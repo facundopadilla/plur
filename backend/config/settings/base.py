@@ -125,4 +125,5 @@ FEATURE_FLAGS = {
 }
 
 TRANSAK_API_KEY: str = os.environ.get("TRANSAK_API_KEY", "")
+TRANSAK_WEBHOOK_SECRET: str = os.environ.get("TRANSAK_WEBHOOK_SECRET", "")
 TRANSAK_SUPPORTED_CURRENCIES: list[str] = ["USD", "EUR"]

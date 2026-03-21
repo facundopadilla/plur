@@ -7,6 +7,20 @@ from django.conf import settings
 from django.db import models
 
 
+class WebhookEvent(models.Model):
+    event_id = models.CharField(max_length=200, unique=True)
+    event_type = models.CharField(max_length=100)
+    order_id = models.CharField(max_length=200, blank=True)
+    processed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "webhook event"
+        verbose_name_plural = "webhook events"
+
+    def __str__(self) -> str:
+        return f"WebhookEvent {self.event_id} ({self.event_type})"
+
+
 class PurchaseOrder(models.Model):
     STATUS_PENDING: ClassVar[str] = "pending"
     STATUS_PROCESSING: ClassVar[str] = "processing"
