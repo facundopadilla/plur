@@ -63,20 +63,22 @@ export function SaleQRModal({ garment, onClose }: SaleQRModalProps) {
   useEffect(() => {
     if (sellerStep !== 'qr') return
 
-    pollRef.current = setInterval(async () => {
-      try {
-        const res = await apiClient.get<PendingSale[]>('/sales/sales/pending')
-        const matching = res.data.find(
-          (s) => String(s.garment_id) === String(garmentBackendId),
-        )
-        if (matching) {
-          if (pollRef.current) clearInterval(pollRef.current)
-          setPendingSale(matching)
-          setSellerStep('confirming')
+    pollRef.current = setInterval(() => {
+      void (async () => {
+        try {
+          const res = await apiClient.get<PendingSale[]>('/sales/sales/pending')
+          const matching = res.data.find(
+            (s) => String(s.garment_id) === String(garmentBackendId),
+          )
+          if (matching) {
+            if (pollRef.current) clearInterval(pollRef.current)
+            setPendingSale(matching)
+            setSellerStep('confirming')
+          }
+        } catch {
+          // polling error — keep trying
         }
-      } catch {
-        // polling error — keep trying
-      }
+      })()
     }, 3000)
 
     return () => {

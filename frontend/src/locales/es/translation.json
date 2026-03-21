@@ -264,7 +264,10 @@
     "tabs": {
       "inventario": "Inventario",
       "espejo": "Espejo AI",
+      "vestidor": "Vestidor",
+      "match": "Match",
       "creditos": "Créditos",
+      "publicar": "Publicar",
       "perfil": "Perfil"
     },
     "swipe": {
@@ -385,6 +388,74 @@
       "saleRejected": "El vendedor rechazó la venta",
       "saleExpired": "La solicitud expiró",
       "viewOnChain": "Ver en Snowtrace (Avalanche)"
+    }
+  },
+  "earlyAccess": {
+    "nav": {
+      "badge": "Acceso anticipado"
+    },
+    "hero": {
+      "eyebrow": "Acceso anticipado — Cupos limitados",
+      "titleLine1": "Tu ropa merece",
+      "titleLine2": "otra vida.",
+      "description": "Plur reinventa la moda circular. Subí lo que ya no usás, encontrá lo que buscás, intercambiá sin desperdiciar. Sé de los primeros.",
+      "cta": "Quiero acceso anticipado"
+    },
+    "howItWorks": {
+      "eyebrow": "Cómo funciona",
+      "titleLine1": "Tres pasos.",
+      "titleLine2": "Cero desperdicio.",
+      "step1": {
+        "title": "Subí tu ropa",
+        "description": "Sacale fotos a las prendas que ya no usás y publicalas en segundos. Así de fácil."
+      },
+      "step2": {
+        "title": "Encontrá tu match",
+        "description": "Deslizá entre prendas que te gusten. Si hay match, conectás con el otro usuario al instante."
+      },
+      "step3": {
+        "title": "Comprá o intercambiá",
+        "description": "Usá tokens PLR o comprá directo. Tu ropa es tu moneda. Sin intermediarios."
+      }
+    },
+    "premium": {
+      "eyebrow": "Oferta exclusiva",
+      "titleLine1": "2 meses de",
+      "titleLine2": "Premium gratis.",
+      "description": "Los primeros en registrarse reciben acceso completo a todas las funciones premium sin costo.",
+      "cta": "Reclamar mi lugar",
+      "features": {
+        "unlimitedMatches": "Matches ilimitados",
+        "aiFitting": "Probador IA incluido",
+        "noFees": "Sin comisiones",
+        "priority": "Prioridad en el feed"
+      }
+    },
+    "form": {
+      "eyebrow": "Registrate",
+      "title": "Unite a la lista.",
+      "subtitle": "Dejá tu email y subí fotos de ropa que te gustaría encontrar. Los primeros reciben 2 meses de Premium gratis.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "tu@email.com",
+      "nameLabel": "Nombre (opcional)",
+      "namePlaceholder": "¿Cómo te llamás?",
+      "photosLabel": "Ropa que te gustaría encontrar",
+      "photosHint": "Subí hasta 5 fotos de prendas que te interesarían. JPG, PNG o WebP. Máx 5MB.",
+      "photoAlt": "Prenda",
+      "descriptionPlaceholder": "Describí la prenda...",
+      "uploadPrompt": "Tocá para subir fotos o arrastralas acá",
+      "uploadMore": "Agregar más ({{remaining}} restantes)",
+      "submitButton": "Quiero acceso anticipado",
+      "submitting": "Enviando...",
+      "disclaimer": "No compartimos tu información. Solo te contactamos cuando esté todo listo.",
+      "validation": {
+        "emailRequired": "El email es obligatorio",
+        "submitError": "Hubo un error. Intentá de nuevo."
+      },
+      "success": {
+        "title": "¡Estás adentro!",
+        "description": "Te anotamos en la lista de acceso anticipado. Te vamos a contactar apenas esté todo listo. Preparate para darle una segunda vida a tu ropa."
+      }
     }
   }
 }

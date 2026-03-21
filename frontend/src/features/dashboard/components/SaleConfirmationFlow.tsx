@@ -92,28 +92,30 @@ export function SaleConfirmationFlow({ payload, onClose }: SaleConfirmationFlowP
       saleIdRef.current = sale.id
 
       // Start polling for seller confirmation
-      pollRef.current = setInterval(async () => {
-        try {
-          const pollRes = await apiClient.get<SaleResponse>(`/sales/sales/${sale.id}`)
-          const status = pollRes.data.status
-          if (status === 'confirmed') {
-            if (pollRef.current) clearInterval(pollRef.current)
-            if (pollRes.data.tx_hash) setTxHash(pollRes.data.tx_hash)
-            void queryClient.invalidateQueries({ queryKey: ['wallet', 'balance'] })
-            void queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions'] })
-            setStep('processing')
-          } else if (status === 'rejected') {
-            if (pollRef.current) clearInterval(pollRef.current)
-            setErrorMsg(t('dashboard.sale.saleRejected'))
-            setStep('error')
-          } else if (status === 'expired') {
-            if (pollRef.current) clearInterval(pollRef.current)
-            setErrorMsg(t('dashboard.sale.saleExpired'))
-            setStep('error')
+      pollRef.current = setInterval(() => {
+        void (async () => {
+          try {
+            const pollRes = await apiClient.get<SaleResponse>(`/sales/sales/${sale.id}`)
+            const status = pollRes.data.status
+            if (status === 'confirmed') {
+              if (pollRef.current) clearInterval(pollRef.current)
+              if (pollRes.data.tx_hash) setTxHash(pollRes.data.tx_hash)
+              void queryClient.invalidateQueries({ queryKey: ['wallet', 'balance'] })
+              void queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions'] })
+              setStep('processing')
+            } else if (status === 'rejected') {
+              if (pollRef.current) clearInterval(pollRef.current)
+              setErrorMsg(t('dashboard.sale.saleRejected'))
+              setStep('error')
+            } else if (status === 'expired') {
+              if (pollRef.current) clearInterval(pollRef.current)
+              setErrorMsg(t('dashboard.sale.saleExpired'))
+              setStep('error')
+            }
+          } catch {
+            // polling error — keep trying
           }
-        } catch {
-          // polling error — keep trying
-        }
+        })()
       }, 3000)
     } catch (err: unknown) {
       setErrorMsg(extractApiError(err, 'Error al iniciar la compra'))

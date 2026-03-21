@@ -265,7 +265,10 @@
     "tabs": {
       "inventario": "Inventory",
       "espejo": "AI Mirror",
+      "vestidor": "AI Mirror",
+      "match": "Match",
       "creditos": "Credits",
+      "publicar": "Publish",
       "perfil": "Profile"
     },
     "swipe": {
@@ -386,6 +389,74 @@
       "saleRejected": "The seller rejected the sale",
       "saleExpired": "The request has expired",
       "viewOnChain": "View on Snowtrace (Avalanche)"
+    }
+  },
+  "earlyAccess": {
+    "nav": {
+      "badge": "Early Access"
+    },
+    "hero": {
+      "eyebrow": "Early Access — Limited Spots",
+      "titleLine1": "Your clothes deserve",
+      "titleLine2": "a new life.",
+      "description": "Plur reinvents circular fashion. Upload what you no longer wear, find what you're looking for, exchange without waste. Be among the first.",
+      "cta": "Get early access"
+    },
+    "howItWorks": {
+      "eyebrow": "How it works",
+      "titleLine1": "Three steps.",
+      "titleLine2": "Zero waste.",
+      "step1": {
+        "title": "Upload your clothes",
+        "description": "Take photos of garments you no longer wear and publish them in seconds. That simple."
+      },
+      "step2": {
+        "title": "Find your match",
+        "description": "Swipe through garments you like. If there's a match, you connect with the other user instantly."
+      },
+      "step3": {
+        "title": "Buy or exchange",
+        "description": "Use PLR tokens or buy directly. Your wardrobe is your currency. No middlemen."
+      }
+    },
+    "premium": {
+      "eyebrow": "Exclusive offer",
+      "titleLine1": "2 months of",
+      "titleLine2": "Premium free.",
+      "description": "The first to sign up get full access to all premium features at no cost.",
+      "cta": "Claim my spot",
+      "features": {
+        "unlimitedMatches": "Unlimited matches",
+        "aiFitting": "AI fitting room included",
+        "noFees": "No fees",
+        "priority": "Feed priority"
+      }
+    },
+    "form": {
+      "eyebrow": "Sign up",
+      "title": "Join the list.",
+      "subtitle": "Leave your email and upload photos of clothes you'd like to find. The first to sign up get 2 months of Premium free.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@email.com",
+      "nameLabel": "Name (optional)",
+      "namePlaceholder": "What's your name?",
+      "photosLabel": "Clothes you'd like to find",
+      "photosHint": "Upload up to 5 photos of garments you're interested in. JPG, PNG or WebP. Max 5MB.",
+      "photoAlt": "Garment",
+      "descriptionPlaceholder": "Describe the garment...",
+      "uploadPrompt": "Tap to upload photos or drag them here",
+      "uploadMore": "Add more ({{remaining}} remaining)",
+      "submitButton": "Get early access",
+      "submitting": "Sending...",
+      "disclaimer": "We don't share your information. We'll only contact you when everything is ready.",
+      "validation": {
+        "emailRequired": "Email is required",
+        "submitError": "Something went wrong. Please try again."
+      },
+      "success": {
+        "title": "You're in!",
+        "description": "We've added you to the early access list. We'll reach out as soon as everything is ready. Get ready to give your clothes a second life."
+      }
     }
   }
 }

@@ -9,11 +9,13 @@ import { CreditosTab } from './CreditosTab'
 import { ProfileHeader } from './ProfileHeader'
 import { QRScannerOverlay } from './QRScannerOverlay'
 import { UserProfileModal } from './UserProfileModal'
-import { X } from 'lucide-react'
+import { X, QrCode } from 'lucide-react'
 import { useDashboardStore } from '@/stores/dashboard.store'
+import { useTranslation } from 'react-i18next'
 import type { DashboardTab } from '../types'
 
 export function DashboardLayout() {
+  const { t } = useTranslation()
   const { mobileOverlay, setMobileOverlay } = useDashboardStore()
   const [showScanner, setShowScanner] = useState(false)
   const [showProfile, setShowProfile] = useState(false)
@@ -55,6 +57,20 @@ export function DashboardLayout() {
             )}
             {mobileOverlay === 'vestidor' && <EspejoAITab />}
             {mobileOverlay === 'creditos' && <CreditosTab />}
+            {mobileOverlay === 'match' && <div className="flex-1 flex items-center justify-center text-pl-gray-400">Match (Próximamente)</div>}
+            {mobileOverlay === 'publicar' && (
+              <div className="flex-1 flex flex-col items-center justify-center gap-6 text-pl-gray-400 p-6 text-center">
+                <p>Publicar (Próximamente)</p>
+                <button
+                  onClick={() => setShowScanner(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded border border-pl-gray-600 hover:bg-pl-gray-800 transition-colors text-pl-white text-sm"
+                >
+                  <QrCode className="w-4 h-4" />
+                  {t('dashboard.sale.scanQR')}
+                </button>
+              </div>
+            )}
+            {mobileOverlay === 'perfil' && <div className="flex-1 flex items-center justify-center text-pl-gray-400">Perfil (Próximamente)</div>}
           </div>
         </div>
       )}

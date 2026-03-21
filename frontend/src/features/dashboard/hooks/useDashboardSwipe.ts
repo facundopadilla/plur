@@ -42,18 +42,22 @@ export function useDashboardSwipe(garments: DashboardGarment[]): UseDashboardSwi
   }, [unseenGarments.length])
 
   useEffect(() => {
+    const timers = timersRef.current
     return () => {
-      timersRef.current.forEach(clearTimeout)
+      timers.forEach(clearTimeout)
     }
   }, [])
 
-  const visibleCards: SwipeCardState[] = []
-  for (let i = 0; i < 3; i++) {
-    const garment = unseenGarments[currentIndex + i]
-    if (garment !== undefined) {
-      visibleCards.push({ garment, stackPosition: i })
+  const visibleCards = useMemo(() => {
+    const cards: SwipeCardState[] = []
+    for (let i = 0; i < 3; i++) {
+      const garment = unseenGarments[currentIndex + i]
+      if (garment !== undefined) {
+        cards.push({ garment, stackPosition: i })
+      }
     }
-  }
+    return cards
+  }, [unseenGarments, currentIndex])
 
   const isEmpty = unseenGarments.length === 0 || currentIndex >= unseenGarments.length
 
