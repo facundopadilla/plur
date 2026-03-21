@@ -47,6 +47,13 @@ class ConversationService:
         return conversation
 
 
+    @classmethod
+    async def finalize_conversation_by_garment(cls, garment_id: int) -> None:
+        conversation = await ConversationRepository.find_open_by_garment_id(garment_id)
+        if conversation is not None:
+            await ConversationRepository.finalize(conversation)
+
+
 class MessageService:
     @classmethod
     async def list_for_conversation(cls, user: User, conversation_id: int) -> list[Message]:

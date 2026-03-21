@@ -11,6 +11,7 @@ from django.db import transaction
 from django.utils import timezone
 from loguru import logger
 
+from apps.match.services import ConversationService as _ConversationService
 from apps.sales.models import CreditTransaction, Garment, Sale
 from apps.sales.repositories import CreditTransactionRepository, GarmentRepository, SaleRepository
 from apps.users.models import User
@@ -318,6 +319,7 @@ class SaleService:
             seller_id=seller.pk,
             total=total,
         )
+        await _ConversationService.finalize_conversation_by_garment(sale.garment_id)
         return sale
 
     @classmethod
@@ -345,6 +347,7 @@ class SaleService:
         await sale.asave(update_fields=["status", "resolved_at"])
 
         logger.info("Sale rejected", sale_id=sale.pk, seller_id=seller.pk)
+        await _ConversationService.finalize_conversation_by_garment(sale.garment_id)
         return sale
 
 
