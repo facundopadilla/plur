@@ -200,6 +200,7 @@ export const useDashboardStore = create<DashboardState>()(
     {
       name: 'dashboard-storage',
       partialize: (state) => ({
+        activeTab: state.activeTab,
         likedItems: state.likedItems,
         credits: state.credits,
         transactions: state.transactions,
@@ -209,6 +210,25 @@ export const useDashboardStore = create<DashboardState>()(
         sellerChats: state.sellerChats,
         publishedGarments: state.publishedGarments,
       }),
+      onRehydrateStorage: () => (rehydratedState, error) => {
+        if (error || !rehydratedState) return
+
+        const VALID_TABS: DashboardTab[] = [
+          'inventario',
+          'vestidor',
+          'match',
+          'creditos',
+          'publicar',
+          'perfil',
+        ]
+
+        const rawTab = rehydratedState.activeTab as string
+        if (rawTab === 'espejo') {
+          rehydratedState.activeTab = 'vestidor'
+        } else if (!VALID_TABS.includes(rehydratedState.activeTab)) {
+          rehydratedState.activeTab = 'inventario'
+        }
+      },
     },
   ),
 )

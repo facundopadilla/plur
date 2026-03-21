@@ -20,7 +20,7 @@ const LEFT_TABS: {
   Icon: React.ComponentType<TabIcon>
 }[] = [
   { key: 'inventario', labelKey: 'dashboard.tabs.inventario', Icon: Package },
-  { key: 'espejo', labelKey: 'dashboard.tabs.espejo', Icon: Sparkles },
+  { key: 'vestidor', labelKey: 'dashboard.tabs.espejo', Icon: Sparkles },
 ]
 
 const RIGHT_TABS: {

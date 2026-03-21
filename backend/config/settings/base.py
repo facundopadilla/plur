@@ -35,6 +35,7 @@ AUTH_USER_MODEL = "users.User"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -82,6 +83,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Media files (user-uploaded content)
 MEDIA_URL = "media/"
@@ -112,3 +114,10 @@ AVALANCHE_BACKEND_WALLET_ADDRESS = os.environ.get(
 PLR_WELCOME_CREDITS = int(os.environ.get("PLR_WELCOME_CREDITS", "30"))  # 30 PLR on signup
 PLR_AI_IMAGE_COST = int(os.environ.get("PLR_AI_IMAGE_COST", "1"))  # 1 PLR per AI image
 PLATFORM_FEE_RATE = float(os.environ.get("PLATFORM_FEE_RATE", "0.005"))  # 0.5%
+
+FEATURE_FLAGS = {
+    "dashboard_ia_v2": False,
+    "match_chat": False,
+    "proximity_sort": False,
+    "transak_onramp": False,
+}

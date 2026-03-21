@@ -23,7 +23,7 @@ export function LeftPanel({ onQrScan }: LeftPanelProps) {
             <InventarioTab />
           </div>
         )}
-        {activeTab === 'espejo' && (
+        {activeTab === 'vestidor' && (
           <div className="flex-1 overflow-hidden flex flex-col">
             <EspejoAITab />
           </div>

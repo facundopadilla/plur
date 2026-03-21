@@ -9,7 +9,7 @@ interface PanelTabsProps {
 
 const TABS: { key: DashboardTab; labelKey: string }[] = [
   { key: 'inventario', labelKey: 'dashboard.tabs.inventario' },
-  { key: 'espejo', labelKey: 'dashboard.tabs.espejo' },
+  { key: 'vestidor', labelKey: 'dashboard.tabs.espejo' },
   { key: 'creditos', labelKey: 'dashboard.tabs.creditos' },
 ]
 

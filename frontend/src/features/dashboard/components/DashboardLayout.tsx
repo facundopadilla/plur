@@ -53,7 +53,7 @@ export function DashboardLayout() {
                 <InventarioTab />
               </div>
             )}
-            {mobileOverlay === 'espejo' && <EspejoAITab />}
+            {mobileOverlay === 'vestidor' && <EspejoAITab />}
             {mobileOverlay === 'creditos' && <CreditosTab />}
           </div>
         </div>

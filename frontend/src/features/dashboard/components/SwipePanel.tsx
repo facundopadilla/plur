@@ -33,8 +33,8 @@ export function SwipePanel() {
     createChat(garment.id, garment.name, garment.images[0] ?? '')
     swipe('like')
     setTimeout(() => {
-      setActiveTab('espejo')
-      setMobileOverlay('espejo')
+      setActiveTab('vestidor')
+      setMobileOverlay('vestidor')
     }, 750)
   }
 
