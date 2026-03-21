@@ -4,6 +4,7 @@ import { Check, Loader2, X, Tag, AlertCircle, ExternalLink } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { useDashboardStore } from '@/stores/dashboard.store'
+import { useMyGarments } from '../hooks/useGarments'
 import { getCurrency, formatFiatPrice } from '../data/currencies'
 import { apiClient } from '@/api/client'
 import type { QRSalePayload } from '../types'
@@ -47,7 +48,8 @@ interface SaleResponse {
 export function SaleConfirmationFlow({ payload, onClose }: SaleConfirmationFlowProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
-  const { selectedCurrency, publishedGarments } = useDashboardStore()
+  const { selectedCurrency } = useDashboardStore()
+  const { data: myGarments } = useMyGarments()
   const currency = getCurrency(selectedCurrency)
   const [step, setStep] = useState<FlowStep>('confirm')
   const [processingIndex, setProcessingIndex] = useState(0)
@@ -59,7 +61,7 @@ export function SaleConfirmationFlow({ payload, onClose }: SaleConfirmationFlowP
   const platformFee = Math.ceil(payload.pricePLR * PLATFORM_FEE_RATE)
   const totalPLR = payload.pricePLR + platformFee
 
-  const garmentImage = publishedGarments.find((g) => g.id === payload.garmentId)?.images[0]
+  const garmentImage = myGarments?.find((g) => String(g.id) === payload.garmentId)?.images[0]
 
   // Cleanup polling on unmount
   useEffect(() => {

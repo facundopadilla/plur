@@ -10,7 +10,6 @@ import type {
   CurrencyCode,
   SellerChat,
   SellerChatMessage,
-  PublishedGarment,
 } from '@/features/dashboard/types'
 import { DEFAULT_CURRENCY } from '@/features/dashboard/data/currencies'
 
@@ -45,11 +44,6 @@ interface DashboardState {
   sellerChats: SellerChat[]
   createSellerChat: (garment: DashboardGarment) => string
   addSellerMessage: (chatId: string, msg: Omit<SellerChatMessage, 'id' | 'timestamp'>) => void
-
-  publishedGarments: PublishedGarment[]
-  addPublishedGarment: (garment: Omit<PublishedGarment, 'id' | 'publishedAt' | 'status'> & { backendId?: number | undefined }) => void
-  removePublishedGarment: (garmentId: string) => void
-  markGarmentAsSold: (garmentId: string) => void
 }
 
 export const useDashboardStore = create<DashboardState>()(
@@ -171,31 +165,6 @@ export const useDashboardStore = create<DashboardState>()(
               : chat,
           ),
         })),
-
-      publishedGarments: [],
-      addPublishedGarment: (garment) =>
-        set((state) => ({
-          publishedGarments: [
-            ...state.publishedGarments,
-            {
-              ...garment,
-              id: garment.backendId !== undefined ? String(garment.backendId) : `pub-${Date.now()}`,
-              backendId: garment.backendId,
-              publishedAt: Date.now(),
-              status: 'active' as const,
-            },
-          ],
-        })),
-      removePublishedGarment: (garmentId) =>
-        set((state) => ({
-          publishedGarments: state.publishedGarments.filter((g) => g.id !== garmentId),
-        })),
-      markGarmentAsSold: (garmentId) =>
-        set((state) => ({
-          publishedGarments: state.publishedGarments.map((g) =>
-            g.id === garmentId ? { ...g, status: 'sold' as const } : g,
-          ),
-        })),
     }),
     {
       name: 'dashboard-storage',
@@ -208,7 +177,6 @@ export const useDashboardStore = create<DashboardState>()(
         seenGarmentIds: state.seenGarmentIds,
         selectedCurrency: state.selectedCurrency,
         sellerChats: state.sellerChats,
-        publishedGarments: state.publishedGarments,
       }),
       onRehydrateStorage: () => (rehydratedState, error) => {
         if (error || !rehydratedState) return

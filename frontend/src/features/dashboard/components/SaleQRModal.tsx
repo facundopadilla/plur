@@ -38,7 +38,7 @@ export function SaleQRModal({ garment, onClose }: SaleQRModalProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const user = useAuthStore((s) => s.user)
-  const { selectedCurrency, markGarmentAsSold } = useDashboardStore()
+  const { selectedCurrency } = useDashboardStore()
   const currency = getCurrency(selectedCurrency)
 
   const [sellerStep, setSellerStep] = useState<SellerStep>('qr')
@@ -91,7 +91,7 @@ export function SaleQRModal({ garment, onClose }: SaleQRModalProps) {
     setSellerStep('processing')
     try {
       await apiClient.post(`/sales/sales/${pendingSale.id}/confirm`)
-      markGarmentAsSold(String(garment.id))
+      await queryClient.invalidateQueries({ queryKey: ['garments', 'mine'] })
       await queryClient.invalidateQueries({ queryKey: ['wallet', 'balance'] })
       await queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions'] })
       setSellerStep('done')

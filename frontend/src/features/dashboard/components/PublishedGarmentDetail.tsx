@@ -1,14 +1,15 @@
 import { useState } from 'react'
-import { ArrowLeft, QrCode, Tag } from 'lucide-react'
+import { ArrowLeft, QrCode, Tag, Trash2, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { getCurrency, formatFiatPrice } from '../data/currencies'
 import { useDashboardStore } from '@/stores/dashboard.store'
+import { useDeleteGarment } from '../hooks/useGarments'
 import { SaleQRModal } from './SaleQRModal'
-import type { PublishedGarment } from '../types'
+import type { GarmentOut } from '@/api/generated/types.gen'
 
 interface PublishedGarmentDetailProps {
-  garment: PublishedGarment
+  garment: GarmentOut
   onBack: () => void
 }
 
@@ -18,6 +19,34 @@ export function PublishedGarmentDetail({ garment, onBack }: PublishedGarmentDeta
   const currency = getCurrency(selectedCurrency)
   const [showQR, setShowQR] = useState(false)
   const [activeImage, setActiveImage] = useState(0)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const deleteGarment = useDeleteGarment()
+
+  const handleDelete = () => {
+    if (!confirmDelete) {
+      setConfirmDelete(true)
+      return
+    }
+    deleteGarment.mutate(garment.id, {
+      onSuccess: () => onBack(),
+    })
+  }
+
+  const qrGarment = {
+    id: String(garment.id),
+    name: garment.name,
+    pricePLR: garment.price_plr,
+    status: garment.status as 'active' | 'sold',
+    backendId: garment.id,
+    description: garment.description,
+    images: garment.images,
+    size: garment.size,
+    style: garment.style,
+    condition: garment.condition,
+    location: garment.location,
+    tags: garment.tags,
+    publishedAt: new Date(garment.created_at).getTime(),
+  }
 
   return (
     <div className="relative flex flex-col h-full slide-in-right">
@@ -90,10 +119,10 @@ export function PublishedGarmentDetail({ garment, onBack }: PublishedGarmentDeta
               {t('dashboard.sale.priceLabel')}
             </p>
             <p className="text-[18px] font-bold text-pl-accent font-body tracking-[0.04em]">
-              {garment.pricePLR} PLR
+              {garment.price_plr} PLR
             </p>
             <p className="text-[12px] text-pl-gray-300 font-body">
-              {formatFiatPrice(garment.pricePLR, currency)}
+              {formatFiatPrice(garment.price_plr, currency)}
             </p>
           </div>
 
@@ -134,7 +163,7 @@ export function PublishedGarmentDetail({ garment, onBack }: PublishedGarmentDeta
       </div>
 
       {/* CTA */}
-      <div className="p-4 border-t border-pl-gray-700 shrink-0">
+      <div className="p-4 border-t border-pl-gray-700 shrink-0 space-y-2">
         {garment.status === 'active' ? (
           <button
             onClick={() => setShowQR(true)}
@@ -148,10 +177,27 @@ export function PublishedGarmentDetail({ garment, onBack }: PublishedGarmentDeta
             {t('dashboard.publish.statusSold')}
           </div>
         )}
+        <button
+          onClick={handleDelete}
+          disabled={deleteGarment.isPending}
+          className={cn(
+            'w-full flex items-center justify-center gap-2 text-[11px] font-semibold tracking-[0.12em] uppercase px-4 py-2.5 font-body transition-colors',
+            confirmDelete
+              ? 'bg-red-600 text-white hover:bg-red-700'
+              : 'border border-pl-gray-600 text-pl-gray-400 hover:text-red-400 hover:border-red-400/50',
+            deleteGarment.isPending && 'opacity-50 cursor-not-allowed',
+          )}
+        >
+          {deleteGarment.isPending ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <Trash2 className="w-3.5 h-3.5" />
+          )}
+          {confirmDelete ? t('dashboard.publish.confirmDelete') : t('common.delete')}
+        </button>
       </div>
 
-      {/* QR Modal */}
-      {showQR && <SaleQRModal garment={garment} onClose={() => setShowQR(false)} />}
+      {showQR && <SaleQRModal garment={qrGarment} onClose={() => setShowQR(false)} />}
     </div>
   )
 }

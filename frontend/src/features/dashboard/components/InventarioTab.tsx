@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next'
 import { useDashboardStore } from '@/stores/dashboard.store'
 import { getCurrency, formatFiatPrice } from '../data/currencies'
 import { cn } from '@/lib/utils'
-import type { DashboardGarment, InventarioSubTab, PublishedGarment } from '../types'
+import type { DashboardGarment, InventarioSubTab } from '../types'
+import type { GarmentOut } from '@/api/generated/types.gen'
 import { SellerChatView } from './SellerChatView'
 import { PublishedListingsView } from './PublishedListingsView'
 import { PublishGarmentForm } from './PublishGarmentForm'
@@ -15,31 +16,27 @@ type InternalView = 'grid' | 'sellerChat' | 'publishForm' | 'publishedDetail'
 export function InventarioTab() {
   const { t } = useTranslation()
   const likedItems = useDashboardStore((s) => s.likedItems)
-  const publishedGarments = useDashboardStore((s) => s.publishedGarments)
   const selectedCurrency = useDashboardStore((s) => s.selectedCurrency)
   const currency = getCurrency(selectedCurrency)
 
   const [subTab, setSubTab] = useState<InventarioSubTab>('liked')
   const [view, setView] = useState<InternalView>('grid')
   const [selectedGarment, setSelectedGarment] = useState<DashboardGarment | null>(null)
-  const [selectedPublishedId, setSelectedPublishedId] = useState<string | null>(null)
-
-  // Read from store directly so status updates (sold) reflect immediately
-  const selectedPublished = publishedGarments.find((g) => g.id === selectedPublishedId) ?? null
+  const [selectedPublished, setSelectedPublished] = useState<GarmentOut | null>(null)
 
   const handleGarmentClick = (garment: DashboardGarment) => {
     setSelectedGarment(garment)
     setView('sellerChat')
   }
 
-  const handlePublishedGarmentClick = (garment: PublishedGarment) => {
-    setSelectedPublishedId(garment.id)
+  const handlePublishedGarmentClick = (garment: GarmentOut) => {
+    setSelectedPublished(garment)
     setView('publishedDetail')
   }
 
   const handleBack = () => {
     setSelectedGarment(null)
-    setSelectedPublishedId(null)
+    setSelectedPublished(null)
     setView('grid')
   }
 

@@ -315,7 +315,9 @@
       "tags": "Etiquetas",
       "tagsHint": "Separadas por coma (ej: vintage, urbano)",
       "publishButton": "Publicar prenda",
-      "publishSuccess": "¡Prenda publicada!"
+      "publishSuccess": "¡Prenda publicada!",
+      "publishError": "No se pudo publicar la prenda. Intentá de nuevo.",
+      "confirmDelete": "¿Confirmar eliminación?"
     },
     "espejo": {
       "title": "Espejo AI",

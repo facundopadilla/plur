@@ -316,7 +316,9 @@
       "tags": "Tags",
       "tagsHint": "Comma separated (e.g. vintage, urban)",
       "publishButton": "Publish garment",
-      "publishSuccess": "Garment published!"
+      "publishSuccess": "Garment published!",
+      "publishError": "Could not publish the garment. Please try again.",
+      "confirmDelete": "Confirm deletion?"
     },
     "espejo": {
       "title": "AI Mirror",
