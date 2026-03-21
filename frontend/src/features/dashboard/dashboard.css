@@ -1,0 +1,70 @@
+/* Dashboard-specific CSS — swipe stamps and card animations */
+
+/* Swipe stamp animation (portado de landing.css) */
+.swipe-stamp {
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+}
+
+.swipe-stamp.show {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Photo album arrow hover visibility */
+.photo-album-arrows {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.photo-album:hover .photo-album-arrows {
+  opacity: 1;
+}
+
+/* Card hover lift */
+.swipe-card-top:hover {
+  transform-origin: bottom center;
+}
+
+/* Mobile tab overlay slide-in */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.mobile-overlay {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Pulse animation for empty state icon */
+@keyframes emptyPulse {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.08); opacity: 0.6; }
+}
+
+.empty-pulse {
+  animation: emptyPulse 2.5s ease-in-out infinite;
+}
+
+/* Sub-view slide-in (seller chat, publish form) */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}

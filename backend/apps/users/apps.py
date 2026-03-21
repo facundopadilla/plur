@@ -1,0 +1,13 @@
+"""Django app configuration for the users app."""
+
+from __future__ import annotations
+
+from django.apps import AppConfig
+
+
+class UsersConfig(AppConfig):
+    """Configuration for the users application."""
+
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "apps.users"
+    verbose_name = "Users"

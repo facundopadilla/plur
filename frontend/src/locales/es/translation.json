@@ -1,0 +1,335 @@
+{
+  "auth": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "loginButton": "Ingresar",
+    "loginError": "Credenciales incorrectas",
+    "signup": "Crear cuenta",
+    "signupButton": "Crear cuenta",
+    "confirmPassword": "Confirmar contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellidos",
+    "dateOfBirth": "Fecha de nacimiento",
+    "phoneNumber": "Número de celular",
+    "profilePicture": "Foto de perfil",
+    "profilePictureHint": "Hacé clic para subir una foto",
+    "profilePictureOptional": "(opcional)",
+    "profilePictureMaxSize": "Máximo 5MB",
+    "stepCredentials": "Credenciales",
+    "stepPersonal": "Datos personales",
+    "stepProfile": "Perfil",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "passwordRecovery": "Recuperar contraseña",
+    "passwordRecoveryDescription": "Ingresá tu correo electrónico y te enviamos instrucciones para restablecer tu contraseña.",
+    "passwordRecoveryButton": "Enviar instrucciones",
+    "passwordRecoverySent": "Revisá tu correo",
+    "passwordRecoverySentDescription": "Si existe una cuenta con ese correo, vas a recibir las instrucciones en breve.",
+    "activation": "Activar cuenta",
+    "activationDescription": "Ingresá el código de verificación que recibiste por correo.",
+    "activationCode": "Código de verificación",
+    "activationButton": "Activar cuenta",
+    "activationSuccess": "¡Cuenta activada!",
+    "activationSuccessDescription": "Tu cuenta fue activada exitosamente. Redirigiendo al login...",
+    "noAccount": "¿No tenés cuenta?",
+    "hasAccount": "¿Ya tenés cuenta?",
+    "backToLogin": "Volver al login",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "validation": {
+      "emailRequired": "El correo es obligatorio",
+      "emailInvalid": "El correo no es válido",
+      "passwordRequired": "La contraseña es obligatoria",
+      "passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+      "passwordsDoNotMatch": "Las contraseñas no coinciden",
+      "firstNameRequired": "El nombre es obligatorio",
+      "lastNameRequired": "Los apellidos son obligatorios",
+      "dateOfBirthRequired": "La fecha de nacimiento es obligatoria",
+      "dateOfBirthInvalid": "Debés tener al menos 13 años",
+      "phoneRequired": "El número de celular es obligatorio",
+      "phoneInvalid": "El número de celular no es válido",
+      "profilePictureTooLarge": "La imagen no puede superar los 5MB",
+      "profilePictureInvalidType": "Solo se aceptan imágenes (JPG, PNG, WebP)",
+      "codeRequired": "El código es obligatorio",
+      "codeInvalid": "El código debe tener 6 dígitos"
+    }
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error inesperado",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "back": "Volver",
+    "confirm": "Confirmar"
+  },
+  "home": {
+    "title": "Inicio",
+    "welcome": "Bienvenido a Plur"
+  },
+  "onboarding": {
+    "skipLink": "Responder después",
+    "finish": "Empezar a explorar",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "stepStyles": "Estilos",
+    "stepColors": "Colores",
+    "stepBody": "Medidas",
+    "styles": {
+      "title": "¿Qué estilos te gustan?",
+      "subtitle": "Seleccioná todos los que quieras",
+      "casual": "Casual",
+      "streetwear": "Streetwear",
+      "formal": "Formal",
+      "deportivo": "Deportivo",
+      "vintage": "Vintage",
+      "bohemio": "Bohemio",
+      "minimalista": "Minimalista",
+      "urbano": "Urbano",
+      "clasico": "Clásico",
+      "punk": "Punk",
+      "romantico": "Romántico",
+      "grunge": "Grunge"
+    },
+    "colors": {
+      "title": "¿Qué colores usás más?",
+      "subtitle": "Seleccioná tus colores favoritos",
+      "negro": "Negro",
+      "blanco": "Blanco",
+      "gris": "Gris",
+      "azul": "Azul",
+      "rojo": "Rojo",
+      "verde": "Verde",
+      "beige": "Beige",
+      "marron": "Marrón",
+      "rosa": "Rosa",
+      "amarillo": "Amarillo",
+      "naranja": "Naranja",
+      "violeta": "Violeta"
+    },
+    "body": {
+      "title": "Tus medidas",
+      "subtitle": "Así filtramos prendas de tu talle",
+      "upperBody": "Remera / Parte superior",
+      "lowerBody": "Pantalón / Parte inferior",
+      "shoeSize": "Calzado",
+      "shoeSizePlaceholder": "Ej: 42",
+      "height": "Altura",
+      "heightPlaceholder": "cm",
+      "weight": "Peso",
+      "weightPlaceholder": "kg"
+    }
+  },
+  "landing": {
+    "nav": {
+      "brand": "Plur",
+      "match": "Match",
+      "aiFitting": "AI Fitting",
+      "tokens": "Tokens",
+      "collection": "Collection",
+      "tokenBalance": "240 PLR",
+      "joinPlur": "Join Plur"
+    },
+    "hero": {
+      "eyebrow": "Circular Fashion — Redefined",
+      "titleMain": "Swipe",
+      "titleItalic": "Try on. Exchange.",
+      "description": "La moda circular reinventada. Descubrí prendas, probalas con IA y usá tokens para intercambiar ropa con otros. Sin desperdicio, puro estilo.",
+      "ctaPrimary": "Empezá a matchear",
+      "ctaSecondary": "Cómo funciona",
+      "scroll": "Scroll",
+      "stats": {
+        "garments": "Prendas activas",
+        "users": "Usuarios",
+        "satisfaction": "Satisfacción"
+      }
+    },
+    "swipe": {
+      "counter": "01 / 04",
+      "eyebrow": "01 — Match",
+      "titleLine1": "Encontrá",
+      "titleLine2": "tu estilo.",
+      "description": "Deslizá entre miles de prendas pre-loved, vintage y de diseñadores emergentes. Si te gusta, hacé match. Si no, siguiente. Así de simple, como elegir tu próximo outfit.",
+      "feature1Title": "Algoritmo de estilo",
+      "feature1Desc": "Aprende tus preferencias y te muestra prendas que van con vos",
+      "feature2Title": "Match instantáneo",
+      "feature2Desc": "Cuando hacés match, conectás directo con el vendedor",
+      "feature3Title": "Comprá o intercambiá",
+      "feature3Desc": "Usá pesos, tokens PLR, o hacé un intercambio directo",
+      "btnPass": "Pasar",
+      "btnSave": "Guardar",
+      "btnMatch": "Match"
+    },
+    "fitting": {
+      "counter": "02 / 04",
+      "eyebrow": "02 — AI Fitting Room",
+      "titleLine1": "Probátelo",
+      "titleLine2": "sin salir",
+      "titleLine3": "de casa.",
+      "description": "Subí una foto tuya y nuestra IA genera una imagen realista de vos usando la prenda que te gustó. Antes de comprar, ya sabés cómo te queda.",
+      "step1Title": "Subí tu foto",
+      "step1Desc": "Una foto tuya de cuerpo entero. Se procesa de forma privada y segura.",
+      "step2Title": "Elegí la prenda",
+      "step2Desc": "Desde cualquier match o desde la colección. Seleccioná lo que querés probarte.",
+      "step3Title": "Mirá el resultado",
+      "step3Desc": "En segundos, la IA genera una imagen realista de vos con la prenda puesta.",
+      "labelOriginal": "Tu foto",
+      "labelResult": "Resultado IA"
+    },
+    "tokens": {
+      "counter": "03 / 04",
+      "eyebrow": "03 — Token Economy",
+      "titleLine1": "Vendé ropa.",
+      "titleLine2": "Ganá tokens.",
+      "description": "Cada prenda que subís para vender te genera tokens PLR. Usalos para adquirir ropa de otros usuarios sin gastar un peso. Tu guardarropa se convierte en tu moneda.",
+      "card1Title": "Subí",
+      "card1Desc": "Publicá las prendas que ya no usás. Agregá fotos, talle y estado.",
+      "card1Value": "+50",
+      "card2Title": "Intercambiá",
+      "card2Desc": "Usá tus tokens PLR para conseguir prendas de otros usuarios. Sin plata de por medio.",
+      "card2Value": "PLR",
+      "card3Title": "Crecé",
+      "card3Desc": "Mientras más vendés y mejor rating tenés, más tokens ganás por prenda.",
+      "card3Value": "x2",
+      "exchangeFromLabel": "Tu ropa",
+      "exchangeFromDesc": "Prendas que ya no usás",
+      "exchangeToLabel": "Nueva ropa",
+      "exchangeToDesc": "Pre-loved, vintage, diseño"
+    },
+    "gallery": {
+      "counter": "04 / 04",
+      "eyebrow": "04 — Collection",
+      "titleLine1": "Lo más",
+      "titleLine2": "buscado.",
+      "description": "Prendas trending entre la comunidad Plur. Moda circular que no pierde estilo."
+    },
+    "testimonials": {
+      "eyebrow": "Comunidad",
+      "title": "Lo que dicen."
+    },
+    "cta": {
+      "titleLine1": "Tu ropa",
+      "titleLine2": "merece otra",
+      "titleLine3": "vida.",
+      "description": "Unite a la comunidad de moda circular más grande. Swipeá, probate, intercambiá. Sin desperdicio.",
+      "ctaPrimary": "Crear cuenta gratis",
+      "ctaSecondary": "Explorar prendas"
+    },
+    "footer": {
+      "tagline": "Moda circular para una nueva generación. Cada prenda tiene una historia — dale un nuevo capítulo.",
+      "platform": "Plataforma",
+      "community": "Comunidad",
+      "legal": "Legal",
+      "platformLinks": {
+        "swipe": "Swipe & Match",
+        "fitting": "Probador IA",
+        "tokens": "Tokens PLR",
+        "publish": "Publicar prenda"
+      },
+      "communityLinks": {
+        "blog": "Blog",
+        "instagram": "Instagram",
+        "discord": "Discord",
+        "ambassadors": "Embajadores"
+      },
+      "legalLinks": {
+        "terms": "Términos",
+        "privacy": "Privacidad",
+        "shipping": "Envíos",
+        "sizing": "Guía de talles"
+      },
+      "copyright": "© 2026 Plur. Todos los derechos reservados.",
+      "madeWith": "Hecho con <icon/> para el planeta"
+    }
+  },
+  "dashboard": {
+    "profile": {
+      "credits": "{{amount}} PLR",
+      "profileLabel": "Perfil"
+    },
+    "tabs": {
+      "inventario": "Inventario",
+      "espejo": "Espejo AI",
+      "creditos": "Créditos"
+    },
+    "swipe": {
+      "btnLike": "Me gusta",
+      "btnDislike": "Pasar",
+      "stampMatch": "MATCH",
+      "stampNope": "NOPE",
+      "emptyTitle": "No hay más prendas",
+      "emptyDescription": "Ya viste todas las prendas disponibles.",
+      "emptyReset": "Reiniciar"
+    },
+    "inventario": {
+      "title": "Tu inventario",
+      "emptyTitle": "Todavía no tenés prendas",
+      "emptyDescription": "Las prendas que te gusten van a aparecer acá.",
+      "itemCount": "{{count}} prendas",
+      "subTabLiked": "Me gusta",
+      "subTabPublished": "Publicadas"
+    },
+    "sellerChat": {
+      "title": "Chat con vendedor",
+      "placeholder": "Escribí un mensaje...",
+      "garmentDetails": "Detalles de la prenda",
+      "viewProfile": "Ver perfil",
+      "publishedGarments": "Prendas publicadas",
+      "noOtherGarments": "No tiene otras prendas publicadas"
+    },
+    "publish": {
+      "title": "Publicá tu ropa",
+      "emptyTitle": "Empezá a vender",
+      "emptyDescription": "Publicá las prendas que ya no usás y ganá tokens PLR por cada venta.",
+      "newListing": "Nueva publicación",
+      "listingCount": "{{count}} publicaciones",
+      "statusActive": "Activa",
+      "statusSold": "Vendida",
+      "addPhotos": "Agregar fotos",
+      "name": "Nombre de la prenda",
+      "description": "Descripción",
+      "price": "Precio en PLR",
+      "size": "Talle",
+      "style": "Estilo",
+      "condition": "Estado",
+      "location": "Ubicación",
+      "tags": "Etiquetas",
+      "tagsHint": "Separadas por coma (ej: vintage, urbano)",
+      "publishButton": "Publicar prenda",
+      "publishSuccess": "¡Prenda publicada! +50 PLR"
+    },
+    "espejo": {
+      "title": "Espejo AI",
+      "description": "Seleccioná una prenda y subí tu foto para ver cómo te queda.",
+      "selectGarment": "Elegir prenda",
+      "uploadPhoto": "Subir foto",
+      "generating": "Generando imagen...",
+      "newChat": "Nueva prueba",
+      "placeholder": "Escribí un mensaje...",
+      "emptyChats": "Iniciá una prueba virtual seleccionando una prenda de tu inventario."
+    },
+    "creditos": {
+      "title": "Tus créditos",
+      "balance": "Balance actual",
+      "history": "Historial",
+      "earned": "Ganado",
+      "spent": "Gastado",
+      "purchased": "Comprado",
+      "emptyHistory": "Todavía no tenés movimientos.",
+      "currency": "Moneda de visualización",
+      "currencyHint": "Los precios de las prendas se muestran en esta moneda"
+    },
+    "garment": {
+      "size": "Talle",
+      "condition": "Estado",
+      "style": "Estilo",
+      "location": "Ubicación",
+      "seller": "Vendedor"
+    }
+  }
+}

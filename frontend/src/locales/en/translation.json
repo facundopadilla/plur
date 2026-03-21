@@ -1,0 +1,336 @@
+{
+  "auth": {
+    "login": "Log in",
+    "logout": "Log out",
+    "email": "Email",
+    "password": "Password",
+    "loginButton": "Sign in",
+    "loginError": "Invalid credentials",
+    "signup": "Create account",
+    "signupButton": "Create account",
+    "confirmPassword": "Confirm password",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "dateOfBirth": "Date of birth",
+    "phoneNumber": "Phone number",
+    "profilePicture": "Profile picture",
+    "profilePictureHint": "Click to upload a photo",
+    "profilePictureOptional": "(optional)",
+    "profilePictureMaxSize": "Maximum 5MB",
+    "stepCredentials": "Credentials",
+    "stepPersonal": "Personal info",
+    "stepProfile": "Profile",
+    "next": "Next",
+    "previous": "Previous",
+    "forgotPassword": "Forgot your password?",
+    "passwordRecovery": "Recover password",
+    "passwordRecoveryDescription": "Enter your email and we'll send you instructions to reset your password.",
+    "passwordRecoveryButton": "Send instructions",
+    "passwordRecoverySent": "Check your email",
+    "passwordRecoverySentDescription": "If an account exists with that email, you'll receive instructions shortly.",
+    "activation": "Activate account",
+    "activationDescription": "Enter the verification code you received by email.",
+    "activationCode": "Verification code",
+    "activationButton": "Activate account",
+    "activationSuccess": "Account activated!",
+    "activationSuccessDescription": "Your account was successfully activated. Redirecting to login...",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "backToLogin": "Back to login",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email is not valid",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 8 characters",
+      "passwordsDoNotMatch": "Passwords do not match",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "dateOfBirthRequired": "Date of birth is required",
+      "dateOfBirthInvalid": "You must be at least 13 years old",
+      "phoneRequired": "Phone number is required",
+      "phoneInvalid": "Phone number is not valid",
+      "profilePictureTooLarge": "Image cannot exceed 5MB",
+      "profilePictureInvalidType": "Only images are accepted (JPG, PNG, WebP)",
+      "codeRequired": "Code is required",
+      "codeInvalid": "Code must be 6 digits"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Unexpected error",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "back": "Back",
+    "confirm": "Confirm"
+  },
+  "home": {
+    "title": "Home",
+    "welcome": "Welcome to Plur"
+  },
+  "onboarding": {
+    "skipLink": "Answer later",
+    "finish": "Start exploring",
+    "next": "Next",
+    "previous": "Previous",
+    "stepStyles": "Styles",
+    "stepColors": "Colors",
+    "stepBody": "Measurements",
+    "styles": {
+      "title": "What styles do you like?",
+      "subtitle": "Select all that apply",
+      "casual": "Casual",
+      "streetwear": "Streetwear",
+      "formal": "Formal",
+      "deportivo": "Athletic",
+      "vintage": "Vintage",
+      "bohemio": "Bohemian",
+      "minimalista": "Minimalist",
+      "urbano": "Urban",
+      "clasico": "Classic",
+      "punk": "Punk",
+      "romantico": "Romantic",
+      "grunge": "Grunge"
+    },
+    "colors": {
+      "title": "What colors do you wear most?",
+      "subtitle": "Select your favorite colors",
+      "negro": "Black",
+      "blanco": "White",
+      "gris": "Grey",
+      "azul": "Blue",
+      "rojo": "Red",
+      "verde": "Green",
+      "beige": "Beige",
+      "marron": "Brown",
+      "rosa": "Pink",
+      "amarillo": "Yellow",
+      "naranja": "Orange",
+      "violeta": "Purple"
+    },
+    "body": {
+      "title": "Your measurements",
+      "subtitle": "This helps us filter garments in your size",
+      "upperBody": "Top / Upper body",
+      "lowerBody": "Bottom / Lower body",
+      "shoeSize": "Footwear",
+      "shoeSizePlaceholder": "e.g. 42",
+      "height": "Height",
+      "heightPlaceholder": "cm",
+      "weight": "Weight",
+      "weightPlaceholder": "kg"
+    }
+  },
+  "landing": {
+    "nav": {
+      "brand": "Plur",
+      "match": "Match",
+      "aiFitting": "AI Fitting",
+      "tokens": "Tokens",
+      "collection": "Collection",
+      "tokenBalance": "240 PLR",
+      "joinPlur": "Join Plur"
+    },
+    "hero": {
+      "eyebrow": "Circular Fashion — Redefined",
+      "titleMain": "Swipe",
+      "titleItalic": "Try on. Exchange.",
+      "description": "Circular fashion reinvented. Discover garments, try them on with AI and use tokens to exchange clothes with others. Zero waste, pure style.",
+      "ctaPrimary": "Start matching",
+      "ctaSecondary": "How it works",
+      "scroll": "Scroll",
+      "stats": {
+        "garments": "Active garments",
+        "users": "Users",
+        "satisfaction": "Satisfaction"
+      }
+    },
+    "swipe": {
+      "counter": "01 / 04",
+      "eyebrow": "01 — Match",
+      "titleLine1": "Find",
+      "titleLine2": "your style.",
+      "description": "Swipe through thousands of pre-loved, vintage and emerging designer pieces. Like it? Match. Not for you? Next. Simple as choosing your next outfit.",
+      "feature1Title": "Style algorithm",
+      "feature1Desc": "Learns your preferences and shows you garments that suit you",
+      "feature2Title": "Instant match",
+      "feature2Desc": "When you match, you connect directly with the seller",
+      "feature3Title": "Buy or exchange",
+      "feature3Desc": "Use cash, PLR tokens, or make a direct swap",
+      "btnPass": "Pass",
+      "btnSave": "Save",
+      "btnMatch": "Match"
+    },
+    "fitting": {
+      "counter": "02 / 04",
+      "eyebrow": "02 — AI Fitting Room",
+      "titleLine1": "Try it on",
+      "titleLine2": "without",
+      "titleLine3": "leaving home.",
+      "description": "Upload a photo and our AI generates a realistic image of you wearing the garment you liked. Before buying, you already know how it looks.",
+      "step1Title": "Upload your photo",
+      "step1Desc": "A full-body photo of you. Processed privately and securely.",
+      "step2Title": "Choose the garment",
+      "step2Desc": "From any match or from the collection. Select what you want to try on.",
+      "step3Title": "See the result",
+      "step3Desc": "In seconds, the AI generates a realistic image of you wearing the garment.",
+      "labelOriginal": "Your photo",
+      "labelResult": "AI Result"
+    },
+    "tokens": {
+      "counter": "03 / 04",
+      "eyebrow": "03 — Token Economy",
+      "titleLine1": "Sell clothes.",
+      "titleLine2": "Earn tokens.",
+      "description": "Every garment you list generates PLR tokens. Use them to acquire clothes from other users without spending cash. Your wardrobe becomes your currency.",
+      "card1Title": "List",
+      "card1Desc": "Publish the garments you no longer wear. Add photos, size and condition.",
+      "card1Value": "+50",
+      "card2Title": "Exchange",
+      "card2Desc": "Use your PLR tokens to get garments from other users. No cash needed.",
+      "card2Value": "PLR",
+      "card3Title": "Grow",
+      "card3Desc": "The more you sell and the better your rating, the more tokens you earn per garment.",
+      "card3Value": "x2",
+      "exchangeFromLabel": "Your clothes",
+      "exchangeFromDesc": "Garments you no longer use",
+      "exchangeToLabel": "New clothes",
+      "exchangeToDesc": "Pre-loved, vintage, design",
+      "exchangeToDesc2": "Pre-loved, vintage, design"
+    },
+    "gallery": {
+      "counter": "04 / 04",
+      "eyebrow": "04 — Collection",
+      "titleLine1": "Most",
+      "titleLine2": "wanted.",
+      "description": "Trending garments in the Plur community. Circular fashion that doesn't lose style."
+    },
+    "testimonials": {
+      "eyebrow": "Community",
+      "title": "What they say."
+    },
+    "cta": {
+      "titleLine1": "Your clothes",
+      "titleLine2": "deserve",
+      "titleLine3": "a new life.",
+      "description": "Join the largest circular fashion community. Swipe, try on, exchange. Zero waste.",
+      "ctaPrimary": "Create free account",
+      "ctaSecondary": "Explore garments"
+    },
+    "footer": {
+      "tagline": "Circular fashion for a new generation. Every garment has a story — give it a new chapter.",
+      "platform": "Platform",
+      "community": "Community",
+      "legal": "Legal",
+      "platformLinks": {
+        "swipe": "Swipe & Match",
+        "fitting": "AI Fitting Room",
+        "tokens": "PLR Tokens",
+        "publish": "List a garment"
+      },
+      "communityLinks": {
+        "blog": "Blog",
+        "instagram": "Instagram",
+        "discord": "Discord",
+        "ambassadors": "Ambassadors"
+      },
+      "legalLinks": {
+        "terms": "Terms",
+        "privacy": "Privacy",
+        "shipping": "Shipping",
+        "sizing": "Size guide"
+      },
+      "copyright": "© 2026 Plur. All rights reserved.",
+      "madeWith": "Made with <icon/> for the planet"
+    }
+  },
+  "dashboard": {
+    "profile": {
+      "credits": "{{amount}} PLR",
+      "profileLabel": "Profile"
+    },
+    "tabs": {
+      "inventario": "Inventory",
+      "espejo": "AI Mirror",
+      "creditos": "Credits"
+    },
+    "swipe": {
+      "btnLike": "Like",
+      "btnDislike": "Pass",
+      "stampMatch": "MATCH",
+      "stampNope": "NOPE",
+      "emptyTitle": "No more garments",
+      "emptyDescription": "You've seen all available garments.",
+      "emptyReset": "Start over"
+    },
+    "inventario": {
+      "title": "Your inventory",
+      "emptyTitle": "No garments yet",
+      "emptyDescription": "Garments you like will appear here.",
+      "itemCount": "{{count}} garments",
+      "subTabLiked": "Liked",
+      "subTabPublished": "Published"
+    },
+    "sellerChat": {
+      "title": "Chat with seller",
+      "placeholder": "Write a message...",
+      "garmentDetails": "Garment details",
+      "viewProfile": "View profile",
+      "publishedGarments": "Published garments",
+      "noOtherGarments": "No other garments published"
+    },
+    "publish": {
+      "title": "Publish your clothes",
+      "emptyTitle": "Start selling",
+      "emptyDescription": "Publish clothes you no longer wear and earn PLR tokens for each sale.",
+      "newListing": "New listing",
+      "listingCount": "{{count}} listings",
+      "statusActive": "Active",
+      "statusSold": "Sold",
+      "addPhotos": "Add photos",
+      "name": "Garment name",
+      "description": "Description",
+      "price": "Price in PLR",
+      "size": "Size",
+      "style": "Style",
+      "condition": "Condition",
+      "location": "Location",
+      "tags": "Tags",
+      "tagsHint": "Comma separated (e.g. vintage, urban)",
+      "publishButton": "Publish garment",
+      "publishSuccess": "Garment published! +50 PLR"
+    },
+    "espejo": {
+      "title": "AI Mirror",
+      "description": "Select a garment and upload your photo to see how it looks on you.",
+      "selectGarment": "Choose garment",
+      "uploadPhoto": "Upload photo",
+      "generating": "Generating image...",
+      "newChat": "New try-on",
+      "placeholder": "Write a message...",
+      "emptyChats": "Start a virtual try-on by selecting a garment from your inventory."
+    },
+    "creditos": {
+      "title": "Your credits",
+      "balance": "Current balance",
+      "history": "History",
+      "earned": "Earned",
+      "spent": "Spent",
+      "purchased": "Purchased",
+      "emptyHistory": "No transactions yet.",
+      "currency": "Display currency",
+      "currencyHint": "Garment prices are shown in this currency"
+    },
+    "garment": {
+      "size": "Size",
+      "condition": "Condition",
+      "style": "Style",
+      "location": "Location",
+      "seller": "Seller"
+    }
+  }
+}

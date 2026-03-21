@@ -1,0 +1,47 @@
+# docker/production.yml
+# Use with: DJANGO_SETTINGS_MODULE=config.settings.production
+# Mirrors the Render.com setup for local smoke tests before deploying.
+# Requires a .env.production file (git-ignored) with real secrets.
+
+services:
+  db:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_prod_data:/data
+
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: >
+      sh -c "uv run python manage.py migrate --noinput &&
+             uv run gunicorn config.asgi:application
+             -k uvicorn.workers.UvicornWorker
+             --workers 2
+             --bind 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    env_file:
+      - ../.env.production
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  postgres_prod_data:
+  redis_prod_data:
