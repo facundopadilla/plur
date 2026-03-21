@@ -44,7 +44,7 @@ npm run deploy:fuji  # Deploy to Avalanche Fuji testnet
 
 | Contract | Network | Address | Explorer |
 |----------|---------|---------|---------|
-| PLRToken | Fuji Testnet | TBD | https://testnet.snowtrace.io |
+| PLRToken | Fuji Testnet | 0x159a6f159edaCD4b36947fD54B4BaDD87598de29 | https://testnet.snowtrace.io/address/0x159a6f159edaCD4b36947fD54B4BaDD87598de29#code |
 
 ## Test Coverage
 

@@ -80,6 +80,15 @@
     "stepStyles": "Estilos",
     "stepColors": "Colores",
     "stepBody": "Medidas",
+    "stepPhotos": "Fotos",
+    "photos": {
+      "title": "Tus fotos de referencia",
+      "subtitle": "Las usamos para mostrarte cómo te queda la ropa (opcional)",
+      "front": "Frente — cuerpo completo",
+      "selfie": "Selfie",
+      "profile": "Perfil",
+      "addPhoto": "Agregar foto"
+    },
     "styles": {
       "title": "¿Qué estilos te gustan?",
       "subtitle": "Seleccioná todos los que quieras",
@@ -255,11 +264,13 @@
     "tabs": {
       "inventario": "Inventario",
       "espejo": "Espejo AI",
-      "creditos": "Créditos"
+      "creditos": "Créditos",
+      "perfil": "Perfil"
     },
     "swipe": {
       "btnLike": "Me gusta",
       "btnDislike": "Pasar",
+      "btnTryOn": "Probar con IA",
       "stampMatch": "MATCH",
       "stampNope": "NOPE",
       "emptyTitle": "No hay más prendas",
@@ -301,13 +312,18 @@
       "tags": "Etiquetas",
       "tagsHint": "Separadas por coma (ej: vintage, urbano)",
       "publishButton": "Publicar prenda",
-      "publishSuccess": "¡Prenda publicada! +50 PLR"
+      "publishSuccess": "¡Prenda publicada!"
     },
     "espejo": {
       "title": "Espejo AI",
       "description": "Seleccioná una prenda y subí tu foto para ver cómo te queda.",
       "selectGarment": "Elegir prenda",
       "uploadPhoto": "Subir foto",
+      "uploadReference": "Subir foto de referencia",
+      "generateHighQuality": "Generar imagen alta calidad (1 PLR)",
+      "referenceUploaded": "¡Foto de referencia guardada!",
+      "needPhoto": "Subí una foto tuya",
+      "needPhotoDesc": "Necesitamos al menos una foto de referencia para probarte la prenda",
       "generating": "Generando imagen...",
       "newChat": "Nueva prueba",
       "placeholder": "Escribí un mensaje...",
@@ -322,7 +338,11 @@
       "purchased": "Comprado",
       "emptyHistory": "Todavía no tenés movimientos.",
       "currency": "Moneda de visualización",
-      "currencyHint": "Los precios de las prendas se muestran en esta moneda"
+      "currencyHint": "Los precios de las prendas se muestran en esta moneda",
+      "txDetail": "Detalle de transacción",
+      "txType": "Tipo",
+      "txDescription": "Descripción",
+      "txDate": "Fecha"
     },
     "garment": {
       "size": "Talle",
@@ -330,6 +350,41 @@
       "style": "Estilo",
       "location": "Ubicación",
       "seller": "Vendedor"
+    },
+    "sale": {
+      "qrTitle": "QR de venta",
+      "qrInstruction": "Mostrá este código al comprador para completar la venta",
+      "scanQR": "Escanear QR",
+      "scanTitle": "Escanear QR de compra",
+      "scanInstruction": "Apuntá la cámara al código QR del vendedor",
+      "cameraError": "No se pudo acceder a la cámara",
+      "confirmTitle": "Confirmar compra",
+      "confirmPurchase": "Confirmar compra",
+      "priceLabel": "Precio",
+      "sellerLabel": "Vendedor",
+      "feeLabel": "Fee plataforma (0.5%)",
+      "avaxCommission": "Comisión red",
+      "avaxAmount": "~0.002 AVAX",
+      "totalLabel": "Total",
+      "stepVerifying": "Verificando saldo...",
+      "stepTransferring": "Transfiriendo {{amount}} PLR al vendedor...",
+      "stepCommission": "Procesando comisión AVAX...",
+      "stepFee": "Transfiriendo fee (0.5%) a Plur...",
+      "successTitle": "¡Compra exitosa!",
+      "successDescription": "La transacción se confirmó en la blockchain de Avalanche",
+      "successPaid": "Pagaste",
+      "successSeller": "Vendedor recibió",
+      "generateQR": "Generar QR de venta",
+      "viewDetails": "Ver detalle",
+      "waitingBuyer": "Esperando comprador...",
+      "waitingSeller": "Esperando confirmación del vendedor...",
+      "sellerConfirmTitle": "Solicitud de compra",
+      "sellerConfirmDesc": "{{buyer}} quiere comprar tu prenda",
+      "sellerConfirmButton": "Confirmar venta",
+      "sellerRejectButton": "Rechazar",
+      "saleRejected": "El vendedor rechazó la venta",
+      "saleExpired": "La solicitud expiró",
+      "viewOnChain": "Ver en Snowtrace (Avalanche)"
     }
   }
 }

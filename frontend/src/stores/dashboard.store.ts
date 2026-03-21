@@ -12,10 +12,12 @@ import type {
   SellerChatMessage,
   PublishedGarment,
 } from '@/features/dashboard/types'
-import { MOCK_TRANSACTIONS } from '@/features/dashboard/data/transactions'
 import { DEFAULT_CURRENCY } from '@/features/dashboard/data/currencies'
 
 interface DashboardState {
+  mobileOverlay: DashboardTab | null
+  setMobileOverlay: (tab: DashboardTab | null) => void
+
   likedItems: LikedItem[]
   addLikedItem: (garment: DashboardGarment) => void
   removeLikedItem: (garmentId: string) => void
@@ -45,13 +47,17 @@ interface DashboardState {
   addSellerMessage: (chatId: string, msg: Omit<SellerChatMessage, 'id' | 'timestamp'>) => void
 
   publishedGarments: PublishedGarment[]
-  addPublishedGarment: (garment: Omit<PublishedGarment, 'id' | 'publishedAt' | 'status'>) => void
+  addPublishedGarment: (garment: Omit<PublishedGarment, 'id' | 'publishedAt' | 'status'> & { backendId?: number | undefined }) => void
   removePublishedGarment: (garmentId: string) => void
+  markGarmentAsSold: (garmentId: string) => void
 }
 
 export const useDashboardStore = create<DashboardState>()(
   persist(
     (set, get) => ({
+      mobileOverlay: null,
+      setMobileOverlay: (tab) => set({ mobileOverlay: tab }),
+
       likedItems: [],
       addLikedItem: (garment) =>
         set((state) => ({
@@ -64,8 +70,8 @@ export const useDashboardStore = create<DashboardState>()(
           likedItems: state.likedItems.filter((i) => i.garment.id !== garmentId),
         })),
 
-      credits: 240,
-      transactions: MOCK_TRANSACTIONS,
+      credits: 0,
+      transactions: [],
       addTransaction: (tx) =>
         set((state) => ({
           credits: state.credits + tx.amount,
@@ -173,7 +179,8 @@ export const useDashboardStore = create<DashboardState>()(
             ...state.publishedGarments,
             {
               ...garment,
-              id: `pub-${Date.now()}`,
+              id: garment.backendId !== undefined ? String(garment.backendId) : `pub-${Date.now()}`,
+              backendId: garment.backendId,
               publishedAt: Date.now(),
               status: 'active' as const,
             },
@@ -182,6 +189,12 @@ export const useDashboardStore = create<DashboardState>()(
       removePublishedGarment: (garmentId) =>
         set((state) => ({
           publishedGarments: state.publishedGarments.filter((g) => g.id !== garmentId),
+        })),
+      markGarmentAsSold: (garmentId) =>
+        set((state) => ({
+          publishedGarments: state.publishedGarments.map((g) =>
+            g.id === garmentId ? { ...g, status: 'sold' as const } : g,
+          ),
         })),
     }),
     {

@@ -41,6 +41,10 @@ until docker compose -f "$ROOT/backend/docker/local.yml" exec -T db \
 done
 echo -e "${CYAN}[infra]${NC} PostgreSQL listo."
 
+# ── Avalanche (Fuji testnet) ───────────────────────────────────────────────
+export AVALANCHE_BACKEND_PRIVATE_KEY="${AVALANCHE_BACKEND_PRIVATE_KEY:-0xff48970edd19f9168d6c5d700715d1b255a464ac10386e91b97ffb01b879aeb8}"
+echo -e "${CYAN}[chain]${NC} Avalanche Fuji testnet habilitado (wallet: 0xe2D919b66F1Df21644Bf8dF638Bf9C04e383c2E4)"
+
 # ── Backend ─────────────────────────────────────────────────────────────────
 echo -e "${CYAN}[backend]${NC} Aplicando migraciones..."
 cd "$ROOT/backend"

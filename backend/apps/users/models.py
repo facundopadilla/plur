@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import ClassVar
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
-
-if TYPE_CHECKING:
-    pass
 
 
 class UserManager(BaseUserManager["User"]):
@@ -23,7 +20,7 @@ class UserManager(BaseUserManager["User"]):
         date_of_birth: str = "1990-01-01",
         phone_number: str = "",
         **extra_fields: object,
-    ) -> "User":
+    ) -> User:
         """Create and save a regular user.
 
         Args:
@@ -53,7 +50,7 @@ class UserManager(BaseUserManager["User"]):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email: str, password: str, **extra_fields: object) -> "User":
+    def create_superuser(self, email: str, password: str, **extra_fields: object) -> User:
         """Create and save a superuser.
 
         Args:
@@ -96,11 +93,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
+    credits = models.IntegerField(default=0)
+    wallet_address = models.CharField(max_length=42, blank=True, default="")
+    wallet_private_key = models.CharField(max_length=66, blank=True, default="")
     activation_code = models.CharField(max_length=6, blank=True)
     reset_code = models.CharField(max_length=6, blank=True)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name", "last_name", "date_of_birth", "phone_number"]
+    REQUIRED_FIELDS: ClassVar = ["first_name", "last_name", "date_of_birth", "phone_number"]
 
     objects: UserManager = UserManager()
 

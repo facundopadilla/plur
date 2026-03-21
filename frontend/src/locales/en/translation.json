@@ -80,6 +80,15 @@
     "stepStyles": "Styles",
     "stepColors": "Colors",
     "stepBody": "Measurements",
+    "stepPhotos": "Photos",
+    "photos": {
+      "title": "Your reference photos",
+      "subtitle": "We use these to show you how clothes look on you (optional)",
+      "front": "Front — full body",
+      "selfie": "Selfie",
+      "profile": "Profile",
+      "addPhoto": "Add photo"
+    },
     "styles": {
       "title": "What styles do you like?",
       "subtitle": "Select all that apply",
@@ -256,11 +265,13 @@
     "tabs": {
       "inventario": "Inventory",
       "espejo": "AI Mirror",
-      "creditos": "Credits"
+      "creditos": "Credits",
+      "perfil": "Profile"
     },
     "swipe": {
       "btnLike": "Like",
       "btnDislike": "Pass",
+      "btnTryOn": "Try on with AI",
       "stampMatch": "MATCH",
       "stampNope": "NOPE",
       "emptyTitle": "No more garments",
@@ -302,13 +313,18 @@
       "tags": "Tags",
       "tagsHint": "Comma separated (e.g. vintage, urban)",
       "publishButton": "Publish garment",
-      "publishSuccess": "Garment published! +50 PLR"
+      "publishSuccess": "Garment published!"
     },
     "espejo": {
       "title": "AI Mirror",
       "description": "Select a garment and upload your photo to see how it looks on you.",
       "selectGarment": "Choose garment",
       "uploadPhoto": "Upload photo",
+      "uploadReference": "Upload reference photo",
+      "generateHighQuality": "Generate high-quality image (1 PLR)",
+      "referenceUploaded": "Reference photo saved!",
+      "needPhoto": "Upload a photo of yourself",
+      "needPhotoDesc": "We need at least one reference photo to show you how the garment looks on you",
       "generating": "Generating image...",
       "newChat": "New try-on",
       "placeholder": "Write a message...",
@@ -323,7 +339,11 @@
       "purchased": "Purchased",
       "emptyHistory": "No transactions yet.",
       "currency": "Display currency",
-      "currencyHint": "Garment prices are shown in this currency"
+      "currencyHint": "Garment prices are shown in this currency",
+      "txDetail": "Transaction detail",
+      "txType": "Type",
+      "txDescription": "Description",
+      "txDate": "Date"
     },
     "garment": {
       "size": "Size",
@@ -331,6 +351,41 @@
       "style": "Style",
       "location": "Location",
       "seller": "Seller"
+    },
+    "sale": {
+      "qrTitle": "Sale QR code",
+      "qrInstruction": "Show this code to the buyer to complete the sale",
+      "scanQR": "Scan QR",
+      "scanTitle": "Scan purchase QR",
+      "scanInstruction": "Point the camera at the seller's QR code",
+      "cameraError": "Could not access camera",
+      "confirmTitle": "Confirm purchase",
+      "confirmPurchase": "Confirm purchase",
+      "priceLabel": "Price",
+      "sellerLabel": "Seller",
+      "feeLabel": "Platform fee (0.5%)",
+      "avaxCommission": "Network fee",
+      "avaxAmount": "~0.002 AVAX",
+      "totalLabel": "Total",
+      "stepVerifying": "Verifying balance...",
+      "stepTransferring": "Transferring {{amount}} PLR to seller...",
+      "stepCommission": "Processing AVAX commission...",
+      "stepFee": "Transferring fee (0.5%) to Plur...",
+      "successTitle": "Purchase complete!",
+      "successDescription": "Transaction confirmed on Avalanche blockchain",
+      "successPaid": "You paid",
+      "successSeller": "Seller received",
+      "generateQR": "Generate sale QR",
+      "viewDetails": "View details",
+      "waitingBuyer": "Waiting for buyer...",
+      "waitingSeller": "Waiting for seller confirmation...",
+      "sellerConfirmTitle": "Purchase request",
+      "sellerConfirmDesc": "{{buyer}} wants to buy your garment",
+      "sellerConfirmButton": "Confirm sale",
+      "sellerRejectButton": "Reject",
+      "saleRejected": "The seller rejected the sale",
+      "saleExpired": "The request has expired",
+      "viewOnChain": "View on Snowtrace (Avalanche)"
     }
   }
 }

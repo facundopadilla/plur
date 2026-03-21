@@ -1,14 +1,22 @@
+import { useState } from 'react'
 import { RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDashboardSwipe } from '../hooks/useDashboardSwipe'
 import { DashboardSwipeCard } from './DashboardSwipeCard'
 import { SwipeActions } from './SwipeActions'
+import { ReferencePhotoPrompt } from './ReferencePhotoPrompt'
 import { DASHBOARD_GARMENTS } from '../data/garments'
 import { useDashboardStore } from '@/stores/dashboard.store'
+import { useProfileStore } from '@/stores/profile.store'
+import type { DashboardGarment } from '../types'
 
 export function SwipePanel() {
   const { t } = useTranslation()
-  const resetSeen = useDashboardStore((s) => s.resetSeen)
+  const { resetSeen, setActiveTab, setMobileOverlay, createChat } = useDashboardStore()
+  const referencePhotos = useProfileStore((s) => s.referencePhotos)
+
+  const [showPhotoPrompt, setShowPhotoPrompt] = useState(false)
+  const [pendingGarment, setPendingGarment] = useState<DashboardGarment | null>(null)
 
   const {
     visibleCards,
@@ -21,8 +29,43 @@ export function SwipePanel() {
     handleTouchEnd,
   } = useDashboardSwipe(DASHBOARD_GARMENTS)
 
+  const executeTryOn = (garment: DashboardGarment) => {
+    createChat(garment.id, garment.name, garment.images[0] ?? '')
+    swipe('like')
+    setTimeout(() => {
+      setActiveTab('espejo')
+      setMobileOverlay('espejo')
+    }, 750)
+  }
+
+  const handleTryOn = () => {
+    const topGarment = visibleCards[0]?.garment
+    if (!topGarment || isEmpty) return
+
+    if (referencePhotos.length === 0) {
+      setPendingGarment(topGarment)
+      setShowPhotoPrompt(true)
+      return
+    }
+
+    executeTryOn(topGarment)
+  }
+
+  const handlePhotoPromptConfirm = () => {
+    setShowPhotoPrompt(false)
+    if (pendingGarment) {
+      executeTryOn(pendingGarment)
+      setPendingGarment(null)
+    }
+  }
+
+  const handlePhotoPromptCancel = () => {
+    setShowPhotoPrompt(false)
+    setPendingGarment(null)
+  }
+
   return (
-    <div className="flex flex-col h-full bg-pl-black">
+    <div className="flex flex-col h-full bg-pl-black relative">
       {/* Card stack area */}
       <div
         className="flex-1 relative"
@@ -71,9 +114,19 @@ export function SwipePanel() {
       {/* Action buttons */}
       <SwipeActions
         onDislike={() => swipe('dislike')}
+        onTryOn={handleTryOn}
         onLike={() => swipe('like')}
         disabled={isEmpty}
       />
+
+      {/* Reference photo prompt */}
+      {showPhotoPrompt && (
+        <ReferencePhotoPrompt
+          onConfirm={handlePhotoPromptConfirm}
+          onCancel={handlePhotoPromptCancel}
+        />
+      )}
+
     </div>
   )
 }

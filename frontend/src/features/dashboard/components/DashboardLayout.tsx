@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import '../dashboard.css'
+import { useState } from 'react'
 import { LeftPanel } from './LeftPanel'
 import { SwipePanel } from './SwipePanel'
 import { MobileTabBar } from './MobileTabBar'
@@ -7,22 +7,25 @@ import { InventarioTab } from './InventarioTab'
 import { EspejoAITab } from './EspejoAITab'
 import { CreditosTab } from './CreditosTab'
 import { ProfileHeader } from './ProfileHeader'
+import { QRScannerOverlay } from './QRScannerOverlay'
+import { UserProfileModal } from './UserProfileModal'
 import { X } from 'lucide-react'
+import { useDashboardStore } from '@/stores/dashboard.store'
 import type { DashboardTab } from '../types'
 
 export function DashboardLayout() {
-  // Mobile overlay: null = swipe view, tab key = overlay open
-  const [mobileOverlay, setMobileOverlay] = useState<DashboardTab | null>(null)
+  const { mobileOverlay, setMobileOverlay } = useDashboardStore()
+  const [showScanner, setShowScanner] = useState(false)
+  const [showProfile, setShowProfile] = useState(false)
 
   const handleMobileTabChange = (tab: DashboardTab) => {
-    // Toggle: if already open, close it
-    setMobileOverlay((prev) => (prev === tab ? null : tab))
+    setMobileOverlay(mobileOverlay === tab ? null : tab)
   }
 
   return (
     <div className="flex h-screen bg-pl-black overflow-hidden">
       {/* Left panel — desktop only (manages its own tab state via store) */}
-      <LeftPanel />
+      <LeftPanel onQrScan={() => setShowScanner(true)} />
 
       {/* Right panel — swipe cards (always rendered) */}
       <div className="flex-1 flex flex-col min-w-0 relative">
@@ -31,15 +34,15 @@ export function DashboardLayout() {
 
       {/* Mobile tab overlay (shown over swipe panel) */}
       {mobileOverlay !== null && (
-        <div className="lg:hidden mobile-overlay fixed inset-0 bottom-[56px] bg-pl-black z-40 flex flex-col overflow-hidden">
+        <div className="lg:hidden mobile-overlay fixed inset-0 bg-pl-black z-40 flex flex-col overflow-hidden" style={{ bottom: 'calc(56px + env(safe-area-inset-bottom, 0px))' }}>
           <div className="flex items-center justify-between border-b border-pl-gray-700">
-            <div className="flex-1">
-              <ProfileHeader />
+            <div className="flex-1 min-w-0">
+              <ProfileHeader onQrScan={() => setShowScanner(true)} />
             </div>
             <button
               onClick={() => setMobileOverlay(null)}
               aria-label="Cerrar"
-              className="p-4 text-pl-gray-400 hover:text-pl-white transition-colors"
+              className="p-4 text-pl-gray-400 hover:text-pl-white transition-colors shrink-0"
             >
               <X className="w-5 h-5" />
             </button>
@@ -57,7 +60,18 @@ export function DashboardLayout() {
       )}
 
       {/* Mobile bottom tab bar */}
-      <MobileTabBar activeTab={mobileOverlay} onTabChange={handleMobileTabChange} />
+      <MobileTabBar
+        activeTab={mobileOverlay}
+        onTabChange={handleMobileTabChange}
+        onQrScan={() => setShowScanner(true)}
+        onProfile={() => setShowProfile(true)}
+      />
+
+      {/* QR Scanner overlay — shared entre desktop header y mobile navbar */}
+      {showScanner && <QRScannerOverlay onClose={() => setShowScanner(false)} />}
+
+      {/* Profile modal — abierto desde el tab Perfil del navbar mobile */}
+      {showProfile && <UserProfileModal onClose={() => setShowProfile(false)} />}
     </div>
   )
 }

@@ -2,14 +2,21 @@
 
 from __future__ import annotations
 
-from datetime import date
+from typing import TYPE_CHECKING
 
+from asgiref.sync import sync_to_async
 from django.conf import settings
-from django.http import HttpRequest, HttpResponse
+from loguru import logger
 from ninja import File, Form
-from ninja.files import UploadedFile
 
+from apps.sales.models import CreditTransaction
 from apps.users.api.router import router
+
+if TYPE_CHECKING:
+    from datetime import date
+
+    from django.http import HttpRequest, HttpResponse
+    from ninja.files import UploadedFile
 from apps.users.api.schemas import (
     AccessTokenOut,
     ActivateIn,
@@ -21,6 +28,7 @@ from apps.users.api.schemas import (
     RegisterOut,
     TokenOut,
 )
+from apps.users.models import User
 from apps.users.services import AuthService
 
 
@@ -35,9 +43,9 @@ async def register(
     password: str = Form(...),
     first_name: str = Form(...),
     last_name: str = Form(...),
-    date_of_birth: date = Form(...),
+    date_of_birth: date = Form(...),  # noqa: B008
     phone_number: str = Form(...),
-    profile_picture: UploadedFile | None = File(None),
+    profile_picture: UploadedFile | None = File(None),  # noqa: B008
 ) -> tuple[int, RegisterOut | ErrorOut]:
     """Register a new user account.
 
@@ -129,6 +137,32 @@ async def activate(
     """Activate a user account using the 6-digit code sent to their email."""
     try:
         await AuthService.activate(payload.email, payload.code)
+        user = await User.objects.aget(email=payload.email)
+        user.credits = settings.PLR_WELCOME_CREDITS
+        await user.asave(update_fields=["credits"])
+        await CreditTransaction.objects.acreate(
+            user=user,
+            tx_type="earned",
+            amount=settings.PLR_WELCOME_CREDITS,
+            description="Bienvenida a Plur",
+        )
+        # Mint welcome credits on-chain to user's wallet (fire-and-forget)
+        try:
+            from core.blockchain import mint_plr
+
+            if user.wallet_address:
+                tx_hash = await sync_to_async(mint_plr)(
+                    amount_plr=settings.PLR_WELCOME_CREDITS,
+                    reason="Bienvenida a Plur",
+                    reference_id_str=f"welcome-{user.pk}",
+                    to_address=user.wallet_address,
+                )
+                await CreditTransaction.objects.filter(user=user, description="Bienvenida a Plur").aupdate(
+                    tx_hash=tx_hash
+                )
+                logger.info("On-chain mint for welcome credits", user_id=user.pk, tx_hash=tx_hash)
+        except Exception:
+            logger.exception("Blockchain mint failed for welcome credits", user_id=user.pk)
         return 200, ActivateOut(message="Account activated successfully.")
     except ValueError as exc:
         return 400, ErrorOut(detail=str(exc))
@@ -149,6 +183,4 @@ async def password_reset(
     to prevent account enumeration.
     """
     await AuthService.request_password_reset(payload.email)
-    return PasswordResetOut(
-        message="If an account exists with that email, a reset code has been sent."
-    )
+    return PasswordResetOut(message="If an account exists with that email, a reset code has been sent.")

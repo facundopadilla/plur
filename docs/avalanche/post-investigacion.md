@@ -487,14 +487,14 @@ Un botón funcional + feedback de `tx_hash` alcanza para demo fuerte.
 
 ## Sprint Noche 1 (impacto máximo)
 
-1. **T01/T02/T03/T06/T07** (backend)  
-2. **T08/T09/T10** (contrato PLRToken + tests)  
+1. **T01/T02/T03/T06/T07** (backend)
+2. **T08/T09/T10** (contrato PLRToken + tests)
 3. **README con evidencia real**: address + 2-3 tx hashes Fuji
 
 ## Sprint Noche 2
 
-4. **T12/T13/T14** (pricing + clawback)  
-5. **T15/T17** (reconciliación y cierre de ventanas)  
+4. **T12/T13/T14** (pricing + clawback)
+5. **T15/T17** (reconciliación y cierre de ventanas)
 6. Frontend test básico + polish demo
 
 ---

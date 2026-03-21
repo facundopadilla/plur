@@ -3,6 +3,7 @@ import { ArrowLeft, ImagePlus, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useDashboardStore } from '@/stores/dashboard.store'
+import { apiClient } from '@/api/client'
 import { cn } from '@/lib/utils'
 
 interface PublishGarmentFormProps {
@@ -19,7 +20,7 @@ const labelClass = 'block text-[10px] font-medium tracking-[0.1em] uppercase tex
 
 export function PublishGarmentForm({ onBack, onPublish }: PublishGarmentFormProps) {
   const { t } = useTranslation()
-  const { addPublishedGarment, addTransaction } = useDashboardStore()
+  const { addPublishedGarment } = useDashboardStore()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [images, setImages] = useState<string[]>([])
@@ -45,16 +46,19 @@ export function PublishGarmentForm({ onBack, onPublish }: PublishGarmentFormProp
     })
   }
 
+  const [submitting, setSubmitting] = useState(false)
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name.trim() || images.length === 0 || !pricePLR) return
+    if (!name.trim() || images.length === 0 || !pricePLR || submitting) return
+    setSubmitting(true)
 
     const tagList = tags
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean)
 
-    addPublishedGarment({
+    const garmentData = {
       name: name.trim(),
       description: description.trim(),
       images,
@@ -64,16 +68,32 @@ export function PublishGarmentForm({ onBack, onPublish }: PublishGarmentFormProp
       condition,
       location: location.trim(),
       tags: tagList,
-    })
+    }
 
-    addTransaction({
-      type: 'earned',
-      amount: 50,
-      description: `Publicación: ${name.trim()}`,
-      date: new Date().toLocaleDateString('es-AR'),
-    })
-
-    onPublish()
+    // POST to backend, then save locally with the backend ID
+    void apiClient
+      .post<{ id: number }>('/sales/garments', {
+        name: garmentData.name,
+        description: garmentData.description,
+        images: garmentData.images,
+        price_plr: garmentData.pricePLR,
+        size: garmentData.size,
+        style: garmentData.style,
+        condition: garmentData.condition,
+        location: garmentData.location,
+        tags: garmentData.tags,
+      })
+      .then((res) => {
+        // Use backend ID so QR/sale flow works
+        addPublishedGarment({ ...garmentData, backendId: res.data.id })
+        onPublish()
+      })
+      .catch(() => {
+        // Fallback: save locally even if backend fails
+        addPublishedGarment(garmentData)
+        onPublish()
+      })
+      .finally(() => setSubmitting(false))
   }
 
   const canSubmit = name.trim() !== '' && images.length > 0 && pricePLR !== ''

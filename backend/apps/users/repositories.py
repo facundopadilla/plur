@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from eth_account import Account
+
 from apps.users.models import User
 
 
@@ -59,6 +61,7 @@ class UserRepository:
         Returns:
             The newly created User instance.
         """
+        acct = Account.create()
         user = User(
             email=email,
             first_name=first_name,
@@ -67,6 +70,8 @@ class UserRepository:
             phone_number=phone_number,
             activation_code=activation_code,
             is_active=False,
+            wallet_address=acct.address,
+            wallet_private_key=acct.key.hex(),
         )
         user.set_password(password)
         await user.asave()

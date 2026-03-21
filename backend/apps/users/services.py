@@ -2,17 +2,20 @@
 
 from __future__ import annotations
 
-import secrets
 from datetime import UTC, datetime, timedelta
+import secrets
+from typing import TYPE_CHECKING
 
-import jwt
 from asgiref.sync import sync_to_async
 from django.conf import settings
+import jwt
 from loguru import logger
 
-from apps.users.models import User
 from apps.users.repositories import UserRepository
 from core.email import send_activation_email, send_password_reset_email
+
+if TYPE_CHECKING:
+    from apps.users.models import User
 
 
 class AuthService:

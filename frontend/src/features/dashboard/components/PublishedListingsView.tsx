@@ -3,12 +3,14 @@ import { useTranslation } from 'react-i18next'
 import { useDashboardStore } from '@/stores/dashboard.store'
 import { getCurrency, formatFiatPrice } from '../data/currencies'
 import { cn } from '@/lib/utils'
+import type { PublishedGarment } from '../types'
 
 interface PublishedListingsViewProps {
   onAdd: () => void
+  onGarmentClick: (garment: PublishedGarment) => void
 }
 
-export function PublishedListingsView({ onAdd }: PublishedListingsViewProps) {
+export function PublishedListingsView({ onAdd, onGarmentClick }: PublishedListingsViewProps) {
   const { t } = useTranslation()
   const publishedGarments = useDashboardStore((s) => s.publishedGarments)
   const selectedCurrency = useDashboardStore((s) => s.selectedCurrency)
@@ -55,9 +57,10 @@ export function PublishedListingsView({ onAdd }: PublishedListingsViewProps) {
       </div>
       <div className="grid grid-cols-2 gap-2">
         {publishedGarments.map((garment) => (
-          <div
+          <button
             key={garment.id}
-            className="relative aspect-square rounded-lg overflow-hidden border border-pl-gray-700 hover:border-pl-gray-500 transition-colors"
+            onClick={() => onGarmentClick(garment)}
+            className="relative aspect-square rounded-lg overflow-hidden border border-pl-gray-700 hover:border-pl-gray-500 transition-colors text-left"
           >
             {garment.images[0] ? (
               <img
@@ -100,7 +103,7 @@ export function PublishedListingsView({ onAdd }: PublishedListingsViewProps) {
                 {garment.pricePLR} PLR
               </p>
             </div>
-          </div>
+          </button>
         ))}
       </div>
     </div>

@@ -81,10 +81,10 @@ USUARIO
 
 ## Contrato desplegado (Fuji testnet)
 
-> *Pendiente de deploy — ver 07-fuji-testnet.md para instrucciones.*
+> *Deployado en Fuji Testnet — verificado en Snowtrace.*
 
 | Contrato | Address Fuji | Explorer |
 |----------|-------------|---------|
-| PLRToken | TBD | https://testnet.snowtrace.io |
+| PLRToken | 0x159a6f159edaCD4b36947fD54B4BaDD87598de29 | https://testnet.snowtrace.io/address/0x159a6f159edaCD4b36947fD54B4BaDD87598de29#code |
 | PLRStaking | TBD | https://testnet.snowtrace.io |
 | PLRMarketplace | TBD | https://testnet.snowtrace.io |
