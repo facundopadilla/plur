@@ -25,7 +25,7 @@ export interface DashboardGarment {
   }
 }
 
-export type DashboardTab = 'inventario' | 'espejo' | 'creditos'
+export type DashboardTab = 'inventario' | 'vestidor' | 'match' | 'creditos' | 'publicar' | 'perfil'
 
 export interface LikedItem {
   garment: DashboardGarment
@@ -38,6 +38,7 @@ export interface CreditTransaction {
   amount: number
   description: string
   date: string
+  txHash?: string | undefined
 }
 
 export interface AIChatMessage {
@@ -77,6 +78,7 @@ export interface SellerChat {
 
 export interface PublishedGarment {
   id: string
+  backendId?: number | undefined
   name: string
   description: string
   images: string[]
@@ -91,3 +93,10 @@ export interface PublishedGarment {
 }
 
 export type InventarioSubTab = 'liked' | 'published'
+
+export interface QRSalePayload {
+  garmentId: string
+  name: string
+  pricePLR: number
+  seller: string
+}

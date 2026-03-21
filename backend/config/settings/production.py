@@ -24,17 +24,12 @@ DATABASES = {
     )
 }
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.environ["REDIS_URL"],
-        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
-    }
-}
-
 # CORS — allow frontend origin (set CORS_ALLOWED_ORIGINS in Render dashboard)
 CORS_ALLOWED_ORIGINS = os.environ["CORS_ALLOWED_ORIGINS"].split(",")
 CORS_ALLOW_CREDENTIALS = True
+
+# Static files — whitenoise serves Django admin assets
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Security settings for HTTPS on Render
 SECURE_SSL_REDIRECT = True
@@ -45,8 +40,10 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# Email — Resend via django-anymail
-EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
-ANYMAIL = {
-    "RESEND_API_KEY": os.environ["RESEND_API_KEY"],
-}
+# Email — Resend via django-anymail (falls back to console if key not set)
+_resend_key = os.environ.get("RESEND_API_KEY", "")
+if _resend_key:
+    EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
+    ANYMAIL = {"RESEND_API_KEY": _resend_key}
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

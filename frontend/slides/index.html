@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plur — Pitch Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Design Tokens (from Plur design system) ── */
+:root {
+  --pl-accent: #C8FF00;
+  --pl-accent-dim: #A0CC00;
+  --pl-black: #0A0A0A;
+  --pl-white: #F5F5F5;
+  --pl-gray-300: #D0D0D0;
+  --pl-gray-400: #A0A0A0;
+  --pl-gray-500: #707070;
+  --pl-gray-600: #505050;
+  --pl-gray-700: #303030;
+  --pl-gray-800: #1A1A1A;
+  --pl-red: #FF4D6A;
+  --pl-green: #00E676;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Manrope', sans-serif;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--pl-black);
+  color: var(--pl-white);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Grain Overlay (like the landing page) ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.025;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ── Slide Container ── */
+.deck {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6vh 8vw;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.slide.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.slide.exit {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+/* ── Typography ── */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: clamp(10px, 1.1vw, 13px);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--pl-accent);
+  margin-bottom: 2vh;
+}
+
+.slide-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5.5vw, 80px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  margin-bottom: 3vh;
+}
+
+.slide-title .accent {
+  color: var(--pl-accent);
+}
+
+.slide-title .italic {
+  font-style: italic;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: -0.01em;
+}
+
+.slide-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.6vw, 20px);
+  font-weight: 400;
+  color: var(--pl-gray-400);
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+/* ── Layout helpers ── */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6vw;
+  align-items: center;
+  flex: 1;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 4vh;
+}
+
+.card {
+  background: var(--pl-gray-800);
+  border: 1px solid var(--pl-gray-700);
+  padding: 28px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--pl-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-out);
+}
+
+.active .card::before {
+  transform: scaleX(1);
+  transition-delay: 0.3s;
+}
+
+.card-number {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--pl-accent);
+  margin-bottom: 12px;
+}
+
+.card h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+  color: var(--pl-white);
+}
+
+.card p {
+  font-size: 13px;
+  color: var(--pl-gray-400);
+  line-height: 1.5;
+}
+
+/* ── Stat Badges ── */
+.stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 4vh;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.5vw, 48px);
+  font-weight: 800;
+  color: var(--pl-accent);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pl-gray-500);
+  margin-top: 6px;
+}
+
+/* ── Tech Stack Badges ── */
+.tech-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 2vh;
+}
+
+.tech-badge {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 8px 16px;
+  border: 1px solid var(--pl-gray-600);
+  color: var(--pl-gray-300);
+  transition: border-color 0.3s, color 0.3s;
+}
+
+.tech-badge.highlight {
+  border-color: var(--pl-accent);
+  color: var(--pl-accent);
+}
+
+/* ── Flow Steps ── */
+.flow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 3vh;
+  flex-wrap: wrap;
+}
+
+.flow-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: var(--pl-gray-800);
+  border: 1px solid var(--pl-gray-700);
+}
+
+.flow-step .num {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pl-accent);
+  color: var(--pl-black);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.flow-step span {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--pl-white);
+}
+
+.flow-arrow {
+  color: var(--pl-gray-600);
+  font-size: 20px;
+}
+
+/* ── Token visual ── */
+.token-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--pl-gray-800);
+  border: 1px solid var(--pl-accent);
+  padding: 10px 20px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--pl-accent);
+}
+
+/* ── Feature list ── */
+.feature-list {
+  list-style: none;
+  margin-top: 2vh;
+}
+
+.feature-list li {
+  font-size: 15px;
+  color: var(--pl-gray-300);
+  line-height: 1.6;
+  padding: 6px 0;
+  padding-left: 20px;
+  position: relative;
+}
+
+.feature-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  width: 8px;
+  height: 2px;
+  background: var(--pl-accent);
+}
+
+/* ── Progress Bar ── */
+.progress {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--pl-accent);
+  transition: width 0.5s var(--ease-out);
+  z-index: 100;
+}
+
+/* ── Slide Counter ── */
+.counter {
+  position: fixed;
+  bottom: 24px;
+  right: 32px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--pl-gray-500);
+  z-index: 100;
+}
+
+/* ── Nav Hint ── */
+.nav-hint {
+  position: fixed;
+  bottom: 24px;
+  left: 32px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pl-gray-600);
+  z-index: 100;
+}
+
+/* ── Blockchain badge ── */
+.chain-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2vh;
+}
+
+.chain-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #E84142;
+}
+
+.chain-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pl-gray-400);
+  letter-spacing: 0.08em;
+}
+
+/* ── Closing slide special ── */
+.closing-brand {
+  font-family: var(--font-display);
+  font-size: clamp(80px, 12vw, 160px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: var(--pl-accent);
+  line-height: 0.9;
+}
+
+.closing-tagline {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.8vw, 22px);
+  font-weight: 400;
+  color: var(--pl-gray-400);
+  margin-top: 2vh;
+  max-width: 500px;
+}
+
+/* ── Two-col list ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 40px;
+  margin-top: 2vh;
+}
+
+.two-col-item {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--pl-gray-700);
+}
+
+.two-col-item strong {
+  font-size: 13px;
+  color: var(--pl-white);
+  font-weight: 600;
+}
+
+.two-col-item span {
+  display: block;
+  font-size: 12px;
+  color: var(--pl-gray-500);
+  margin-top: 2px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .split { grid-template-columns: 1fr; gap: 3vh; }
+  .slide { padding: 4vh 6vw; }
+  .stats { flex-wrap: wrap; gap: 20px; }
+  .two-col { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ═══════════ SLIDE 1: HERO ═══════════ -->
+  <div class="slide active" data-slide="0">
+    <div class="eyebrow">Circular Fashion — Redefined</div>
+    <div class="slide-title">
+      Swipe<span class="accent">.</span><br>
+      <span class="italic">Try on. Exchange.</span>
+    </div>
+    <p class="slide-subtitle">
+      La moda circular reinventada. Descubri prendas, probalas con IA y usa tokens para intercambiar ropa con otros. Sin desperdicio, puro estilo.
+    </p>
+    <div class="stats">
+      <div>
+        <div class="stat-value">2.4K+</div>
+        <div class="stat-label">Prendas activas</div>
+      </div>
+      <div>
+        <div class="stat-value">850+</div>
+        <div class="stat-label">Usuarios</div>
+      </div>
+      <div>
+        <div class="stat-value">97%</div>
+        <div class="stat-label">Satisfaccion</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 2: PROBLEMA ═══════════ -->
+  <div class="slide" data-slide="1">
+    <div class="eyebrow">El problema</div>
+    <div class="slide-title">
+      La moda<br>
+      <span class="accent">contamina</span><span class="accent">.</span>
+    </div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-number">92M</div>
+        <h3>Toneladas de ropa</h3>
+        <p>Se descartan cada anio en el mundo. La industria textil es la segunda mas contaminante.</p>
+      </div>
+      <div class="card">
+        <div class="card-number">73%</div>
+        <h3>Termina en basureros</h3>
+        <p>De toda la ropa producida a nivel global termina incinerada o en vertederos.</p>
+      </div>
+      <div class="card">
+        <div class="card-number">40%</div>
+        <h3>Nunca se usa</h3>
+        <p>De las compras online se devuelven. Sin probarse la ropa, los consumidores compran de mas.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 3: SOLUCION ═══════════ -->
+  <div class="slide" data-slide="2">
+    <div class="eyebrow">La solucion</div>
+    <div class="slide-title">
+      Plur<span class="accent">.</span><br>
+      <span class="italic">4 pilares.</span>
+    </div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-number">01</div>
+        <h3>Swipe & Match</h3>
+        <p>Descubri prendas pre-loved con un swipe. Algoritmo de estilo que aprende tus gustos.</p>
+      </div>
+      <div class="card">
+        <div class="card-number">02</div>
+        <h3>Probador IA</h3>
+        <p>Subi tu foto y ve como te queda la prenda antes de comprar. Sin salir de tu casa.</p>
+      </div>
+      <div class="card">
+        <div class="card-number">03</div>
+        <h3>Token Economy</h3>
+        <p>Vende tu ropa y gana tokens $PLR en Avalanche. Tu guardarropa es tu moneda.</p>
+      </div>
+      <div class="card">
+        <div class="card-number">04</div>
+        <h3>Comunidad</h3>
+        <p>Conecta con vendedores, chatea, intercambia. Moda circular impulsada por la comunidad.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 4: SWIPE & MATCH ═══════════ -->
+  <div class="slide" data-slide="3">
+    <div class="split">
+      <div>
+        <div class="eyebrow">01 — Match</div>
+        <div class="slide-title">
+          Encontra<br>
+          <span class="italic">tu estilo</span><span class="accent">.</span>
+        </div>
+        <p class="slide-subtitle">
+          Desliza entre miles de prendas pre-loved, vintage y de disenadores emergentes. Si te gusta, hace match.
+        </p>
+        <ul class="feature-list">
+          <li>Algoritmo de estilo que aprende tus preferencias</li>
+          <li>Match instantaneo con el vendedor</li>
+          <li>Chat directo para negociar</li>
+          <li>Compra con PLR tokens o intercambia directo</li>
+        </ul>
+      </div>
+      <div>
+        <div class="cards-grid" style="grid-template-columns: 1fr;">
+          <div class="card">
+            <h3>Bomber Vintage</h3>
+            <p style="color: var(--pl-accent); font-weight: 700; font-size: 16px; margin-top: 8px;">85 PLR</p>
+            <p>Streetwear &middot; Talle M &middot; Excelente</p>
+          </div>
+          <div class="card">
+            <h3>Jean Wide Leg</h3>
+            <p style="color: var(--pl-accent); font-weight: 700; font-size: 16px; margin-top: 8px;">60 PLR</p>
+            <p>Casual &middot; Talle 28 &middot; Bueno</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 5: AI FITTING ═══════════ -->
+  <div class="slide" data-slide="4">
+    <div class="split">
+      <div>
+        <div class="eyebrow">02 — AI Fitting Room</div>
+        <div class="slide-title">
+          Probatelo<br>
+          <span class="italic">sin salir</span><br>
+          <span class="italic">de casa</span><span class="accent">.</span>
+        </div>
+        <p class="slide-subtitle">
+          Subi una foto tuya y nuestra IA genera una imagen realista de vos usando la prenda. Antes de comprar, ya sabes como te queda.
+        </p>
+      </div>
+      <div>
+        <div class="flow">
+          <div class="flow-step">
+            <div class="num">1</div>
+            <span>Subi tu foto</span>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="num">2</div>
+            <span>Elegi la prenda</span>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="num">3</div>
+            <span>Mira el resultado</span>
+          </div>
+        </div>
+        <div style="margin-top: 3vh;">
+          <div class="card">
+            <h3>Privacidad garantizada</h3>
+            <p>Las fotos se procesan de forma segura. Nunca se almacenan ni se comparten con terceros.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 6: TOKEN ECONOMY ═══════════ -->
+  <div class="slide" data-slide="5">
+    <div class="split">
+      <div>
+        <div class="eyebrow">03 — Token Economy</div>
+        <div class="slide-title">
+          Vende ropa<span class="accent">.</span><br>
+          <span class="italic">Gana tokens.</span>
+        </div>
+        <p class="slide-subtitle">
+          Cada prenda que vendes te genera tokens $PLR. Usalos para adquirir ropa de otros sin gastar un peso. Tu guardarropa se convierte en tu moneda.
+        </p>
+        <div class="chain-badge">
+          <div class="chain-dot"></div>
+          <span class="chain-label">Avalanche C-Chain</span>
+        </div>
+      </div>
+      <div>
+        <div class="cards-grid" style="grid-template-columns: 1fr;">
+          <div class="card">
+            <div class="card-number" style="font-size: 22px;">Comprador paga</div>
+            <p>Precio prenda (PLR) + Fee plataforma (0.5%) + Comision red (~0.002 AVAX)</p>
+          </div>
+          <div class="card">
+            <div class="card-number" style="font-size: 22px;">Vendedor recibe</div>
+            <p>Precio total de la prenda en $PLR. Transferencia atomica on-chain.</p>
+          </div>
+          <div class="card">
+            <div class="card-number" style="font-size: 22px;">Plataforma</div>
+            <p>Fee 0.5% + Comision AVAX. Modelo sustentable de bajo costo.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 7: QR SALE FLOW ═══════════ -->
+  <div class="slide" data-slide="6">
+    <div class="eyebrow">Flujo de venta P2P</div>
+    <div class="slide-title" style="font-size: clamp(28px, 4vw, 56px);">
+      QR Scan<span class="accent">.</span> <span class="italic">Confirma. Listo.</span>
+    </div>
+    <div class="flow" style="margin-top: 3vh;">
+      <div class="flow-step">
+        <div class="num">1</div>
+        <span>Vendedor genera QR</span>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="num">2</div>
+        <span>Comprador escanea</span>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="num">3</div>
+        <span>Vendedor confirma</span>
+      </div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">
+        <div class="num">4</div>
+        <span>Tokens transferidos</span>
+      </div>
+    </div>
+    <ul class="feature-list" style="margin-top: 4vh;">
+      <li>Transaccion atomica: los creditos se mueven solo si ambas partes confirman</li>
+      <li>Prenda se marca como vendida automaticamente</li>
+      <li>Cross-device: vendedor y comprador en dispositivos distintos</li>
+      <li>Validacion de saldo antes de iniciar la compra</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════ SLIDE 8: TECH STACK ═══════════ -->
+  <div class="slide" data-slide="7">
+    <div class="split">
+      <div>
+        <div class="eyebrow">Tech Stack</div>
+        <div class="slide-title" style="font-size: clamp(28px, 4vw, 56px);">
+          Full-stack<span class="accent">.</span><br>
+          <span class="italic">Production-ready.</span>
+        </div>
+      </div>
+      <div>
+        <p style="font-size: 12px; color: var(--pl-gray-500); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; margin-bottom: 12px;">Frontend</p>
+        <div class="tech-grid">
+          <span class="tech-badge highlight">React 18</span>
+          <span class="tech-badge highlight">TypeScript</span>
+          <span class="tech-badge">Vite 6</span>
+          <span class="tech-badge">Tailwind v4</span>
+          <span class="tech-badge">Zustand</span>
+          <span class="tech-badge">TanStack Query</span>
+          <span class="tech-badge">shadcn/ui</span>
+        </div>
+
+        <p style="font-size: 12px; color: var(--pl-gray-500); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; margin-top: 24px; margin-bottom: 12px;">Backend</p>
+        <div class="tech-grid">
+          <span class="tech-badge highlight">Django 5.2</span>
+          <span class="tech-badge highlight">Django Ninja</span>
+          <span class="tech-badge">PostgreSQL 18</span>
+          <span class="tech-badge">Redis</span>
+          <span class="tech-badge">JWT Auth</span>
+          <span class="tech-badge">Async-first</span>
+        </div>
+
+        <p style="font-size: 12px; color: var(--pl-gray-500); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; margin-top: 24px; margin-bottom: 12px;">Blockchain</p>
+        <div class="tech-grid">
+          <span class="tech-badge highlight">Avalanche C-Chain</span>
+          <span class="tech-badge highlight">Solidity</span>
+          <span class="tech-badge">Hardhat</span>
+          <span class="tech-badge">ERC-20 $PLR</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 9: MODELO DE NEGOCIO ═══════════ -->
+  <div class="slide" data-slide="8">
+    <div class="eyebrow">Modelo de negocio</div>
+    <div class="slide-title" style="font-size: clamp(28px, 4vw, 56px);">
+      Sustentable<span class="accent">.</span> <span class="italic">Escalable.</span>
+    </div>
+    <div class="two-col" style="margin-top: 4vh;">
+      <div class="two-col-item">
+        <strong>Fee por transaccion (0.5%)</strong>
+        <span>Aplicado a cada compra exitosa en la plataforma</span>
+      </div>
+      <div class="two-col-item">
+        <strong>Comision de red (AVAX)</strong>
+        <span>Gas fee de la blockchain — cubre costos de infraestructura</span>
+      </div>
+      <div class="two-col-item">
+        <strong>6 monedas soportadas</strong>
+        <span>ARS, USD, CLP, BRL, EUR, MXN — expansion a Latam</span>
+      </div>
+      <div class="two-col-item">
+        <strong>Token $PLR (ERC-20)</strong>
+        <span>Incentiva la economia circular sin friccion</span>
+      </div>
+      <div class="two-col-item">
+        <strong>AI Fitting como premium</strong>
+        <span>1 PLR = 1 foto de alta calidad generada con IA</span>
+      </div>
+      <div class="two-col-item">
+        <strong>Zero inventory risk</strong>
+        <span>Marketplace P2P — los usuarios son los vendedores</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 10: CLOSING ═══════════ -->
+  <div class="slide" data-slide="9">
+    <div style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center; height: 100%;">
+      <div class="closing-brand">Plur<span style="color: var(--pl-white);">.</span></div>
+      <div class="closing-tagline">
+        Tu ropa merece otra vida.<br>
+        Moda circular para una nueva generacion.
+      </div>
+      <div style="margin-top: 5vh; display: flex; gap: 16px; align-items: center;">
+        <div class="token-pill">$PLR</div>
+        <div class="chain-badge">
+          <div class="chain-dot"></div>
+          <span class="chain-label">Avalanche C-Chain</span>
+        </div>
+      </div>
+      <p style="font-size: 11px; color: var(--pl-gray-600); margin-top: 4vh; letter-spacing: 0.08em;">
+        Aleph Hackathon 2026
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Progress bar -->
+<div class="progress" id="progress"></div>
+
+<!-- Counter -->
+<div class="counter" id="counter">01 / 10</div>
+
+<!-- Nav hint -->
+<div class="nav-hint">
+  <span style="opacity: 0.6;">&larr; &rarr;</span> &nbsp; Flechas para navegar
+</div>
+
+<script>
+(() => {
+  const slides = document.querySelectorAll('.slide');
+  const progress = document.getElementById('progress');
+  const counter = document.getElementById('counter');
+  const total = slides.length;
+  let current = 0;
+
+  function go(index) {
+    if (index < 0 || index >= total || index === current) return;
+    slides[current].classList.remove('active');
+    slides[current].classList.add('exit');
+    setTimeout(() => slides[current === index ? current : current].classList.remove('exit'), 600);
+
+    const prev = current;
+    current = index;
+    slides[current].classList.add('active');
+
+    // Remove exit from old slide after transition
+    setTimeout(() => slides[prev].classList.remove('exit'), 600);
+
+    // Update progress
+    progress.style.width = ((current + 1) / total * 100) + '%';
+
+    // Update counter
+    const c = String(current + 1).padStart(2, '0');
+    const t = String(total).padStart(2, '0');
+    counter.textContent = c + ' / ' + t;
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      go(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      go(current - 1);
+    }
+  });
+
+  // Touch swipe
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 60) go(dx < 0 ? current + 1 : current - 1);
+  });
+
+  // Click left/right halves
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('button, a, input')) return;
+    const x = e.clientX / window.innerWidth;
+    go(x > 0.5 ? current + 1 : current - 1);
+  });
+
+  // Init progress
+  progress.style.width = (1 / total * 100) + '%';
+})();
+</script>
+
+</body>
+</html>

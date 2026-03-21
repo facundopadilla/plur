@@ -11,9 +11,10 @@ interface OnboardingStepBodyProps {
   onUpdate: (partial: Partial<OnboardingFormData>) => void
   onBack: () => void
   onFinish: () => void
+  finishLabel?: string
 }
 
-export function OnboardingStepBody({ data, onUpdate, onBack, onFinish }: OnboardingStepBodyProps) {
+export function OnboardingStepBody({ data, onUpdate, onBack, onFinish, finishLabel }: OnboardingStepBodyProps) {
   const { t } = useTranslation()
 
   return (
@@ -185,7 +186,7 @@ export function OnboardingStepBody({ data, onUpdate, onBack, onFinish }: Onboard
           className="flex-[2] text-[11px] font-semibold tracking-[0.12em] uppercase px-8 py-4 bg-pl-accent text-pl-black font-body cursor-pointer border-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(200,255,0,0.3)]"
           style={{ transitionTimingFunction: 'var(--pl-ease-out)' }}
         >
-          {t('onboarding.finish')}
+          {finishLabel ?? t('onboarding.finish')}
         </button>
       </div>
     </div>

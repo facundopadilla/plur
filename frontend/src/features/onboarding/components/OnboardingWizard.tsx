@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { StepIndicator } from '@/features/auth/components/StepIndicator'
 import { useOnboardingStore } from '@/stores/onboarding.store'
+import { useProfileStore } from '@/stores/profile.store'
 import type { OnboardingFormData } from '../types'
 import { OnboardingStepStyles } from './OnboardingStepStyles'
 import { OnboardingStepColors } from './OnboardingStepColors'
 import { OnboardingStepBody } from './OnboardingStepBody'
+import { OnboardingStepPhotos } from './OnboardingStepPhotos'
 
 const INITIAL_DATA: OnboardingFormData = {
   selectedStyles: [],
@@ -16,11 +18,13 @@ const INITIAL_DATA: OnboardingFormData = {
   shoeSize: '',
   heightCm: '',
   weightKg: '',
+  referencePhotos: [],
 }
 
 export function OnboardingWizard() {
   const { t } = useTranslation()
   const { completeOnboarding, skipOnboarding } = useOnboardingStore()
+  const addReferencePhoto = useProfileStore((s) => s.addReferencePhoto)
 
   const [currentStep, setCurrentStep] = useState(0)
   const [formData, setFormData] = useState<OnboardingFormData>(INITIAL_DATA)
@@ -29,6 +33,7 @@ export function OnboardingWizard() {
     t('onboarding.stepStyles'),
     t('onboarding.stepColors'),
     t('onboarding.stepBody'),
+    t('onboarding.stepPhotos'),
   ]
 
   const handleUpdate = (partial: Partial<OnboardingFormData>) => {
@@ -36,6 +41,9 @@ export function OnboardingWizard() {
   }
 
   const handleFinish = () => {
+    formData.referencePhotos.forEach((photo) => {
+      addReferencePhoto({ label: photo.label, dataUrl: photo.dataUrl })
+    })
     completeOnboarding({
       styles: formData.selectedStyles,
       colors: formData.selectedColors,
@@ -92,6 +100,15 @@ export function OnboardingWizard() {
               data={formData}
               onUpdate={handleUpdate}
               onBack={() => setCurrentStep(1)}
+              onFinish={() => setCurrentStep(3)}
+              finishLabel={t('onboarding.next')}
+            />
+          )}
+          {currentStep === 3 && (
+            <OnboardingStepPhotos
+              data={formData}
+              onUpdate={handleUpdate}
+              onBack={() => setCurrentStep(2)}
               onFinish={handleFinish}
             />
           )}

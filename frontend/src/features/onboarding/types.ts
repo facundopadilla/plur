@@ -12,6 +12,11 @@ export interface ColorOption {
   hex: string
 }
 
+export interface ReferencePhotoEntry {
+  label: string
+  dataUrl: string
+}
+
 export interface OnboardingFormData {
   selectedStyles: string[]
   selectedColors: string[]
@@ -20,4 +25,5 @@ export interface OnboardingFormData {
   shoeSize: string
   heightCm: string
   weightKg: string
+  referencePhotos: ReferencePhotoEntry[]
 }

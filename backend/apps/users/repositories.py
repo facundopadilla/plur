@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from apps.users.models import User
+from eth_account import Account
+
+from apps.users.models import User, UserPreferences
 
 
 class UserRepository:
@@ -59,6 +61,7 @@ class UserRepository:
         Returns:
             The newly created User instance.
         """
+        acct = Account.create()
         user = User(
             email=email,
             first_name=first_name,
@@ -67,7 +70,44 @@ class UserRepository:
             phone_number=phone_number,
             activation_code=activation_code,
             is_active=False,
+            wallet_address=acct.address,
+            wallet_private_key=acct.key.hex(),
         )
         user.set_password(password)
         await user.asave()
         return user
+
+
+class PreferencesRepository:
+    """Repository for UserPreferences database operations."""
+
+    @staticmethod
+    async def get_or_create(user: User) -> UserPreferences:
+        """Get or create preferences for a user (with defaults).
+
+        Args:
+            user: The User instance.
+
+        Returns:
+            The UserPreferences instance (existing or newly created).
+        """
+        prefs, _ = await UserPreferences.objects.aget_or_create(user=user)
+        return prefs
+
+    @staticmethod
+    async def update(user: User, data: dict) -> UserPreferences:
+        """Update preferences for a user.
+
+        Args:
+            user: The User instance.
+            data: Dictionary of fields to update (partial).
+
+        Returns:
+            The updated UserPreferences instance.
+        """
+        prefs = await PreferencesRepository.get_or_create(user)
+        for key, value in data.items():
+            if value is not None:
+                setattr(prefs, key, value)
+        await prefs.asave()
+        return prefs

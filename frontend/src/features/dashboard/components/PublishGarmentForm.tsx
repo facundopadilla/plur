@@ -1,9 +1,9 @@
 import { useState, useRef } from 'react'
-import { ArrowLeft, ImagePlus, X } from 'lucide-react'
+import { ArrowLeft, ImagePlus, X, AlertCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useDashboardStore } from '@/stores/dashboard.store'
 import { cn } from '@/lib/utils'
+import { usePublishGarment } from '../hooks/useGarments'
 
 interface PublishGarmentFormProps {
   onBack: () => void
@@ -19,7 +19,7 @@ const labelClass = 'block text-[10px] font-medium tracking-[0.1em] uppercase tex
 
 export function PublishGarmentForm({ onBack, onPublish }: PublishGarmentFormProps) {
   const { t } = useTranslation()
-  const { addPublishedGarment, addTransaction } = useDashboardStore()
+  const publishGarment = usePublishGarment()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [images, setImages] = useState<string[]>([])
@@ -47,36 +47,32 @@ export function PublishGarmentForm({ onBack, onPublish }: PublishGarmentFormProp
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name.trim() || images.length === 0 || !pricePLR) return
+    if (!name.trim() || images.length === 0 || !pricePLR || publishGarment.isPending) return
 
     const tagList = tags
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean)
 
-    addPublishedGarment({
-      name: name.trim(),
-      description: description.trim(),
-      images,
-      pricePLR: Number(pricePLR),
-      size: size.trim(),
-      style,
-      condition,
-      location: location.trim(),
-      tags: tagList,
-    })
-
-    addTransaction({
-      type: 'earned',
-      amount: 50,
-      description: `Publicación: ${name.trim()}`,
-      date: new Date().toLocaleDateString('es-AR'),
-    })
-
-    onPublish()
+    publishGarment.mutate(
+      {
+        name: name.trim(),
+        description: description.trim(),
+        images,
+        price_plr: Number(pricePLR),
+        size: size.trim(),
+        style,
+        condition,
+        location: location.trim(),
+        tags: tagList,
+      },
+      {
+        onSuccess: () => onPublish(),
+      },
+    )
   }
 
-  const canSubmit = name.trim() !== '' && images.length > 0 && pricePLR !== ''
+  const canSubmit = name.trim() !== '' && images.length > 0 && pricePLR !== '' && !publishGarment.isPending
 
   return (
     <div className="flex flex-col h-full slide-in-right">
@@ -96,7 +92,12 @@ export function PublishGarmentForm({ onBack, onPublish }: PublishGarmentFormProp
 
       <ScrollArea className="flex-1">
         <form onSubmit={handleSubmit} className="p-3 space-y-4">
-          {/* Photos */}
+          {publishGarment.isError && (
+            <div className="flex items-center gap-2 text-[11px] text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{t('dashboard.publish.publishError')}</span>
+            </div>
+          )}
           <div>
             <label className={labelClass}>{t('dashboard.publish.addPhotos')}</label>
             <div className="flex flex-wrap gap-2">
@@ -239,7 +240,7 @@ export function PublishGarmentForm({ onBack, onPublish }: PublishGarmentFormProp
             disabled={!canSubmit}
             className="w-full flex items-center justify-center gap-2 text-[11px] font-semibold tracking-[0.12em] uppercase px-4 py-3 bg-pl-accent text-pl-black font-body hover:bg-pl-accent-dim transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {t('dashboard.publish.publishButton')}
+            {publishGarment.isPending ? t('common.loading') : t('dashboard.publish.publishButton')}
           </button>
         </form>
       </ScrollArea>

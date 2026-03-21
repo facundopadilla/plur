@@ -80,6 +80,15 @@
     "stepStyles": "Styles",
     "stepColors": "Colors",
     "stepBody": "Measurements",
+    "stepPhotos": "Photos",
+    "photos": {
+      "title": "Your reference photos",
+      "subtitle": "We use these to show you how clothes look on you (optional)",
+      "front": "Front — full body",
+      "selfie": "Selfie",
+      "profile": "Profile",
+      "addPhoto": "Add photo"
+    },
     "styles": {
       "title": "What styles do you like?",
       "subtitle": "Select all that apply",
@@ -256,11 +265,16 @@
     "tabs": {
       "inventario": "Inventory",
       "espejo": "AI Mirror",
-      "creditos": "Credits"
+      "vestidor": "AI Mirror",
+      "match": "Match",
+      "creditos": "Credits",
+      "publicar": "Publish",
+      "perfil": "Profile"
     },
     "swipe": {
       "btnLike": "Like",
       "btnDislike": "Pass",
+      "btnTryOn": "Try on with AI",
       "stampMatch": "MATCH",
       "stampNope": "NOPE",
       "emptyTitle": "No more garments",
@@ -302,13 +316,20 @@
       "tags": "Tags",
       "tagsHint": "Comma separated (e.g. vintage, urban)",
       "publishButton": "Publish garment",
-      "publishSuccess": "Garment published! +50 PLR"
+      "publishSuccess": "Garment published!",
+      "publishError": "Could not publish the garment. Please try again.",
+      "confirmDelete": "Confirm deletion?"
     },
     "espejo": {
       "title": "AI Mirror",
       "description": "Select a garment and upload your photo to see how it looks on you.",
       "selectGarment": "Choose garment",
       "uploadPhoto": "Upload photo",
+      "uploadReference": "Upload reference photo",
+      "generateHighQuality": "Generate high-quality image (1 PLR)",
+      "referenceUploaded": "Reference photo saved!",
+      "needPhoto": "Upload a photo of yourself",
+      "needPhotoDesc": "We need at least one reference photo to show you how the garment looks on you",
       "generating": "Generating image...",
       "newChat": "New try-on",
       "placeholder": "Write a message...",
@@ -323,7 +344,11 @@
       "purchased": "Purchased",
       "emptyHistory": "No transactions yet.",
       "currency": "Display currency",
-      "currencyHint": "Garment prices are shown in this currency"
+      "currencyHint": "Garment prices are shown in this currency",
+      "txDetail": "Transaction detail",
+      "txType": "Type",
+      "txDescription": "Description",
+      "txDate": "Date"
     },
     "garment": {
       "size": "Size",
@@ -331,6 +356,109 @@
       "style": "Style",
       "location": "Location",
       "seller": "Seller"
+    },
+    "sale": {
+      "qrTitle": "Sale QR code",
+      "qrInstruction": "Show this code to the buyer to complete the sale",
+      "scanQR": "Scan QR",
+      "scanTitle": "Scan purchase QR",
+      "scanInstruction": "Point the camera at the seller's QR code",
+      "cameraError": "Could not access camera",
+      "confirmTitle": "Confirm purchase",
+      "confirmPurchase": "Confirm purchase",
+      "priceLabel": "Price",
+      "sellerLabel": "Seller",
+      "feeLabel": "Platform fee (0.5%)",
+      "avaxCommission": "Network fee",
+      "avaxAmount": "~0.002 AVAX",
+      "totalLabel": "Total",
+      "stepVerifying": "Verifying balance...",
+      "stepTransferring": "Transferring {{amount}} PLR to seller...",
+      "stepCommission": "Processing AVAX commission...",
+      "stepFee": "Transferring fee (0.5%) to Plur...",
+      "successTitle": "Purchase complete!",
+      "successDescription": "Transaction confirmed on Avalanche blockchain",
+      "successPaid": "You paid",
+      "successSeller": "Seller received",
+      "generateQR": "Generate sale QR",
+      "viewDetails": "View details",
+      "waitingBuyer": "Waiting for buyer...",
+      "waitingSeller": "Waiting for seller confirmation...",
+      "sellerConfirmTitle": "Purchase request",
+      "sellerConfirmDesc": "{{buyer}} wants to buy your garment",
+      "sellerConfirmButton": "Confirm sale",
+      "sellerRejectButton": "Reject",
+      "saleRejected": "The seller rejected the sale",
+      "saleExpired": "The request has expired",
+      "viewOnChain": "View on Snowtrace (Avalanche)"
+    }
+  },
+  "earlyAccess": {
+    "nav": {
+      "badge": "Early Access"
+    },
+    "hero": {
+      "eyebrow": "Early Access — Limited Spots",
+      "titleLine1": "Your clothes deserve",
+      "titleLine2": "a new life.",
+      "description": "Plur reinvents circular fashion. Upload what you no longer wear, find what you're looking for, exchange without waste. Be among the first.",
+      "cta": "Get early access"
+    },
+    "howItWorks": {
+      "eyebrow": "How it works",
+      "titleLine1": "Three steps.",
+      "titleLine2": "Zero waste.",
+      "step1": {
+        "title": "Upload your clothes",
+        "description": "Take photos of garments you no longer wear and publish them in seconds. That simple."
+      },
+      "step2": {
+        "title": "Find your match",
+        "description": "Swipe through garments you like. If there's a match, you connect with the other user instantly."
+      },
+      "step3": {
+        "title": "Buy or exchange",
+        "description": "Use PLR tokens or buy directly. Your wardrobe is your currency. No middlemen."
+      }
+    },
+    "premium": {
+      "eyebrow": "Exclusive offer",
+      "titleLine1": "2 months of",
+      "titleLine2": "Premium free.",
+      "description": "The first to sign up get full access to all premium features at no cost.",
+      "cta": "Claim my spot",
+      "features": {
+        "unlimitedMatches": "Unlimited matches",
+        "aiFitting": "AI fitting room included",
+        "noFees": "No fees",
+        "priority": "Feed priority"
+      }
+    },
+    "form": {
+      "eyebrow": "Sign up",
+      "title": "Join the list.",
+      "subtitle": "Leave your email and upload photos of clothes you'd like to find. The first to sign up get 2 months of Premium free.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@email.com",
+      "nameLabel": "Name (optional)",
+      "namePlaceholder": "What's your name?",
+      "photosLabel": "Clothes you'd like to find",
+      "photosHint": "Upload up to 5 photos of garments you're interested in. JPG, PNG or WebP. Max 5MB.",
+      "photoAlt": "Garment",
+      "descriptionPlaceholder": "Describe the garment...",
+      "uploadPrompt": "Tap to upload photos or drag them here",
+      "uploadMore": "Add more ({{remaining}} remaining)",
+      "submitButton": "Get early access",
+      "submitting": "Sending...",
+      "disclaimer": "We don't share your information. We'll only contact you when everything is ready.",
+      "validation": {
+        "emailRequired": "Email is required",
+        "submitError": "Something went wrong. Please try again."
+      },
+      "success": {
+        "title": "You're in!",
+        "description": "We've added you to the early access list. We'll reach out as soon as everything is ready. Get ready to give your clothes a second life."
+      }
     }
   }
 }

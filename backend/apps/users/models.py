@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import ClassVar
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
-
-if TYPE_CHECKING:
-    pass
 
 
 class UserManager(BaseUserManager["User"]):
@@ -23,7 +20,7 @@ class UserManager(BaseUserManager["User"]):
         date_of_birth: str = "1990-01-01",
         phone_number: str = "",
         **extra_fields: object,
-    ) -> "User":
+    ) -> User:
         """Create and save a regular user.
 
         Args:
@@ -53,7 +50,7 @@ class UserManager(BaseUserManager["User"]):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email: str, password: str, **extra_fields: object) -> "User":
+    def create_superuser(self, email: str, password: str, **extra_fields: object) -> User:
         """Create and save a superuser.
 
         Args:
@@ -96,11 +93,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
+    credits = models.IntegerField(default=0)
+    wallet_address = models.CharField(max_length=42, blank=True, default="")
+    wallet_private_key = models.CharField(max_length=66, blank=True, default="")
     activation_code = models.CharField(max_length=6, blank=True)
     reset_code = models.CharField(max_length=6, blank=True)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name", "last_name", "date_of_birth", "phone_number"]
+    REQUIRED_FIELDS: ClassVar = ["first_name", "last_name", "date_of_birth", "phone_number"]
 
     objects: UserManager = UserManager()
 
@@ -116,3 +116,35 @@ class User(AbstractBaseUser, PermissionsMixin):
     def full_name(self) -> str:
         """Return the user's full name."""
         return f"{self.first_name} {self.last_name}"
+
+
+class UserPreferences(models.Model):
+    """User preferences for discovery and clothing attributes.
+
+    Fields:
+        user: One-to-one relationship to User.
+        styles: List of clothing styles (JSON array).
+        sizes: List of preferred sizes (JSON array).
+        colors: List of preferred colors (JSON array).
+        discovery_radius_km: Search radius in kilometers (1-500).
+        proximity_enabled: Whether proximity-based discovery is enabled.
+        created_at: Timestamp when preferences were created.
+        updated_at: Timestamp of last modification.
+    """
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="preferences")
+    styles = models.JSONField(default=list, blank=True)
+    sizes = models.JSONField(default=list, blank=True)
+    colors = models.JSONField(default=list, blank=True)
+    discovery_radius_km = models.IntegerField(default=50)
+    proximity_enabled = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "user preference"
+        verbose_name_plural = "user preferences"
+
+    def __str__(self) -> str:
+        """Return string representation of preferences."""
+        return f"Preferences for {self.user.email}"

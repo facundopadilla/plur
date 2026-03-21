@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react'
 import type { Garment } from '../data/garments'
 
 type SwipeAction = 'match' | 'nope' | 'save'
@@ -30,18 +30,22 @@ export function useSwipeCards(garments: Garment[]): UseSwipeCardsReturn {
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
 
   useEffect(() => {
+    const timers = timersRef.current
     return () => {
-      timersRef.current.forEach(clearTimeout)
+      timers.forEach(clearTimeout)
     }
   }, [])
 
-  const visibleCards: SwipeCardState[] = []
-  for (let i = 0; i < 3; i++) {
-    const garment = garments[currentIndex + i]
-    if (garment !== undefined) {
-      visibleCards.push({ garment, stackPosition: i })
+  const visibleCards = useMemo(() => {
+    const cards: SwipeCardState[] = []
+    for (let i = 0; i < 3; i++) {
+      const garment = garments[currentIndex + i]
+      if (garment !== undefined) {
+        cards.push({ garment, stackPosition: i })
+      }
     }
-  }
+    return cards
+  }, [garments, currentIndex])
 
   const swipe = useCallback(
     (action: SwipeAction) => {

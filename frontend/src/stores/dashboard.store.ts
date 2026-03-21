@@ -10,12 +10,13 @@ import type {
   CurrencyCode,
   SellerChat,
   SellerChatMessage,
-  PublishedGarment,
 } from '@/features/dashboard/types'
-import { MOCK_TRANSACTIONS } from '@/features/dashboard/data/transactions'
 import { DEFAULT_CURRENCY } from '@/features/dashboard/data/currencies'
 
 interface DashboardState {
+  mobileOverlay: DashboardTab | null
+  setMobileOverlay: (tab: DashboardTab | null) => void
+
   likedItems: LikedItem[]
   addLikedItem: (garment: DashboardGarment) => void
   removeLikedItem: (garmentId: string) => void
@@ -43,15 +44,14 @@ interface DashboardState {
   sellerChats: SellerChat[]
   createSellerChat: (garment: DashboardGarment) => string
   addSellerMessage: (chatId: string, msg: Omit<SellerChatMessage, 'id' | 'timestamp'>) => void
-
-  publishedGarments: PublishedGarment[]
-  addPublishedGarment: (garment: Omit<PublishedGarment, 'id' | 'publishedAt' | 'status'>) => void
-  removePublishedGarment: (garmentId: string) => void
 }
 
 export const useDashboardStore = create<DashboardState>()(
   persist(
     (set, get) => ({
+      mobileOverlay: null,
+      setMobileOverlay: (tab) => set({ mobileOverlay: tab }),
+
       likedItems: [],
       addLikedItem: (garment) =>
         set((state) => ({
@@ -64,8 +64,8 @@ export const useDashboardStore = create<DashboardState>()(
           likedItems: state.likedItems.filter((i) => i.garment.id !== garmentId),
         })),
 
-      credits: 240,
-      transactions: MOCK_TRANSACTIONS,
+      credits: 0,
+      transactions: [],
       addTransaction: (tx) =>
         set((state) => ({
           credits: state.credits + tx.amount,
@@ -165,28 +165,11 @@ export const useDashboardStore = create<DashboardState>()(
               : chat,
           ),
         })),
-
-      publishedGarments: [],
-      addPublishedGarment: (garment) =>
-        set((state) => ({
-          publishedGarments: [
-            ...state.publishedGarments,
-            {
-              ...garment,
-              id: `pub-${Date.now()}`,
-              publishedAt: Date.now(),
-              status: 'active' as const,
-            },
-          ],
-        })),
-      removePublishedGarment: (garmentId) =>
-        set((state) => ({
-          publishedGarments: state.publishedGarments.filter((g) => g.id !== garmentId),
-        })),
     }),
     {
       name: 'dashboard-storage',
       partialize: (state) => ({
+        activeTab: state.activeTab,
         likedItems: state.likedItems,
         credits: state.credits,
         transactions: state.transactions,
@@ -194,8 +177,26 @@ export const useDashboardStore = create<DashboardState>()(
         seenGarmentIds: state.seenGarmentIds,
         selectedCurrency: state.selectedCurrency,
         sellerChats: state.sellerChats,
-        publishedGarments: state.publishedGarments,
       }),
+      onRehydrateStorage: () => (rehydratedState, error) => {
+        if (error || !rehydratedState) return
+
+        const VALID_TABS: DashboardTab[] = [
+          'inventario',
+          'vestidor',
+          'match',
+          'creditos',
+          'publicar',
+          'perfil',
+        ]
+
+        const rawTab = rehydratedState.activeTab as string
+        if (rawTab === 'espejo') {
+          rehydratedState.activeTab = 'vestidor'
+        } else if (!VALID_TABS.includes(rehydratedState.activeTab)) {
+          rehydratedState.activeTab = 'inventario'
+        }
+      },
     },
   ),
 )
