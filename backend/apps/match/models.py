@@ -35,6 +35,9 @@ class Conversation(models.Model):
         verbose_name = "conversation"
         verbose_name_plural = "conversations"
 
+    def __str__(self) -> str:
+        return f"Conversation #{self.pk}"
+
 
 class Message(models.Model):
     conversation = models.ForeignKey(Conversation, related_name="messages", on_delete=models.CASCADE)
@@ -46,3 +49,6 @@ class Message(models.Model):
         ordering: ClassVar = ["created_at"]
         verbose_name = "message"
         verbose_name_plural = "messages"
+
+    def __str__(self) -> str:
+        return f"Message #{self.pk}"

@@ -4,13 +4,13 @@ from typing import TYPE_CHECKING
 
 from apps.match.api.router import router
 from apps.match.api.schemas import ConversationCreateIn, ConversationOut, ErrorOut, MessageIn, MessageOut
-from apps.match.models import Conversation, Message
 from apps.match.services import ConversationService, MessageService
 from core.auth import jwt_auth
 
 if TYPE_CHECKING:
     from django.http import HttpRequest
 
+    from apps.match.models import Conversation, Message
     from apps.users.models import User
 
 

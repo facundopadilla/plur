@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import pytest
 from django.test import Client
+import pytest
 
 from apps.match.models import Conversation
 from apps.sales.models import Garment

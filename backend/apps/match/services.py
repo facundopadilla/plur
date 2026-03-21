@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from django.db import IntegrityError
 
-from apps.match.models import Conversation, Message
 from apps.match.repositories import ConversationRepository, MessageRepository
-from apps.users.models import User
+
+if TYPE_CHECKING:
+    from apps.match.models import Conversation, Message
+    from apps.users.models import User
 
 
 class ConversationService:

@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from django.db import models
 
 from apps.match.models import Conversation, Message
 from apps.sales.models import Garment
-from apps.users.models import User
+
+if TYPE_CHECKING:
+    from apps.users.models import User
 
 
 class ConversationRepository:

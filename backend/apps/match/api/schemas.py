@@ -40,3 +40,13 @@ class MessageOut(Schema):
     sender_name: str
     content: str
     created_at: datetime
+
+
+def _rebuild_datetime_schemas() -> None:
+    from datetime import datetime
+
+    for schema in (ConversationOut, MessageOut):
+        schema.model_rebuild(_types_namespace={"datetime": datetime})
+
+
+_rebuild_datetime_schemas()
