@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowUpRight, ArrowDownLeft, ShoppingCart, Loader2, ExternalLink, X, Copy, Check } from 'lucide-react'
+import { ArrowUpRight, ArrowDownLeft, ShoppingCart, Loader2, ExternalLink, X, Copy, Check, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useDashboardStore } from '@/stores/dashboard.store'
@@ -158,6 +158,13 @@ export function CreditosTab() {
           )}
           <span className="text-[13px] text-pl-accent font-body font-semibold tracking-[0.08em]">PLR</span>
         </div>
+        <button
+          onClick={() => window.open('https://core.app/en/buy/', '_blank')}
+          className="mt-3 w-full flex items-center justify-center gap-2 text-[11px] font-semibold tracking-[0.1em] uppercase py-2.5 bg-pl-accent text-pl-black font-body hover:bg-pl-accent-dim transition-colors rounded-lg"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          {t('dashboard.creditos.buyCredits')}
+        </button>
       </div>
 
       {/* Currency selector */}

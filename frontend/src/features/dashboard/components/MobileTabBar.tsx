@@ -1,4 +1,4 @@
-import { Package, Sparkles, Coins, QrCode, User, Plus, Heart } from 'lucide-react'
+import { Sparkles, Coins, QrCode, User, Plus, Heart } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { FEATURE_FLAGS } from '../../flags'
@@ -20,7 +20,7 @@ const LEFT_TABS: {
   labelKey: string
   Icon: React.ComponentType<TabIcon>
 }[] = [
-  { key: 'inventario', labelKey: 'dashboard.tabs.inventario', Icon: Package },
+  { key: 'inventario', labelKey: 'dashboard.tabs.inventario', Icon: Heart },
   { key: 'vestidor', labelKey: 'dashboard.tabs.espejo', Icon: Sparkles },
 ]
 
@@ -31,12 +31,11 @@ const RIGHT_TABS: {
 }[] = [{ key: 'creditos', labelKey: 'dashboard.tabs.creditos', Icon: Coins }]
 
 const LEFT_TABS_V2: typeof LEFT_TABS = [
-  { key: 'inventario', labelKey: 'dashboard.tabs.inventario', Icon: Package },
+  { key: 'inventario', labelKey: 'dashboard.tabs.inventario', Icon: Heart },
   { key: 'vestidor', labelKey: 'dashboard.tabs.vestidor', Icon: Sparkles },
 ]
 
 const RIGHT_TABS_V2: typeof RIGHT_TABS = [
-  { key: 'match', labelKey: 'dashboard.tabs.match', Icon: Heart },
   { key: 'creditos', labelKey: 'dashboard.tabs.creditos', Icon: Coins },
 ]
 

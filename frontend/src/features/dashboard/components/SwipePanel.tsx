@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { RefreshCw } from 'lucide-react'
+import { RefreshCw, Filter } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDashboardSwipe } from '../hooks/useDashboardSwipe'
 import { DashboardSwipeCard } from './DashboardSwipeCard'
@@ -9,6 +9,9 @@ import { DASHBOARD_GARMENTS } from '../data/garments'
 import { useDashboardStore } from '@/stores/dashboard.store'
 import { useProfileStore } from '@/stores/profile.store'
 import type { DashboardGarment } from '../types'
+import { FEATURE_FLAGS } from '@/features/flags'
+import { useNearbyGarments, type GarmentFilters, type Coordinates } from '../hooks/useNearbyGarments'
+import { FiltersDrawer } from './FiltersDrawer'
 
 export function SwipePanel() {
   const { t } = useTranslation()
@@ -17,6 +20,21 @@ export function SwipePanel() {
 
   const [showPhotoPrompt, setShowPhotoPrompt] = useState(false)
   const [pendingGarment, setPendingGarment] = useState<DashboardGarment | null>(null)
+  
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false)
+  const [filters, setFilters] = useState<GarmentFilters>({})
+  const [proximityEnabled, setProximityEnabled] = useState(false)
+  const [coords, setCoords] = useState<Coordinates | null>(null)
+
+  const { data: nearbyGarments, isLoading } = useNearbyGarments({
+    filters,
+    coords,
+    enabled: FEATURE_FLAGS.PROXIMITY_SORT
+  })
+
+  const garmentsToUse = FEATURE_FLAGS.PROXIMITY_SORT && nearbyGarments 
+    ? nearbyGarments 
+    : DASHBOARD_GARMENTS
 
   const {
     visibleCards,
@@ -27,7 +45,7 @@ export function SwipePanel() {
     swipe,
     handleTouchStart,
     handleTouchEnd,
-  } = useDashboardSwipe(DASHBOARD_GARMENTS)
+  } = useDashboardSwipe(garmentsToUse)
 
   const executeTryOn = (garment: DashboardGarment) => {
     createChat(garment.id, garment.name, garment.images[0] ?? '')
@@ -64,39 +82,59 @@ export function SwipePanel() {
     setPendingGarment(null)
   }
 
+  const handleProximityToggle = (enabled: boolean, newCoords: Coordinates | null) => {
+    setProximityEnabled(enabled)
+    setCoords(newCoords)
+  }
+
   return (
     <div className="flex flex-col h-full bg-pl-black relative">
-      {/* Card stack area */}
+      <div className="absolute top-4 right-4 z-10">
+        <button 
+          onClick={() => setIsFiltersOpen(true)}
+          className="bg-pl-gray-900/80 backdrop-blur border border-pl-gray-800 text-pl-white p-3 rounded-full hover:bg-pl-gray-800 transition-colors shadow-lg flex items-center justify-center"
+        >
+          <Filter className="w-5 h-5" />
+        </button>
+      </div>
+
       <div
         className="flex-1 relative"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {isEmpty ? (
-          /* Empty state */
+        {isLoading ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-8 text-center">
+            <div className="text-pl-accent animate-spin">
+              <RefreshCw className="w-10 h-10" />
+            </div>
+            <p className="text-[13px] text-pl-gray-400 font-body leading-relaxed">
+              {t('common.loading', 'Loading...')}
+            </p>
+          </div>
+        ) : isEmpty ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-8 text-center">
             <div className="empty-pulse text-pl-gray-500">
               <RefreshCw className="w-14 h-14" />
             </div>
             <div>
               <h3 className="font-display text-2xl font-extrabold uppercase tracking-[-0.03em] text-pl-white mb-2">
-                {t('dashboard.swipe.emptyTitle')}
+                {t('dashboard.swipe.emptyTitle', 'No more items')}
                 <span className="text-pl-accent">.</span>
               </h3>
               <p className="text-[13px] text-pl-gray-400 font-body leading-relaxed">
-                {t('dashboard.swipe.emptyDescription')}
+                {t('dashboard.swipe.emptyDescription', 'You have seen everything.')}
               </p>
             </div>
             <button
               onClick={resetSeen}
               className="text-[11px] font-semibold tracking-[0.12em] uppercase px-8 py-3 bg-pl-accent text-pl-black font-body hover:bg-pl-accent-dim transition-colors"
             >
-              {t('dashboard.swipe.emptyReset')}
+              {t('dashboard.swipe.emptyReset', 'Reset')}
             </button>
           </div>
         ) : (
-          /* Card stack */
-          <div className="absolute inset-4">
+          <div className="absolute inset-4 mt-16">
             {[...visibleCards].reverse().map(({ garment, stackPosition }) => (
               <DashboardSwipeCard
                 key={garment.id}
@@ -111,15 +149,13 @@ export function SwipePanel() {
         )}
       </div>
 
-      {/* Action buttons */}
       <SwipeActions
         onDislike={() => swipe('dislike')}
         onTryOn={handleTryOn}
         onLike={() => swipe('like')}
-        disabled={isEmpty}
+        disabled={isEmpty || isLoading}
       />
 
-      {/* Reference photo prompt */}
       {showPhotoPrompt && (
         <ReferencePhotoPrompt
           onConfirm={handlePhotoPromptConfirm}
@@ -127,6 +163,14 @@ export function SwipePanel() {
         />
       )}
 
+      <FiltersDrawer
+        isOpen={isFiltersOpen}
+        onClose={() => setIsFiltersOpen(false)}
+        filters={filters}
+        onFiltersChange={setFilters}
+        proximityEnabled={proximityEnabled}
+        onProximityToggle={handleProximityToggle}
+      />
     </div>
   )
 }

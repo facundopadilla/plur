@@ -35,11 +35,6 @@ export function LeftPanel({ onQrScan }: LeftPanelProps) {
             <CreditosTab />
           </div>
         )}
-        {activeTab === 'match' && (
-          <div className="flex-1 flex items-center justify-center text-pl-gray-400">
-            Match (Próximamente)
-          </div>
-        )}
         {activeTab === 'publicar' && (
           <div className="flex-1 overflow-hidden flex flex-col">
             <PublicarTab />

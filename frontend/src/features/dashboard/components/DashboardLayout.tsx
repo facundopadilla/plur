@@ -57,7 +57,6 @@ export function DashboardLayout() {
             )}
             {mobileOverlay === 'vestidor' && <EspejoAITab />}
             {mobileOverlay === 'creditos' && <CreditosTab />}
-            {mobileOverlay === 'match' && <div className="flex-1 flex items-center justify-center text-pl-gray-400">Match (Próximamente)</div>}
             {mobileOverlay === 'publicar' && (
               <div className="flex-1 overflow-hidden flex flex-col">
                 <PublicarTab />

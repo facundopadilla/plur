@@ -7,7 +7,7 @@ import type { GarmentOut } from '@/api/generated/types.gen'
 type View = 'list' | 'form' | 'detail'
 
 export function PublicarTab() {
-  const [view, setView] = useState<View>('list')
+  const [view, setView] = useState<View>('form')
   const [selectedGarment, setSelectedGarment] = useState<GarmentOut | null>(null)
 
   if (view === 'form') {

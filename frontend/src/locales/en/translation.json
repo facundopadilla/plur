@@ -348,7 +348,8 @@
       "txDetail": "Transaction detail",
       "txType": "Type",
       "txDescription": "Description",
-      "txDate": "Date"
+      "txDate": "Date",
+      "buyCredits": "Buy credits"
     },
     "garment": {
       "size": "Size",
@@ -407,6 +408,38 @@
       "save": "Save",
       "saveSuccess": "Preferences saved!",
       "saveError": "There was an error saving your preferences"
+    },
+    "filters": {
+      "title": "Filters",
+      "style": "Style",
+      "size": "Size",
+      "condition": "Condition",
+      "proximity": "Enable proximity",
+      "proximity_hint": "Find items near you",
+      "gps_unavailable": "Geolocation is not supported by your browser.",
+      "gps_denied_hint": "Location access was denied. Showing all items.",
+      "apply": "Apply Filters",
+      "clear": "Clear",
+      "any": "Any",
+      "styles": {
+        "casual": "Casual",
+        "streetwear": "Streetwear",
+        "vintage": "Vintage",
+        "formal": "Formal",
+        "minimalist": "Minimalist"
+      },
+      "sizes": {
+        "xs": "XS",
+        "s": "S",
+        "m": "M",
+        "l": "L",
+        "xl": "XL"
+      },
+      "conditions": {
+        "new": "New",
+        "excellent": "Excellent",
+        "good": "Good"
+      }
     }
   },
   "earlyAccess": {

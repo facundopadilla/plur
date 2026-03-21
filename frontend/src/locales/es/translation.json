@@ -347,7 +347,8 @@
       "txDetail": "Detalle de transacción",
       "txType": "Tipo",
       "txDescription": "Descripción",
-      "txDate": "Fecha"
+      "txDate": "Fecha",
+      "buyCredits": "Comprar créditos"
     },
     "garment": {
       "size": "Talle",
@@ -406,6 +407,38 @@
       "save": "Guardar",
       "saveSuccess": "¡Preferencias guardadas!",
       "saveError": "Hubo un error al guardar las preferencias"
+    },
+    "filters": {
+      "title": "Filtros",
+      "style": "Estilo",
+      "size": "Talle",
+      "condition": "Condición",
+      "proximity": "Habilitar proximidad",
+      "proximity_hint": "Encontrar prendas cerca tuyo",
+      "gps_unavailable": "Tu navegador no soporta geolocalización.",
+      "gps_denied_hint": "Acceso a ubicación denegado. Mostrando todos los ítems.",
+      "apply": "Aplicar Filtros",
+      "clear": "Limpiar",
+      "any": "Cualquiera",
+      "styles": {
+        "casual": "Casual",
+        "streetwear": "Streetwear",
+        "vintage": "Vintage",
+        "formal": "Formal",
+        "minimalist": "Minimalista"
+      },
+      "sizes": {
+        "xs": "XS",
+        "s": "S",
+        "m": "M",
+        "l": "L",
+        "xl": "XL"
+      },
+      "conditions": {
+        "new": "Nuevo",
+        "excellent": "Excelente",
+        "good": "Bueno"
+      }
     }
   },
   "earlyAccess": {

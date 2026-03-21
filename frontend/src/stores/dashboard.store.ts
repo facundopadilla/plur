@@ -184,7 +184,6 @@ export const useDashboardStore = create<DashboardState>()(
         const VALID_TABS: DashboardTab[] = [
           'inventario',
           'vestidor',
-          'match',
           'creditos',
           'publicar',
           'perfil',
