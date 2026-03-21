@@ -9,6 +9,7 @@ from django.urls import path
 from ninja import NinjaAPI
 
 from apps.match.api.endpoints import router as match_router  # — registers endpoints
+from apps.payments.api.endpoints import router as payments_router  # — registers endpoints
 from apps.sales.api.endpoints import router as sales_router  # — registers endpoints
 from apps.users.api.endpoints import router as auth_router  # — registers endpoints
 
@@ -16,6 +17,7 @@ api = NinjaAPI(title="Plur API", version="0.1.0", description="Plur backend API"
 
 api.add_router("/auth", auth_router)
 api.add_router("/match", match_router)
+api.add_router("/payments", payments_router)
 api.add_router("/sales", sales_router)
 
 

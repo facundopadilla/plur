@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "apps.users",
     "apps.sales",
     "apps.match",
+    "apps.payments",
 ]
 
 AUTH_USER_MODEL = "users.User"
@@ -122,3 +123,6 @@ FEATURE_FLAGS = {
     "proximity_sort": False,
     "transak_onramp": False,
 }
+
+TRANSAK_API_KEY: str = os.environ.get("TRANSAK_API_KEY", "")
+TRANSAK_SUPPORTED_CURRENCIES: list[str] = ["USD", "EUR"]
