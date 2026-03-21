@@ -390,6 +390,22 @@
       "saleRejected": "El vendedor rechazó la venta",
       "saleExpired": "La solicitud expiró",
       "viewOnChain": "Ver en Snowtrace (Avalanche)"
+    },
+    "preferences": {
+      "title": "Preferencias",
+      "styles": "Estilos favoritos",
+      "stylesHint": "Seleccioná los estilos que más te gustan",
+      "sizes": "Tus talles",
+      "sizesHint": "Ropa y calzado",
+      "colors": "Colores preferidos",
+      "colorsHint": "Los colores que más usás",
+      "discoveryRadius": "Radio de descubrimiento",
+      "discoveryRadiusHint": "Distancia máxima (km)",
+      "proximityEnabled": "Priorizar cercanía",
+      "proximityEnabledHint": "Mostrar primero la ropa de gente cerca tuyo",
+      "save": "Guardar",
+      "saveSuccess": "¡Preferencias guardadas!",
+      "saveError": "Hubo un error al guardar las preferencias"
     }
   },
   "earlyAccess": {

@@ -5,6 +5,7 @@ import { InventarioTab } from './InventarioTab'
 import { EspejoAITab } from './EspejoAITab'
 import { CreditosTab } from './CreditosTab'
 import { PublicarTab } from './PublicarTab'
+import { PerfilTab } from './PerfilTab'
 
 interface LeftPanelProps {
   onQrScan: () => void
@@ -45,8 +46,8 @@ export function LeftPanel({ onQrScan }: LeftPanelProps) {
           </div>
         )}
         {activeTab === 'perfil' && (
-          <div className="flex-1 flex items-center justify-center text-pl-gray-400">
-            Perfil (Próximamente)
+          <div className="flex-1 overflow-hidden flex flex-col">
+            <PerfilTab />
           </div>
         )}
       </div>
