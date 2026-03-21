@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plur — Circular Fashion</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pl-white: #F5F5F5;
+  --pl-black: #0A0A0A;
+  --pl-gray-100: #E8E8E8;
+  --pl-gray-200: #D0D0D0;
+  --pl-gray-300: #A0A0A0;
+  --pl-gray-400: #707070;
+  --pl-gray-500: #505050;
+  --pl-gray-600: #303030;
+  --pl-gray-700: #1A1A1A;
+  --pl-accent: #C8FF00;
+  --pl-accent-dim: #A0CC00;
+  --pl-red: #FF4D6A;
+  --pl-green: #00E676;
+  --pl-font-display: 'Syne', sans-serif;
+  --pl-font-body: 'Manrope', sans-serif;
+  --pl-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --pl-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --pl-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body { font-family: var(--pl-font-body); background: var(--pl-black); color: var(--pl-white); overflow-x: hidden; }
+::selection { background: var(--pl-accent); color: var(--pl-black); }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: inherit; }
+img { display: block; max-width: 100%; }
+
+/* ══════════════════════════════════════
+   PRELOADER
+   ══════════════════════════════════════ */
+.preloader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--pl-black);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 24px;
+  transition: opacity 0.8s var(--pl-ease-out), visibility 0.8s;
+}
+.preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.preloader-logo {
+  font-family: var(--pl-font-display);
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 800; text-transform: uppercase;
+  letter-spacing: -0.06em;
+  background: linear-gradient(135deg, var(--pl-white) 0%, var(--pl-accent) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: preloaderPulse 1.5s var(--pl-ease-in-out) infinite;
+}
+.preloader-bar {
+  width: 200px; height: 2px; background: var(--pl-gray-700); border-radius: 1px; overflow: hidden;
+}
+.preloader-bar-fill {
+  height: 100%; width: 0; background: var(--pl-accent);
+  animation: preloaderFill 2s var(--pl-ease-out) forwards;
+}
+@keyframes preloaderPulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+@keyframes preloaderFill { to { width: 100%; } }
+
+/* ══════════════════════════════════════
+   GRAIN OVERLAY
+   ══════════════════════════════════════ */
+.grain {
+  position: fixed; inset: 0; z-index: 9990; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* ══════════════════════════════════════
+   NAVIGATION
+   ══════════════════════════════════════ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 32px;
+  background: rgba(10,10,10,0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(245,245,245,0.06);
+  transition: transform 0.5s var(--pl-ease-out);
+}
+.nav-logo {
+  font-family: var(--pl-font-display); font-size: 14px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--pl-white);
+}
+.nav-logo span { color: var(--pl-accent); }
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a {
+  font-size: 11px; font-weight: 400; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--pl-white); opacity: 0.6;
+  transition: opacity 0.3s; position: relative;
+}
+.nav-links a:hover { opacity: 1; }
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px;
+  background: var(--pl-accent); transition: width 0.4s var(--pl-ease-out);
+}
+.nav-links a:hover::after { width: 100%; }
+.nav-cta {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 10px 24px; background: var(--pl-accent); color: var(--pl-black);
+  border: none; transition: all 0.3s var(--pl-ease-out);
+}
+.nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(200,255,0,0.2); }
+.nav-tokens {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 500; color: var(--pl-accent);
+  letter-spacing: 0.04em;
+}
+.nav-tokens svg { width: 16px; height: 16px; }
+
+/* ══════════════════════════════════════
+   HERO
+   ══════════════════════════════════════ */
+.hero {
+  height: 100vh; min-height: 800px; position: relative;
+  display: flex; align-items: center; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+}
+.hero-bg img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(0.3) contrast(1.1);
+  animation: heroZoom 20s var(--pl-ease-in-out) infinite alternate;
+}
+@keyframes heroZoom { from { transform: scale(1); } to { transform: scale(1.08); } }
+.hero-overlay {
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(180deg, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.9) 80%, var(--pl-black) 100%);
+}
+.hero-content {
+  position: relative; z-index: 2;
+  padding: 0 clamp(24px, 5vw, 80px);
+  max-width: 900px;
+}
+.hero-eyebrow {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--pl-accent);
+  margin-bottom: 24px;
+  animation: fadeUp 1s var(--pl-ease-out) 2.2s both;
+}
+.hero-title {
+  font-family: var(--pl-font-display);
+  font-size: clamp(3.5rem, 7vw, 8rem);
+  font-weight: 800; letter-spacing: -0.05em;
+  line-height: 0.92; text-transform: uppercase;
+  margin-bottom: 32px;
+  animation: fadeUp 1s var(--pl-ease-out) 2.4s both;
+}
+.hero-title .accent { color: var(--pl-accent); }
+.hero-title .italic {
+  display: block; font-weight: 300; font-style: italic;
+  letter-spacing: -0.02em; font-size: 0.65em;
+  color: var(--pl-gray-200);
+}
+.hero-desc {
+  font-size: clamp(14px, 1.2vw, 18px); font-weight: 300;
+  line-height: 1.7; max-width: 520px; opacity: 0.6;
+  margin-bottom: 48px;
+  animation: fadeUp 1s var(--pl-ease-out) 2.6s both;
+}
+.hero-actions {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  animation: fadeUp 1s var(--pl-ease-out) 2.8s both;
+}
+.btn-primary {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 16px 40px; background: var(--pl-accent); color: var(--pl-black);
+  border: none; transition: all 0.4s var(--pl-ease-out);
+}
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(200,255,0,0.25); }
+.btn-outline {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 16px 40px; background: transparent; color: var(--pl-white);
+  border: 1px solid var(--pl-gray-500); transition: all 0.4s var(--pl-ease-out);
+}
+.btn-outline:hover { border-color: var(--pl-white); transform: translateY(-3px); }
+
+.hero-stats {
+  position: absolute; bottom: 60px; right: clamp(24px, 5vw, 80px);
+  z-index: 2; display: flex; gap: 48px;
+  animation: fadeUp 1s var(--pl-ease-out) 3s both;
+}
+.hero-stat { text-align: right; }
+.hero-stat-number {
+  font-family: var(--pl-font-display); font-size: clamp(2rem, 3vw, 3.5rem);
+  font-weight: 800; letter-spacing: -0.04em; line-height: 1;
+  color: var(--pl-white);
+}
+.hero-stat-number span { color: var(--pl-accent); }
+.hero-stat-label {
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  opacity: 0.4; margin-top: 8px; color: var(--pl-white);
+}
+
+.hero-scroll {
+  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+  z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  animation: fadeUp 1s var(--pl-ease-out) 3.2s both;
+}
+.hero-scroll span { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.3; color: var(--pl-white); }
+.hero-scroll-line { width: 1px; height: 40px; background: var(--pl-white); opacity: 0.2; animation: scrollPulse 2s var(--pl-ease-in-out) infinite; }
+@keyframes scrollPulse { 0%,100% { opacity: 0.1; transform: scaleY(0.5); } 50% { opacity: 0.3; transform: scaleY(1); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ══════════════════════════════════════
+   SECTION COMMONS
+   ══════════════════════════════════════ */
+.section { padding: clamp(80px, 10vw, 160px) clamp(24px, 5vw, 80px); position: relative; }
+.section-dark { background: var(--pl-black); color: var(--pl-white); }
+.section-light { background: var(--pl-white); color: var(--pl-black); }
+.section-mid { background: var(--pl-gray-700); color: var(--pl-white); }
+
+.section-eyebrow {
+  font-size: 10px; font-weight: 500; letter-spacing: 0.2em;
+  text-transform: uppercase; margin-bottom: 16px;
+}
+.section-dark .section-eyebrow { color: var(--pl-accent); }
+.section-light .section-eyebrow { color: var(--pl-gray-400); }
+.section-mid .section-eyebrow { color: var(--pl-accent); }
+
+.section-title {
+  font-family: var(--pl-font-display);
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  font-weight: 800; letter-spacing: -0.05em;
+  line-height: 0.95; text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.section-desc {
+  font-size: clamp(14px, 1.1vw, 17px); font-weight: 300;
+  line-height: 1.7; max-width: 560px; opacity: 0.6;
+}
+.section-counter {
+  position: absolute; top: clamp(24px, 4vw, 60px); right: clamp(24px, 5vw, 80px);
+  font-size: 11px; letter-spacing: 0.1em; opacity: 0.3;
+}
+.section-light .section-counter { color: var(--pl-black); }
+.section-dark .section-counter { color: var(--pl-white); }
+.section-mid .section-counter { color: var(--pl-white); }
+
+/* ══════════════════════════════════════
+   HOW IT WORKS - MARQUEE
+   ══════════════════════════════════════ */
+.marquee-strip {
+  overflow: hidden; border-top: 1px solid var(--pl-gray-700);
+  border-bottom: 1px solid var(--pl-gray-700); padding: 20px 0;
+  background: var(--pl-black);
+}
+.marquee-track {
+  display: flex; gap: 48px; width: max-content;
+  animation: marqueeScroll 30s linear infinite;
+}
+.marquee-item {
+  font-family: var(--pl-font-display);
+  font-size: clamp(14px, 1.5vw, 20px);
+  font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; white-space: nowrap;
+  color: var(--pl-white); opacity: 0.3;
+}
+.marquee-item .dot { color: var(--pl-accent); margin: 0 8px; }
+@keyframes marqueeScroll { to { transform: translateX(-50%); } }
+
+/* ══════════════════════════════════════
+   SWIPE / MATCH SECTION
+   ══════════════════════════════════════ */
+.swipe-section {
+  display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 4vw, 80px);
+  align-items: center; min-height: 100vh;
+}
+.swipe-info { max-width: 480px; }
+.swipe-phone {
+  display: flex; justify-content: center; align-items: center;
+  perspective: 1000px;
+}
+.phone-frame {
+  width: 320px; height: 620px;
+  background: var(--pl-gray-700);
+  border-radius: 40px; border: 2px solid var(--pl-gray-600);
+  padding: 12px; position: relative; overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.5), 0 0 0 1px rgba(245,245,245,0.05);
+}
+.phone-screen {
+  width: 100%; height: 100%; border-radius: 30px;
+  background: var(--pl-black); overflow: hidden; position: relative;
+}
+.phone-notch {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 28px; background: var(--pl-black);
+  border-radius: 0 0 20px 20px; z-index: 10;
+}
+.swipe-card-stack {
+  position: relative; width: 100%; height: 100%;
+}
+.swipe-card {
+  position: absolute; inset: 0;
+  transition: transform 0.6s var(--pl-ease-out), opacity 0.6s var(--pl-ease-out);
+}
+.swipe-card img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 30px;
+}
+.swipe-card-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 24px; border-radius: 0 0 30px 30px;
+  background: linear-gradient(transparent, rgba(10,10,10,0.9));
+}
+.swipe-card-name {
+  font-family: var(--pl-font-display); font-size: 18px;
+  font-weight: 700; letter-spacing: -0.02em; color: var(--pl-white);
+}
+.swipe-card-meta {
+  font-size: 11px; opacity: 0.6; margin-top: 4px;
+  letter-spacing: 0.04em; color: var(--pl-white);
+}
+.swipe-card-price {
+  font-size: 13px; font-weight: 600; margin-top: 8px;
+  color: var(--pl-accent);
+}
+.swipe-actions {
+  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 16px; z-index: 20;
+}
+.swipe-btn {
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: none; font-size: 22px;
+  transition: all 0.3s var(--pl-ease-spring);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.swipe-btn:hover { transform: scale(1.15); }
+.swipe-btn.pass { background: var(--pl-gray-600); color: var(--pl-red); }
+.swipe-btn.like { background: var(--pl-accent); color: var(--pl-black); }
+.swipe-btn.save { background: var(--pl-gray-600); color: var(--pl-white); }
+.swipe-stamp {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(-12deg) scale(0);
+  font-family: var(--pl-font-display); font-size: 48px;
+  font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.06em; padding: 8px 24px;
+  border: 4px solid; border-radius: 8px;
+  pointer-events: none; z-index: 30;
+  transition: transform 0.4s var(--pl-ease-spring), opacity 0.4s;
+  opacity: 0;
+}
+.swipe-stamp.match {
+  color: var(--pl-accent); border-color: var(--pl-accent);
+}
+.swipe-stamp.nope {
+  color: var(--pl-red); border-color: var(--pl-red);
+  transform: translate(-50%, -50%) rotate(12deg) scale(0);
+}
+.swipe-stamp.show {
+  transform: translate(-50%, -50%) rotate(-12deg) scale(1);
+  opacity: 1;
+}
+.swipe-stamp.nope.show {
+  transform: translate(-50%, -50%) rotate(12deg) scale(1);
+}
+
+.feature-list {
+  display: flex; flex-direction: column; gap: 32px;
+  margin-top: 48px;
+}
+.feature-item {
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.feature-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--pl-gray-600); font-size: 16px;
+}
+.feature-text h4 {
+  font-family: var(--pl-font-display); font-size: 14px;
+  font-weight: 700; letter-spacing: -0.01em;
+  margin-bottom: 4px; color: var(--pl-white);
+}
+.feature-text p {
+  font-size: 12px; font-weight: 300; line-height: 1.6;
+  opacity: 0.5; color: var(--pl-white);
+}
+
+/* ══════════════════════════════════════
+   AI FITTING ROOM
+   ══════════════════════════════════════ */
+.fitting-room {
+  display: grid; grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+.fitting-left {
+  padding: clamp(60px, 8vw, 120px) clamp(24px, 4vw, 64px);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.fitting-right {
+  position: relative; overflow: hidden;
+}
+.fitting-preview {
+  display: grid; grid-template-columns: 1fr 1fr; height: 100%;
+}
+.fitting-col {
+  position: relative; overflow: hidden;
+}
+.fitting-col img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.8s var(--pl-ease-out);
+}
+.fitting-col:hover img { transform: scale(1.05); }
+.fitting-label {
+  position: absolute; bottom: 24px; left: 24px;
+  font-size: 10px; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--pl-white);
+  background: rgba(10,10,10,0.7); backdrop-filter: blur(10px);
+  padding: 8px 16px;
+}
+.fitting-arrow {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%); z-index: 10;
+  width: 60px; height: 60px; border-radius: 50%;
+  background: var(--pl-accent); color: var(--pl-black);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 700;
+  box-shadow: 0 8px 30px rgba(200,255,0,0.3);
+  animation: arrowPulse 2s var(--pl-ease-in-out) infinite;
+}
+@keyframes arrowPulse {
+  0%,100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.fitting-steps {
+  display: flex; flex-direction: column; gap: 40px;
+  margin-top: 48px;
+}
+.fitting-step {
+  display: flex; gap: 20px; align-items: flex-start;
+}
+.step-number {
+  font-family: var(--pl-font-display);
+  font-size: 36px; font-weight: 800;
+  color: var(--pl-accent); line-height: 1;
+  flex-shrink: 0; width: 50px;
+}
+.step-content h4 {
+  font-family: var(--pl-font-display); font-size: 15px;
+  font-weight: 700; letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.section-light .step-content h4 { color: var(--pl-black); }
+.step-content p {
+  font-size: 13px; font-weight: 300; line-height: 1.65; opacity: 0.55;
+}
+.section-light .step-content p { color: var(--pl-black); }
+
+/* ══════════════════════════════════════
+   TOKEN ECONOMY
+   ══════════════════════════════════════ */
+.token-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; margin-top: 64px;
+}
+.token-card {
+  background: var(--pl-gray-700); padding: clamp(32px, 3vw, 56px);
+  position: relative; overflow: hidden;
+  transition: background 0.5s var(--pl-ease-out);
+}
+.token-card:hover { background: var(--pl-gray-600); }
+.token-card-icon {
+  font-size: 40px; margin-bottom: 24px;
+  filter: grayscale(0);
+}
+.token-card-title {
+  font-family: var(--pl-font-display); font-size: clamp(18px, 1.5vw, 24px);
+  font-weight: 700; letter-spacing: -0.02em;
+  margin-bottom: 12px; color: var(--pl-white);
+}
+.token-card-desc {
+  font-size: 13px; font-weight: 300; line-height: 1.65;
+  opacity: 0.5; color: var(--pl-white);
+}
+.token-card-value {
+  font-family: var(--pl-font-display); font-size: clamp(3rem, 4vw, 5rem);
+  font-weight: 800; letter-spacing: -0.06em; line-height: 1;
+  color: var(--pl-accent); margin-top: 32px; opacity: 0.2;
+}
+.token-exchange {
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  gap: 32px; align-items: center;
+  margin-top: 80px; padding: 48px;
+  border: 1px solid var(--pl-gray-600);
+}
+.token-exchange-side { text-align: center; }
+.token-exchange-icon {
+  font-size: 48px; margin-bottom: 16px;
+}
+.token-exchange-label {
+  font-family: var(--pl-font-display); font-size: 18px;
+  font-weight: 700; color: var(--pl-white); margin-bottom: 8px;
+}
+.token-exchange-sub {
+  font-size: 12px; opacity: 0.4; color: var(--pl-white);
+}
+.token-exchange-arrow {
+  font-family: var(--pl-font-display); font-size: 32px;
+  color: var(--pl-accent); animation: arrowBounce 1.5s var(--pl-ease-in-out) infinite;
+}
+@keyframes arrowBounce {
+  0%,100% { transform: translateX(0); }
+  50% { transform: translateX(8px); }
+}
+
+/* ══════════════════════════════════════
+   GALLERY / COLLECTION
+   ══════════════════════════════════════ */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto auto;
+  gap: 4px;
+  margin-top: 64px;
+}
+.gallery-item {
+  position: relative; overflow: hidden;
+  aspect-ratio: 3/4; cursor: pointer;
+}
+.gallery-item.wide { grid-column: span 2; aspect-ratio: 3/2; }
+.gallery-item.tall { grid-row: span 2; }
+.gallery-item img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.8s var(--pl-ease-out), filter 0.8s;
+  filter: brightness(0.85);
+}
+.gallery-item:hover img { transform: scale(1.06); filter: brightness(1); }
+.gallery-item-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(transparent 50%, rgba(10,10,10,0.8));
+  opacity: 0; transition: opacity 0.5s var(--pl-ease-out);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 24px;
+}
+.gallery-item:hover .gallery-item-overlay { opacity: 1; }
+.gallery-item-name {
+  font-family: var(--pl-font-display); font-size: 16px;
+  font-weight: 700; color: var(--pl-white);
+}
+.gallery-item-price {
+  font-size: 12px; color: var(--pl-accent); margin-top: 4px;
+  font-weight: 500;
+}
+.gallery-item-tokens {
+  font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  opacity: 0.5; margin-top: 4px; color: var(--pl-white);
+}
+
+/* ══════════════════════════════════════
+   TESTIMONIALS / SOCIAL PROOF
+   ══════════════════════════════════════ */
+.proof-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; margin-top: 64px;
+}
+.proof-card {
+  padding: clamp(28px, 3vw, 48px);
+  border: 1px solid rgba(10,10,10,0.1);
+  background: var(--pl-white);
+}
+.proof-card-stars { font-size: 14px; margin-bottom: 16px; letter-spacing: 2px; }
+.proof-card-text {
+  font-size: 14px; font-weight: 300; line-height: 1.7;
+  color: var(--pl-black); opacity: 0.7; margin-bottom: 24px;
+  font-style: italic;
+}
+.proof-card-author {
+  display: flex; align-items: center; gap: 12px;
+}
+.proof-card-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  object-fit: cover;
+}
+.proof-card-name {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+  color: var(--pl-black);
+}
+.proof-card-role {
+  font-size: 10px; opacity: 0.4; color: var(--pl-black);
+}
+
+/* ══════════════════════════════════════
+   CTA / FINAL
+   ══════════════════════════════════════ */
+.cta-section {
+  text-align: center; display: flex; flex-direction: column;
+  align-items: center;
+  padding: clamp(120px, 15vw, 200px) clamp(24px, 5vw, 80px);
+}
+.cta-title {
+  font-family: var(--pl-font-display);
+  font-size: clamp(3rem, 6vw, 7rem);
+  font-weight: 800; letter-spacing: -0.06em;
+  line-height: 0.92; text-transform: uppercase;
+  margin-bottom: 24px; color: var(--pl-white);
+}
+.cta-title .accent { color: var(--pl-accent); }
+.cta-desc {
+  font-size: clamp(14px, 1.1vw, 17px); font-weight: 300;
+  line-height: 1.7; max-width: 500px;
+  opacity: 0.5; margin-bottom: 48px; color: var(--pl-white);
+}
+.cta-actions { display: flex; gap: 16px; }
+
+/* ══════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════ */
+.footer {
+  border-top: 1px solid var(--pl-gray-700);
+  padding: 64px clamp(24px, 5vw, 80px);
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+}
+.footer-brand-name {
+  font-family: var(--pl-font-display); font-size: 20px;
+  font-weight: 800; text-transform: uppercase;
+  letter-spacing: -0.02em; margin-bottom: 16px; color: var(--pl-white);
+}
+.footer-brand-name span { color: var(--pl-accent); }
+.footer-brand-desc {
+  font-size: 12px; font-weight: 300; line-height: 1.7;
+  opacity: 0.4; max-width: 300px; color: var(--pl-white);
+}
+.footer-col-title {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; margin-bottom: 20px;
+  opacity: 0.3; color: var(--pl-white);
+}
+.footer-col a {
+  display: block; font-size: 13px; font-weight: 300;
+  opacity: 0.5; margin-bottom: 12px;
+  transition: opacity 0.3s; color: var(--pl-white);
+}
+.footer-col a:hover { opacity: 1; }
+.footer-bottom {
+  border-top: 1px solid var(--pl-gray-700);
+  padding: 24px clamp(24px, 5vw, 80px);
+  display: flex; justify-content: space-between;
+  font-size: 10px; opacity: 0.25;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--pl-white);
+}
+
+/* ══════════════════════════════════════
+   SCROLL ANIMATIONS
+   ══════════════════════════════════════ */
+.reveal {
+  opacity: 0; transform: translateY(50px);
+  transition: opacity 0.9s var(--pl-ease-out), transform 0.9s var(--pl-ease-out);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .swipe-section { grid-template-columns: 1fr; }
+  .swipe-phone { order: -1; margin-bottom: 48px; }
+  .fitting-room { grid-template-columns: 1fr; }
+  .fitting-right { height: 500px; }
+  .token-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .gallery-item.wide { grid-column: span 1; aspect-ratio: 3/4; }
+  .proof-grid { grid-template-columns: 1fr; }
+  .footer { grid-template-columns: 1fr 1fr; }
+  .hero-stats { display: none; }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-tokens { display: none; }
+  .token-exchange { grid-template-columns: 1fr; text-align: center; }
+  .token-exchange-arrow { transform: rotate(90deg); }
+  .gallery-grid { grid-template-columns: 1fr 1fr; }
+  .footer { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div class="preloader" id="preloader">
+  <div class="preloader-logo">Plur</div>
+  <div class="preloader-bar"><div class="preloader-bar-fill"></div></div>
+</div>
+<div class="grain"></div>
+
+<!-- Navigation -->
+<nav class="nav">
+  <a href="#" class="nav-logo">Plur<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#match">Match</a></li>
+    <li><a href="#fitting">AI Fitting</a></li>
+    <li><a href="#tokens">Tokens</a></li>
+    <li><a href="#collection">Collection</a></li>
+  </ul>
+  <div style="display: flex; align-items: center; gap: 20px;">
+    <div class="nav-tokens">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10l4-4 4 4M8 14l4 4 4-4"/></svg>
+      240 PLR
+    </div>
+    <button class="nav-cta">Join Plur</button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════
+     HERO
+     ════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1920&q=80" alt="Fashion editorial">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Circular Fashion — Redefined</p>
+    <h1 class="hero-title">
+      Swipe<span class="accent">.</span>
+      <span class="italic">Try on. Exchange.</span>
+    </h1>
+    <p class="hero-desc">
+      La moda circular reinventada. Descubrí prendas, probalas con IA y usá tokens para intercambiar ropa con otros. Sin desperdicio, puro estilo.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary">Empezá a matchear</button>
+      <button class="btn-outline">Cómo funciona</button>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-number">12<span>K</span></div>
+      <div class="hero-stat-label">Prendas activas</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number">4.2<span>K</span></div>
+      <div class="hero-stat-label">Usuarios</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number">98<span>%</span></div>
+      <div class="hero-stat-label">Satisfacción</div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- Marquee Strip -->
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <span class="marquee-item">Swipe to match<span class="dot">•</span></span>
+    <span class="marquee-item">Probador con IA<span class="dot">•</span></span>
+    <span class="marquee-item">Token economy<span class="dot">•</span></span>
+    <span class="marquee-item">Circular fashion<span class="dot">•</span></span>
+    <span class="marquee-item">Zero waste<span class="dot">•</span></span>
+    <span class="marquee-item">Community exchange<span class="dot">•</span></span>
+    <span class="marquee-item">Swipe to match<span class="dot">•</span></span>
+    <span class="marquee-item">Probador con IA<span class="dot">•</span></span>
+    <span class="marquee-item">Token economy<span class="dot">•</span></span>
+    <span class="marquee-item">Circular fashion<span class="dot">•</span></span>
+    <span class="marquee-item">Zero waste<span class="dot">•</span></span>
+    <span class="marquee-item">Community exchange<span class="dot">•</span></span>
+    <span class="marquee-item">Swipe to match<span class="dot">•</span></span>
+    <span class="marquee-item">Probador con IA<span class="dot">•</span></span>
+    <span class="marquee-item">Token economy<span class="dot">•</span></span>
+    <span class="marquee-item">Circular fashion<span class="dot">•</span></span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SWIPE / MATCH
+     ════════════════════════════════════════ -->
+<section class="section section-dark" id="match">
+  <span class="section-counter">01 / 04</span>
+  <div class="swipe-section">
+    <div class="swipe-info reveal">
+      <div class="section-eyebrow">01 — Match</div>
+      <h2 class="section-title">Encontrá<br>tu estilo<span style="color: var(--pl-accent)">.</span></h2>
+      <p class="section-desc">
+        Deslizá entre miles de prendas pre-loved, vintage y de diseñadores emergentes. 
+        Si te gusta, hacé match. Si no, siguiente. Así de simple, como elegir tu próximo outfit.
+      </p>
+      <div class="feature-list">
+        <div class="feature-item reveal reveal-delay-1">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-text">
+            <h4>Algoritmo de estilo</h4>
+            <p>Aprende tus preferencias y te muestra prendas que van con vos</p>
+          </div>
+        </div>
+        <div class="feature-item reveal reveal-delay-2">
+          <div class="feature-icon">💚</div>
+          <div class="feature-text">
+            <h4>Match instantáneo</h4>
+            <p>Cuando hacés match, conectás directo con el vendedor</p>
+          </div>
+        </div>
+        <div class="feature-item reveal reveal-delay-3">
+          <div class="feature-icon">📦</div>
+          <div class="feature-text">
+            <h4>Compra o intercambiá</h4>
+            <p>Usá pesos, tokens PLR, o hacé un intercambio directo</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="swipe-phone reveal">
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="swipe-card-stack" id="swipeStack">
+            <!-- Cards are generated via JS -->
+          </div>
+          <div class="swipe-actions">
+            <button class="swipe-btn pass" onclick="swipeCard('nope')" title="Pasar">✕</button>
+            <button class="swipe-btn save" onclick="swipeCard('save')" title="Guardar">★</button>
+            <button class="swipe-btn like" onclick="swipeCard('match')" title="Match">♥</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     AI FITTING ROOM
+     ════════════════════════════════════════ -->
+<section class="section-light" id="fitting" style="padding: 0;">
+  <div class="fitting-room">
+    <div class="fitting-left">
+      <span class="section-counter" style="position: static; margin-bottom: 32px; display: block; color: var(--pl-black);">02 / 04</span>
+      <div class="section-eyebrow reveal">02 — AI Fitting Room</div>
+      <h2 class="section-title reveal" style="color: var(--pl-black);">Probátelo<br>sin salir<br>de casa<span style="color: var(--pl-accent-dim)">.</span></h2>
+      <p class="section-desc reveal" style="color: var(--pl-black);">
+        Subí una foto tuya y nuestra IA genera una imagen realista de vos usando la prenda que te gustó. 
+        Antes de comprar, ya sabés cómo te queda.
+      </p>
+      <div class="fitting-steps">
+        <div class="fitting-step reveal reveal-delay-1">
+          <div class="step-number">01</div>
+          <div class="step-content">
+            <h4>Subí tu foto</h4>
+            <p>Una foto tuya de cuerpo entero. Se procesa de forma privada y segura.</p>
+          </div>
+        </div>
+        <div class="fitting-step reveal reveal-delay-2">
+          <div class="step-number">02</div>
+          <div class="step-content">
+            <h4>Elegí la prenda</h4>
+            <p>Desde cualquier match o desde la colección. Seleccioná lo que querés probarte.</p>
+          </div>
+        </div>
+        <div class="fitting-step reveal reveal-delay-3">
+          <div class="step-number">03</div>
+          <div class="step-content">
+            <h4>Mirá el resultado</h4>
+            <p>En segundos, la IA genera una imagen realista de vos con la prenda puesta.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fitting-right">
+      <div class="fitting-preview">
+        <div class="fitting-col">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80" alt="Original photo">
+          <div class="fitting-label">Tu foto</div>
+        </div>
+        <div class="fitting-col">
+          <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&q=80" alt="AI generated result">
+          <div class="fitting-label">Resultado IA</div>
+        </div>
+      </div>
+      <div class="fitting-arrow">→</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     TOKEN ECONOMY
+     ════════════════════════════════════════ -->
+<section class="section section-mid" id="tokens">
+  <span class="section-counter">03 / 04</span>
+  <div class="reveal">
+    <div class="section-eyebrow">03 — Token Economy</div>
+    <h2 class="section-title">Vendé ropa<span style="color: var(--pl-accent)">.</span><br>Ganá tokens<span style="color: var(--pl-accent)">.</span></h2>
+    <p class="section-desc">
+      Cada prenda que subís para vender te genera tokens PLR. Usalos para adquirir ropa de otros 
+      usuarios sin gastar un peso. Tu guardarropa se convierte en tu moneda.
+    </p>
+  </div>
+
+  <div class="token-grid">
+    <div class="token-card reveal reveal-delay-1">
+      <div class="token-card-icon">📤</div>
+      <div class="token-card-title">Subí</div>
+      <div class="token-card-desc">Publicá las prendas que ya no usás. Agregá fotos, talle y estado.</div>
+      <div class="token-card-value">+50</div>
+    </div>
+    <div class="token-card reveal reveal-delay-2">
+      <div class="token-card-icon">🔄</div>
+      <div class="token-card-title">Intercambiá</div>
+      <div class="token-card-desc">Usá tus tokens PLR para conseguir prendas de otros usuarios. Sin plata de por medio.</div>
+      <div class="token-card-value">PLR</div>
+    </div>
+    <div class="token-card reveal reveal-delay-3">
+      <div class="token-card-icon">📈</div>
+      <div class="token-card-title">Crecé</div>
+      <div class="token-card-desc">Mientras más vendés y mejor rating tenés, más tokens ganás por prenda.</div>
+      <div class="token-card-value">x2</div>
+    </div>
+  </div>
+
+  <div class="token-exchange reveal">
+    <div class="token-exchange-side">
+      <div class="token-exchange-icon">👗</div>
+      <div class="token-exchange-label">Tu ropa</div>
+      <div class="token-exchange-sub">Prendas que ya no usás</div>
+    </div>
+    <div class="token-exchange-arrow">→</div>
+    <div class="token-exchange-side">
+      <div class="token-exchange-icon">✨</div>
+      <div class="token-exchange-label">Nueva ropa</div>
+      <div class="token-exchange-sub">Pre-loved, vintage, diseño</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     COLLECTION / GALLERY
+     ════════════════════════════════════════ -->
+<section class="section section-dark" id="collection">
+  <span class="section-counter">04 / 04</span>
+  <div class="reveal">
+    <div class="section-eyebrow">04 — Collection</div>
+    <h2 class="section-title">Lo más<br>buscado<span style="color: var(--pl-accent)">.</span></h2>
+    <p class="section-desc">
+      Prendas trending entre la comunidad Plur. Moda circular que no pierde estilo.
+    </p>
+  </div>
+
+  <div class="gallery-grid">
+    <div class="gallery-item tall reveal">
+      <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80" alt="Model in coat">
+      <div class="gallery-item-overlay">
+        <div class="gallery-item-name">Trench Oversize</div>
+        <div class="gallery-item-price">120 PLR</div>
+        <div class="gallery-item-tokens">o $45.000 ARS</div>
+      </div>
+    </div>
+    <div class="gallery-item reveal reveal-delay-1">
+      <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=600&q=80" alt="Dress">
+      <div class="gallery-item-overlay">
+        <div class="gallery-item-name">Vestido Midi Floral</div>
+        <div class="gallery-item-price">80 PLR</div>
+        <div class="gallery-item-tokens">o $32.000 ARS</div>
+      </div>
+    </div>
+    <div class="gallery-item reveal reveal-delay-2">
+      <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80" alt="Jacket">
+      <div class="gallery-item-overlay">
+        <div class="gallery-item-name">Blazer Vintage</div>
+        <div class="gallery-item-price">95 PLR</div>
+        <div class="gallery-item-tokens">o $38.000 ARS</div>
+      </div>
+    </div>
+    <div class="gallery-item reveal reveal-delay-1">
+      <img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=600&q=80" alt="Fashion editorial">
+      <div class="gallery-item-overlay">
+        <div class="gallery-item-name">Camisa Seda</div>
+        <div class="gallery-item-price">70 PLR</div>
+        <div class="gallery-item-tokens">o $28.000 ARS</div>
+      </div>
+    </div>
+    <div class="gallery-item wide reveal reveal-delay-2">
+      <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1200&q=80" alt="Fashion editorial wide" style="object-position: center 30%;">
+      <div class="gallery-item-overlay">
+        <div class="gallery-item-name">Conjunto Total Black</div>
+        <div class="gallery-item-price">200 PLR</div>
+        <div class="gallery-item-tokens">o $78.000 ARS</div>
+      </div>
+    </div>
+    <div class="gallery-item reveal reveal-delay-3">
+      <img src="https://images.unsplash.com/photo-1495385794356-15371f348c31?w=600&q=80" alt="Accessories">
+      <div class="gallery-item-overlay">
+        <div class="gallery-item-name">Bolso Cuero</div>
+        <div class="gallery-item-price">110 PLR</div>
+        <div class="gallery-item-tokens">o $44.000 ARS</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Social Proof -->
+<section class="section section-light">
+  <div style="text-align: center; margin-bottom: 64px;" class="reveal">
+    <div class="section-eyebrow" style="color: var(--pl-gray-400);">Comunidad</div>
+    <h2 class="section-title" style="color: var(--pl-black); max-width: 600px; margin: 0 auto 24px;">Lo que dicen<span style="color: var(--pl-accent-dim)">.</span></h2>
+  </div>
+  <div class="proof-grid">
+    <div class="proof-card reveal reveal-delay-1">
+      <div class="proof-card-stars">★★★★★</div>
+      <p class="proof-card-text">"Vendí ropa que no usaba hace meses y con esos tokens me armé un guardarropa nuevo. Es adictivo."</p>
+      <div class="proof-card-author">
+        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" class="proof-card-avatar" alt="avatar">
+        <div>
+          <div class="proof-card-name">Valentina R.</div>
+          <div class="proof-card-role">240 intercambios</div>
+        </div>
+      </div>
+    </div>
+    <div class="proof-card reveal reveal-delay-2">
+      <div class="proof-card-stars">★★★★★</div>
+      <p class="proof-card-text">"El probador con IA es un game changer. Ya no compro nada sin probármelo virtualmente."</p>
+      <div class="proof-card-author">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" class="proof-card-avatar" alt="avatar">
+        <div>
+          <div class="proof-card-name">Tomás L.</div>
+          <div class="proof-card-role">89 matches</div>
+        </div>
+      </div>
+    </div>
+    <div class="proof-card reveal reveal-delay-3">
+      <div class="proof-card-stars">★★★★★</div>
+      <p class="proof-card-text">"Me encanta la idea de que mi ropa tenga una segunda vida. Y el sistema de swipe es súper divertido."</p>
+      <div class="proof-card-author">
+        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80" class="proof-card-avatar" alt="avatar">
+        <div>
+          <div class="proof-card-name">Camila S.</div>
+          <div class="proof-card-role">156 intercambios</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section section-dark">
+  <div class="cta-title reveal">
+    Tu ropa<br>merece otra<br><span class="accent">vida.</span>
+  </div>
+  <p class="cta-desc reveal reveal-delay-1">
+    Unite a la comunidad de moda circular más grande. 
+    Swipeá, probate, intercambiá. Sin desperdicio.
+  </p>
+  <div class="cta-actions reveal reveal-delay-2">
+    <button class="btn-primary">Crear cuenta gratis</button>
+    <button class="btn-outline">Explorar prendas</button>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div>
+    <div class="footer-brand-name">Plur<span>.</span></div>
+    <p class="footer-brand-desc">Moda circular para una nueva generación. Cada prenda tiene una historia — dale un nuevo capítulo.</p>
+  </div>
+  <div class="footer-col">
+    <div class="footer-col-title">Plataforma</div>
+    <a href="#">Swipe & Match</a>
+    <a href="#">Probador IA</a>
+    <a href="#">Tokens PLR</a>
+    <a href="#">Publicar prenda</a>
+  </div>
+  <div class="footer-col">
+    <div class="footer-col-title">Comunidad</div>
+    <a href="#">Blog</a>
+    <a href="#">Instagram</a>
+    <a href="#">Discord</a>
+    <a href="#">Embajadores</a>
+  </div>
+  <div class="footer-col">
+    <div class="footer-col-title">Legal</div>
+    <a href="#">Términos</a>
+    <a href="#">Privacidad</a>
+    <a href="#">Envíos</a>
+    <a href="#">Guía de talles</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span>© 2026 Plur. Todos los derechos reservados.</span>
+  <span>Hecho con ♻️ para el planeta</span>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// PRELOADER
+// ═══════════════════════════════════════
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('preloader').classList.add('hidden');
+  }, 2200);
+});
+
+// ═══════════════════════════════════════
+// SCROLL REVEAL
+// ═══════════════════════════════════════
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ═══════════════════════════════════════
+// SWIPE CARDS
+// ═══════════════════════════════════════
+const garments = [
+  { name: 'Bomber Vintage', meta: 'Talle M · Buenos Aires', price: '85 PLR', img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80' },
+  { name: 'Jean Wide Leg', meta: 'Talle 28 · Córdoba', price: '60 PLR', img: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600&q=80' },
+  { name: 'Vestido Slip', meta: 'Talle S · Rosario', price: '95 PLR', img: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&q=80' },
+  { name: 'Camisa Oversize', meta: 'Talle L · Salta', price: '45 PLR', img: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&q=80' },
+  { name: 'Tapado Lana', meta: 'Talle M · CABA', price: '150 PLR', img: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=600&q=80' },
+  { name: 'Crop Top Knit', meta: 'Talle S · Mendoza', price: '35 PLR', img: 'https://images.unsplash.com/photo-1485462537746-965f33f7f6a7?w=600&q=80' },
+];
+
+let currentCard = 0;
+const stack = document.getElementById('swipeStack');
+
+function renderCards() {
+  stack.innerHTML = '';
+  const visibleCards = garments.slice(currentCard, currentCard + 3).reverse();
+  visibleCards.forEach((g, i) => {
+    const realIndex = visibleCards.length - 1 - i;
+    const card = document.createElement('div');
+    card.className = 'swipe-card';
+    card.style.transform = `scale(${1 - realIndex * 0.04}) translateY(${realIndex * 8}px)`;
+    card.style.zIndex = 10 - realIndex;
+    card.style.opacity = realIndex === 0 ? 1 : 0.6;
+    card.innerHTML = `
+      <img src="${g.img}" alt="${g.name}">
+      <div class="swipe-card-overlay">
+        <div class="swipe-card-name">${g.name}</div>
+        <div class="swipe-card-meta">${g.meta}</div>
+        <div class="swipe-card-price">${g.price}</div>
+      </div>
+      <div class="swipe-stamp match" id="stampMatch">MATCH</div>
+      <div class="swipe-stamp nope" id="stampNope">NOPE</div>
+    `;
+    stack.appendChild(card);
+  });
+}
+
+function swipeCard(action) {
+  const topCard = stack.querySelector('.swipe-card:last-child');
+  if (!topCard) return;
+
+  if (action === 'match') {
+    const stamp = topCard.querySelector('.swipe-stamp.match');
+    stamp.classList.add('show');
+    setTimeout(() => {
+      topCard.style.transform = 'translateX(120%) rotate(15deg)';
+      topCard.style.opacity = '0';
+    }, 400);
+  } else if (action === 'nope') {
+    const stamp = topCard.querySelector('.swipe-stamp.nope');
+    stamp.classList.add('show');
+    setTimeout(() => {
+      topCard.style.transform = 'translateX(-120%) rotate(-15deg)';
+      topCard.style.opacity = '0';
+    }, 400);
+  } else {
+    topCard.style.transform = 'translateY(-120%)';
+    topCard.style.opacity = '0';
+  }
+
+  setTimeout(() => {
+    currentCard++;
+    if (currentCard >= garments.length - 2) currentCard = 0;
+    renderCards();
+  }, 700);
+}
+
+renderCards();
+
+// ═══════════════════════════════════════
+// NAV HIDE ON SCROLL
+// ═══════════════════════════════════════
+let lastScroll = 0;
+const nav = document.querySelector('.nav');
+window.addEventListener('scroll', () => {
+  const currentScroll = window.scrollY;
+  if (currentScroll > lastScroll && currentScroll > 100) {
+    nav.style.transform = 'translateY(-100%)';
+  } else {
+    nav.style.transform = 'translateY(0)';
+  }
+  lastScroll = currentScroll;
+}, { passive: true });
+
+// ═══════════════════════════════════════
+// TOUCH SWIPE SUPPORT (mobile)
+// ═══════════════════════════════════════
+let touchStartX = 0;
+stack.addEventListener('touchstart', (e) => {
+  touchStartX = e.touches[0].clientX;
+}, { passive: true });
+stack.addEventListener('touchend', (e) => {
+  const diff = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(diff) > 60) {
+    swipeCard(diff > 0 ? 'match' : 'nope');
+  }
+}, { passive: true });
+</script>
+</body>
+</html>

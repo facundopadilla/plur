@@ -1,0 +1,128 @@
+/* =========================================================
+   Plur Landing Page — Custom CSS
+   Keyframes, grain overlay, scroll reveal, swipe animations
+   ========================================================= */
+
+/* --- Keyframes --- */
+
+@keyframes preloaderPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes preloaderFill {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+@keyframes heroZoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.1; transform: scaleY(0.5); }
+  50% { opacity: 0.3; transform: scaleY(1); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes marqueeScroll {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes arrowPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+}
+
+@keyframes arrowBounce {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(8px); }
+}
+
+/* --- Hero fadeUp helpers --- */
+
+.anim-fade-up {
+  animation: fadeUp 1s var(--pl-ease-out) both;
+  opacity: 0;
+}
+
+.anim-delay-1 { animation-delay: 2.2s; }
+.anim-delay-2 { animation-delay: 2.4s; }
+.anim-delay-3 { animation-delay: 2.6s; }
+.anim-delay-4 { animation-delay: 2.8s; }
+.anim-delay-5 { animation-delay: 3.0s; }
+
+/* --- Grain overlay --- */
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* --- Preloader --- */
+
+.preloader-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.preloader-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* --- Scroll reveal --- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.9s var(--pl-ease-out), transform 0.9s var(--pl-ease-out);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* --- Marquee --- */
+
+.marquee-track {
+  display: flex;
+  gap: 48px;
+  width: max-content;
+  animation: marqueeScroll 30s linear infinite;
+}
+
+/* --- Swipe stamps --- */
+
+.swipe-stamp {
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.4s var(--pl-ease-spring), opacity 0.4s var(--pl-ease-spring);
+}
+
+.swipe-stamp.show {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* --- Selection override for landing --- */
+
+::selection {
+  background: #C8FF00;
+  color: #0A0A0A;
+}

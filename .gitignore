@@ -1,0 +1,42 @@
+# ── Personal / tooling ───────────────────────────────────────────────────────
+.claude/
+.agents/
+.sisyphus/
+.DS_Store
+*.log
+
+# ── Python / Django ──────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+.venv/
+venv/
+db.sqlite3
+staticfiles/
+mediafiles/
+backend/config/settings/local.py
+backend/.env
+backend/.env.local
+backend/.env.production
+
+# ── Node / Frontend ──────────────────────────────────────────────────────────
+node_modules/
+dist/
+dist-ssr/
+frontend/.env.local
+frontend/src/api/generated/
+pnpm-debug.log*
+npm-debug.log*
+
+# ── Smart contracts ──────────────────────────────────────────────────────────
+plr-contracts/node_modules/
+plr-contracts/.env
+plr-contracts/cache/
+plr-contracts/artifacts/
+plr-contracts/typechain-types/
