@@ -186,3 +186,13 @@ class MirrorGenerateOut(Schema):
     reply: str
     cost_plr: int
     remaining_credits: int
+
+
+def _rebuild_datetime_schemas() -> None:
+    from datetime import datetime
+
+    for schema in (GarmentOut, SaleOut, PendingSaleOut, TransactionOut):
+        schema.model_rebuild(_types_namespace={"datetime": datetime})
+
+
+_rebuild_datetime_schemas()

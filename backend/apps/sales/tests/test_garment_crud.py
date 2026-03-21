@@ -78,7 +78,8 @@ async def test_owner_can_delete_garment(async_client: AsyncClient) -> None:
     )
 
     assert response.status_code == 204
-    assert not await Garment.objects.filter(pk=garment.id).aexists()
+    await garment.arefresh_from_db()
+    assert garment.status == "sold"
 
 
 @pytest.mark.django_db(transaction=True)

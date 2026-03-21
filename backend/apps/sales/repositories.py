@@ -86,8 +86,9 @@ class GarmentRepository:
         return [g async for g in Garment.objects.filter(seller=seller).order_by("-created_at")]
 
     @staticmethod
-    async def delete(garment: Garment) -> None:
-        await garment.adelete()
+    async def soft_delete(garment: Garment) -> None:
+        garment.status = "sold"
+        await garment.asave(update_fields=["status"])
 
 
 class SaleRepository:

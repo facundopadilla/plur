@@ -116,7 +116,7 @@ class GarmentService:
         if garment.status == "sold":
             raise ValueError("Sold garments cannot be modified")
 
-        await GarmentRepository.delete(garment)
+        await GarmentRepository.soft_delete(garment)
         logger.info("Garment deleted", garment_id=garment_id, seller_id=seller.pk)
 
 
