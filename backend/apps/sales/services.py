@@ -78,6 +78,47 @@ class GarmentService:
         logger.info("Garment published", garment_id=garment.pk, seller_id=seller.pk, price=price_plr)
         return garment
 
+    @classmethod
+    async def update(cls, seller: User, garment_id: int, **fields: object) -> Garment:
+        garment = await GarmentRepository.get_by_id(garment_id)
+        if garment is None:
+            raise ValueError("Garment not found")
+        if garment.seller_id != seller.pk:
+            raise ValueError("You can only modify your own garments")
+        if garment.status == "sold":
+            raise ValueError("Sold garments cannot be modified")
+
+        update_fields: list[str] = []
+        for field_name, value in fields.items():
+            if value is None:
+                continue
+            if field_name in {"name", "description", "size", "style", "condition", "location"} and isinstance(
+                value, str
+            ):
+                value = value.strip()
+
+            setattr(garment, field_name, value)
+            update_fields.append(field_name)
+
+        if update_fields:
+            await garment.asave(update_fields=update_fields)
+
+        logger.info("Garment updated", garment_id=garment.pk, seller_id=seller.pk)
+        return garment
+
+    @classmethod
+    async def delete(cls, seller: User, garment_id: int) -> None:
+        garment = await GarmentRepository.get_by_id(garment_id)
+        if garment is None:
+            raise ValueError("Garment not found")
+        if garment.seller_id != seller.pk:
+            raise ValueError("You can only modify your own garments")
+        if garment.status == "sold":
+            raise ValueError("Sold garments cannot be modified")
+
+        await GarmentRepository.delete(garment)
+        logger.info("Garment deleted", garment_id=garment_id, seller_id=seller.pk)
+
 
 class SaleService:
     """Service for sale transaction operations."""

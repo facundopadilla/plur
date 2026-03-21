@@ -85,6 +85,10 @@ class GarmentRepository:
         """
         return [g async for g in Garment.objects.filter(seller=seller).order_by("-created_at")]
 
+    @staticmethod
+    async def delete(garment: Garment) -> None:
+        await garment.adelete()
+
 
 class SaleRepository:
     """Repository for Sale database operations."""

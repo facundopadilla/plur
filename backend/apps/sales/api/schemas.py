@@ -40,6 +40,20 @@ class GarmentIn(Schema):
     tags: list[str] = Field(default_factory=list)
 
 
+class GarmentUpdateIn(Schema):
+    """Input schema for partially updating a garment."""
+
+    name: str | None = None
+    description: str | None = None
+    images: list[str] | None = None
+    price_plr: int | None = None
+    size: str | None = None
+    style: str | None = None
+    condition: str | None = None
+    location: str | None = None
+    tags: list[str] | None = None
+
+
 class GarmentOut(Schema):
     """Output schema for a garment."""
 

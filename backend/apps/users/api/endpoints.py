@@ -25,11 +25,14 @@ from apps.users.api.schemas import (
     LoginIn,
     PasswordResetIn,
     PasswordResetOut,
+    PreferencesIn,
+    PreferencesOut,
     RegisterOut,
     TokenOut,
 )
 from apps.users.models import User
-from apps.users.services import AuthService
+from apps.users.services import AuthService, PreferencesService
+from core.auth import jwt_auth
 
 
 @router.post(
@@ -184,3 +187,70 @@ async def password_reset(
     """
     await AuthService.request_password_reset(payload.email)
     return PasswordResetOut(message="If an account exists with that email, a reset code has been sent.")
+
+
+@router.get(
+    "/me/preferences",
+    response={200: PreferencesOut, 401: ErrorOut},
+    auth=jwt_auth,
+    summary="Get current user's preferences",
+)
+async def get_preferences(request: HttpRequest) -> tuple[int, PreferencesOut | ErrorOut]:
+    """Get the authenticated user's preferences (auto-creates with defaults if missing)."""
+    try:
+        user = request.auth
+        if user is None:
+            return 401, ErrorOut(detail="Not authenticated")
+        prefs = await PreferencesService.get(user)
+        return 200, PreferencesOut(
+            id=prefs.id,
+            styles=prefs.styles,
+            sizes=prefs.sizes,
+            colors=prefs.colors,
+            discovery_radius_km=prefs.discovery_radius_km,
+            proximity_enabled=prefs.proximity_enabled,
+            created_at=prefs.created_at.isoformat(),
+            updated_at=prefs.updated_at.isoformat(),
+        )
+    except Exception:
+        logger.exception("Error retrieving preferences")
+        return 500, ErrorOut(detail="Internal server error")
+
+
+@router.put(
+    "/me/preferences",
+    response={200: PreferencesOut, 400: ErrorOut, 401: ErrorOut},
+    auth=jwt_auth,
+    summary="Update current user's preferences",
+)
+async def update_preferences(
+    request: HttpRequest,
+    payload: PreferencesIn,
+) -> tuple[int, PreferencesOut | ErrorOut]:
+    """Update the authenticated user's preferences (partial update).
+
+    Only provided fields are updated. Returns the updated preferences.
+    """
+    try:
+        user = request.auth
+        if user is None:
+            return 401, ErrorOut(detail="Not authenticated")
+
+        update_data = {k: v for k, v in payload.dict().items() if v is not None}
+
+        prefs = await PreferencesService.update(user, update_data)
+        return 200, PreferencesOut(
+            id=prefs.id,
+            styles=prefs.styles,
+            sizes=prefs.sizes,
+            colors=prefs.colors,
+            discovery_radius_km=prefs.discovery_radius_km,
+            proximity_enabled=prefs.proximity_enabled,
+            created_at=prefs.created_at.isoformat(),
+            updated_at=prefs.updated_at.isoformat(),
+        )
+    except ValueError as exc:
+        return 400, ErrorOut(detail=str(exc))
+    except Exception:
+        logger.exception("Error updating preferences")
+        return 500, ErrorOut(detail="Internal server error")

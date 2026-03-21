@@ -73,3 +73,31 @@ class PasswordResetIn(Schema):
 
 class RefreshIn(Schema):
     """Input schema for token refresh (token is read from cookie)."""
+
+
+# ------------------------------------------------------------------ #
+# Preferences schemas                                                  #
+# ------------------------------------------------------------------ #
+
+
+class PreferencesOut(Schema):
+    """Response schema for user preferences."""
+
+    id: int
+    styles: list[str]
+    sizes: list[str]
+    colors: list[str]
+    discovery_radius_km: int
+    proximity_enabled: bool
+    created_at: str
+    updated_at: str
+
+
+class PreferencesIn(Schema):
+    """Input schema for updating user preferences (all fields optional)."""
+
+    styles: list[str] | None = None
+    sizes: list[str] | None = None
+    colors: list[str] | None = None
+    discovery_radius_km: int | None = Field(None, ge=1, le=500)
+    proximity_enabled: bool | None = None

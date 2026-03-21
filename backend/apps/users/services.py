@@ -11,11 +11,11 @@ from django.conf import settings
 import jwt
 from loguru import logger
 
-from apps.users.repositories import UserRepository
+from apps.users.repositories import PreferencesRepository, UserRepository
 from core.email import send_activation_email, send_password_reset_email
 
 if TYPE_CHECKING:
-    from apps.users.models import User
+    from apps.users.models import User, UserPreferences
 
 
 class AuthService:
@@ -254,3 +254,40 @@ class AuthService:
             await send_password_reset_email(email=user.email, code=reset_code, first_name=user.first_name)
         except Exception:
             logger.warning("Failed to send password reset email", email=email)
+
+
+class PreferencesService:
+    """Service for user preferences management."""
+
+    @staticmethod
+    async def get(user: User) -> UserPreferences:
+        """Get preferences for a user (auto-create with defaults if missing).
+
+        Args:
+            user: The User instance.
+
+        Returns:
+            The UserPreferences instance.
+        """
+        return await PreferencesRepository.get_or_create(user)
+
+    @staticmethod
+    async def update(user: User, data: dict) -> UserPreferences:
+        """Update preferences for a user with partial data.
+
+        Args:
+            user: The User instance.
+            data: Dictionary of fields to update (only provided fields change).
+
+        Returns:
+            The updated UserPreferences instance.
+
+        Raises:
+            ValueError: If discovery_radius_km is outside valid range.
+        """
+        if "discovery_radius_km" in data and data["discovery_radius_km"] is not None:
+            radius = data["discovery_radius_km"]
+            if not (1 <= radius <= 500):
+                raise ValueError("discovery_radius_km must be between 1 and 500")
+
+        return await PreferencesRepository.update(user, data)

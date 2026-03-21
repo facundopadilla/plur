@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     # Project apps
     "apps.users",
     "apps.sales",
+    "apps.match",
 ]
 
 AUTH_USER_MODEL = "users.User"

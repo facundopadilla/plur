@@ -12,6 +12,7 @@ from apps.sales.api.schemas import (
     ErrorOut,
     GarmentIn,
     GarmentOut,
+    GarmentUpdateIn,
     MirrorChatIn,
     MirrorChatOut,
     MirrorGenerateIn,
@@ -84,6 +85,57 @@ async def list_my_garments(
 
     garments = await GarmentRepository.list_by_seller(user)
     return [_garment_to_out(g, user.full_name) for g in garments]
+
+
+@router.patch(
+    "/garments/{garment_id}",
+    response={200: GarmentOut, 403: ErrorOut, 404: ErrorOut},
+    auth=jwt_auth,
+    summary="Update my published garment",
+)
+async def update_garment(
+    request: HttpRequest,
+    garment_id: int,
+    payload: GarmentUpdateIn,
+) -> tuple[int, GarmentOut | ErrorOut]:
+    user: User = request.auth  # type: ignore[assignment]
+    try:
+        garment = await GarmentService.update(
+            seller=user,
+            garment_id=garment_id,
+            name=payload.name,
+            description=payload.description,
+            images=payload.images,
+            price_plr=payload.price_plr,
+            size=payload.size,
+            style=payload.style,
+            condition=payload.condition,
+            location=payload.location,
+            tags=payload.tags,
+        )
+        return 200, _garment_to_out(garment, user.full_name)
+    except ValueError as exc:
+        message = str(exc)
+        return _garment_mutation_error_status(message), ErrorOut(detail=message)
+
+
+@router.delete(
+    "/garments/{garment_id}",
+    response={204: None, 403: ErrorOut, 404: ErrorOut},
+    auth=jwt_auth,
+    summary="Delete my published garment",
+)
+async def delete_garment(
+    request: HttpRequest,
+    garment_id: int,
+) -> tuple[int, None] | tuple[int, ErrorOut]:
+    user: User = request.auth  # type: ignore[assignment]
+    try:
+        await GarmentService.delete(seller=user, garment_id=garment_id)
+        return 204, None
+    except ValueError as exc:
+        message = str(exc)
+        return _garment_mutation_error_status(message), ErrorOut(detail=message)
 
 
 # ------------------------------------------------------------------ #
@@ -436,3 +488,9 @@ def _sale_to_out(sale: SaleModel) -> SaleOut:
         resolved_at=s.resolved_at,
         tx_hash=s.tx_hash,
     )
+
+
+def _garment_mutation_error_status(message: str) -> int:
+    if message == "Garment not found":
+        return 404
+    return 403
