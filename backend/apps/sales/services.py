@@ -34,6 +34,8 @@ class GarmentService:
         style: str,
         condition: str,
         location: str,
+        latitude: float | None,
+        longitude: float | None,
         tags: list[str],
     ) -> Garment:
         """Publish a new garment for sale.
@@ -50,6 +52,8 @@ class GarmentService:
             style: Garment style.
             condition: Garment condition.
             location: Seller location.
+            latitude: Seller latitude.
+            longitude: Seller longitude.
             tags: List of tags.
 
         Returns:
@@ -73,10 +77,34 @@ class GarmentService:
             style=style.strip(),
             condition=condition.strip(),
             location=location.strip(),
+            latitude=latitude,
+            longitude=longitude,
             tags=tags,
         )
         logger.info("Garment published", garment_id=garment.pk, seller_id=seller.pk, price=price_plr)
         return garment
+
+    @classmethod
+    async def find_nearby(
+        cls,
+        lat: float | None,
+        lng: float | None,
+        radius_km: float,
+        style: str | None = None,
+        size: str | None = None,
+        condition: str | None = None,
+    ) -> list[tuple[Garment, float | None]]:
+        if radius_km <= 0:
+            raise ValueError("Radius must be greater than 0")
+
+        return await GarmentRepository.find_nearby(
+            lat=lat,
+            lng=lng,
+            radius_km=radius_km,
+            style=style.strip() if style else None,
+            size=size.strip() if size else None,
+            condition=condition.strip() if condition else None,
+        )
 
     @classmethod
     async def update(cls, seller: User, garment_id: int, **fields: object) -> Garment:

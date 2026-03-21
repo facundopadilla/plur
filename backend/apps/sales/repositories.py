@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from typing import TYPE_CHECKING
 
 from apps.sales.models import CreditTransaction, Garment, Sale
@@ -24,6 +25,8 @@ class GarmentRepository:
         style: str,
         condition: str,
         location: str,
+        latitude: float | None,
+        longitude: float | None,
         tags: list[str],
     ) -> Garment:
         """Create and persist a new garment listing.
@@ -38,6 +41,8 @@ class GarmentRepository:
             style: Garment style.
             condition: Garment condition.
             location: Seller location.
+            latitude: Seller latitude.
+            longitude: Seller longitude.
             tags: List of tags.
 
         Returns:
@@ -53,10 +58,47 @@ class GarmentRepository:
             style=style,
             condition=condition,
             location=location,
+            latitude=latitude,
+            longitude=longitude,
             tags=tags,
         )
         await garment.asave()
         return garment
+
+    @staticmethod
+    async def find_nearby(
+        lat: float | None,
+        lng: float | None,
+        radius_km: float,
+        style: str | None = None,
+        size: str | None = None,
+        condition: str | None = None,
+    ) -> list[tuple[Garment, float | None]]:
+        queryset = Garment.objects.filter(status="active").select_related("seller")
+
+        if style:
+            queryset = queryset.filter(style=style)
+        if size:
+            queryset = queryset.filter(size=size)
+        if condition:
+            queryset = queryset.filter(condition=condition)
+
+        garments = [garment async for garment in queryset.order_by("-created_at", "-pk")]
+
+        if lat is None or lng is None:
+            return [(garment, None) for garment in garments]
+
+        nearby: list[tuple[Garment, float | None]] = []
+        for garment in garments:
+            if garment.latitude is None or garment.longitude is None:
+                continue
+
+            distance = _haversine_km(lat, lng, float(garment.latitude), float(garment.longitude))
+            if distance <= radius_km:
+                nearby.append((garment, distance))
+
+        nearby.sort(key=lambda item: item[1] if item[1] is not None else float("inf"))
+        return nearby
 
     @staticmethod
     async def get_by_id(garment_id: int) -> Garment | None:
@@ -89,6 +131,14 @@ class GarmentRepository:
     async def soft_delete(garment: Garment) -> None:
         garment.status = "sold"
         await garment.asave(update_fields=["status"])
+
+
+def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    radius_km = 6371.0
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat / 2) ** 2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2
+    return radius_km * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 
 class SaleRepository:

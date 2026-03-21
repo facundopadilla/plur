@@ -24,6 +24,8 @@ class Garment(models.Model):
     style = models.CharField(max_length=50, blank=True, default="")
     condition = models.CharField(max_length=50, blank=True, default="")
     location = models.CharField(max_length=100, blank=True, default="")
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     tags = models.JSONField(default=list)
     status = models.CharField(
         max_length=10,

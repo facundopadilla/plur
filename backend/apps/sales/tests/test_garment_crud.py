@@ -129,3 +129,122 @@ async def test_sold_garment_cannot_be_edited(async_client: AsyncClient) -> None:
 
     assert response.status_code == 403
     assert response.json()["detail"] == "Sold garments cannot be modified"
+
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_nearby_returns_nearest_first(async_client: AsyncClient) -> None:
+    seller = await _create_user("seller-nearby-distance@example.com")
+
+    near = await Garment.objects.acreate(
+        seller=seller,
+        name="Near",
+        description="",
+        images=[],
+        price_plr=10,
+        style="urban",
+        latitude=-34.6038,
+        longitude=-58.3817,
+        status="active",
+    )
+    mid = await Garment.objects.acreate(
+        seller=seller,
+        name="Mid",
+        description="",
+        images=[],
+        price_plr=10,
+        style="urban",
+        latitude=-34.6500,
+        longitude=-58.4000,
+        status="active",
+    )
+    far = await Garment.objects.acreate(
+        seller=seller,
+        name="Far",
+        description="",
+        images=[],
+        price_plr=10,
+        style="urban",
+        latitude=-34.7300,
+        longitude=-58.4800,
+        status="active",
+    )
+
+    response = await async_client.get("/api/sales/garments/nearby?lat=-34.6037&lng=-58.3816&radius_km=25")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert [item["id"] for item in data] == [near.id, mid.id, far.id]
+    distances = [item["distance_km"] for item in data]
+    assert distances[0] < distances[1] < distances[2]
+
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_nearby_without_coordinates_uses_fallback_order(async_client: AsyncClient) -> None:
+    seller = await _create_user("seller-nearby-fallback@example.com")
+
+    first = await Garment.objects.acreate(
+        seller=seller,
+        name="First",
+        description="",
+        images=[],
+        price_plr=10,
+        status="active",
+    )
+    second = await Garment.objects.acreate(
+        seller=seller,
+        name="Second",
+        description="",
+        images=[],
+        price_plr=10,
+        status="active",
+    )
+
+    response = await async_client.get("/api/sales/garments/nearby")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) >= 2
+    assert data[0]["id"] == second.id
+    assert data[1]["id"] == first.id
+    assert data[0]["distance_km"] is None
+    assert data[1]["distance_km"] is None
+
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.asyncio
+async def test_nearby_style_filter_returns_only_matching_style(async_client: AsyncClient) -> None:
+    seller = await _create_user("seller-nearby-style@example.com")
+
+    street = await Garment.objects.acreate(
+        seller=seller,
+        name="Street",
+        description="",
+        images=[],
+        price_plr=10,
+        style="street",
+        latitude=-34.6040,
+        longitude=-58.3820,
+        status="active",
+    )
+    await Garment.objects.acreate(
+        seller=seller,
+        name="Formal",
+        description="",
+        images=[],
+        price_plr=10,
+        style="formal",
+        latitude=-34.6050,
+        longitude=-58.3830,
+        status="active",
+    )
+
+    response = await async_client.get(
+        "/api/sales/garments/nearby?lat=-34.6037&lng=-58.3816&radius_km=10&style=street"
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert [item["id"] for item in data] == [street.id]
+    assert data[0]["style"] == "street"

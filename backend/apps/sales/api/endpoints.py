@@ -11,6 +11,7 @@ from apps.sales.api.schemas import (
     BalanceOut,
     ErrorOut,
     GarmentIn,
+    GarmentNearbyOut,
     GarmentOut,
     GarmentUpdateIn,
     MirrorChatIn,
@@ -19,6 +20,7 @@ from apps.sales.api.schemas import (
     MirrorGenerateOut,
     MirrorReferenceIn,
     MirrorReferenceOut,
+    NearbyQueryIn,
     OnChainBalanceOut,
     PendingSaleOut,
     SaleInitiateIn,
@@ -63,11 +65,51 @@ async def publish_garment(
             style=payload.style,
             condition=payload.condition,
             location=payload.location,
+            latitude=payload.latitude,
+            longitude=payload.longitude,
             tags=payload.tags,
         )
         return 201, _garment_to_out(garment, user.full_name)
     except ValueError as exc:
         return 400, ErrorOut(detail=str(exc))
+
+
+@router.get(
+    "/garments/nearby",
+    response={200: list[GarmentNearbyOut], 400: ErrorOut},
+    summary="Discover nearby garments",
+)
+async def list_nearby_garments(
+    request: HttpRequest,
+    lat: float | None = None,
+    lng: float | None = None,
+    radius_km: float = 50.0,
+    style: str | None = None,
+    size: str | None = None,
+    condition: str | None = None,
+) -> tuple[int, list[GarmentNearbyOut] | ErrorOut]:
+    del request
+    query = NearbyQueryIn(
+        lat=lat,
+        lng=lng,
+        radius_km=radius_km,
+        style=style,
+        size=size,
+        condition=condition,
+    )
+    try:
+        nearby = await GarmentService.find_nearby(
+            lat=query.lat,
+            lng=query.lng,
+            radius_km=query.radius_km,
+            style=query.style,
+            size=query.size,
+            condition=query.condition,
+        )
+    except ValueError as exc:
+        return 400, ErrorOut(detail=str(exc))
+
+    return 200, [_garment_to_nearby_out(garment, garment.seller.full_name, distance) for garment, distance in nearby]
 
 
 @router.get(
@@ -111,6 +153,8 @@ async def update_garment(
             style=payload.style,
             condition=payload.condition,
             location=payload.location,
+            latitude=payload.latitude,
+            longitude=payload.longitude,
             tags=payload.tags,
         )
         return 200, _garment_to_out(garment, user.full_name)
@@ -455,9 +499,23 @@ def _garment_to_out(garment: GarmentModel, seller_name: str) -> GarmentOut:
         style=g.style,
         condition=g.condition,
         location=g.location,
+        latitude=float(g.latitude) if g.latitude is not None else None,
+        longitude=float(g.longitude) if g.longitude is not None else None,
         tags=g.tags if isinstance(g.tags, list) else [],
         status=g.status,
         created_at=g.created_at,
+    )
+
+
+def _garment_to_nearby_out(
+    garment: GarmentModel,
+    seller_name: str,
+    distance_km: float | None,
+) -> GarmentNearbyOut:
+    base = _garment_to_out(garment, seller_name)
+    return GarmentNearbyOut(
+        **base.model_dump(),
+        distance_km=round(distance_km, 3) if distance_km is not None else None,
     )
 
 

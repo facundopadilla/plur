@@ -37,6 +37,8 @@ class GarmentIn(Schema):
     style: str = ""
     condition: str = ""
     location: str = ""
+    latitude: float | None = None
+    longitude: float | None = None
     tags: list[str] = Field(default_factory=list)
 
 
@@ -51,6 +53,8 @@ class GarmentUpdateIn(Schema):
     style: str | None = None
     condition: str | None = None
     location: str | None = None
+    latitude: float | None = None
+    longitude: float | None = None
     tags: list[str] | None = None
 
 
@@ -68,9 +72,24 @@ class GarmentOut(Schema):
     style: str
     condition: str
     location: str
+    latitude: float | None
+    longitude: float | None
     tags: list[str]
     status: str
     created_at: datetime
+
+
+class NearbyQueryIn(Schema):
+    lat: float | None = None
+    lng: float | None = None
+    radius_km: float = 50.0
+    style: str | None = None
+    size: str | None = None
+    condition: str | None = None
+
+
+class GarmentNearbyOut(GarmentOut):
+    distance_km: float | None = None
 
 
 # ------------------------------------------------------------------ #
@@ -191,7 +210,7 @@ class MirrorGenerateOut(Schema):
 def _rebuild_datetime_schemas() -> None:
     from datetime import datetime
 
-    for schema in (GarmentOut, SaleOut, PendingSaleOut, TransactionOut):
+    for schema in (GarmentOut, GarmentNearbyOut, SaleOut, PendingSaleOut, TransactionOut):
         schema.model_rebuild(_types_namespace={"datetime": datetime})
 
 
