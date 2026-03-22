@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { RefreshCw, Filter, MessageCircle, Heart, Sparkles, X, MessageSquare } from 'lucide-react'
+import { RefreshCw, Filter, Heart, Sparkles, X, MessageSquare } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDashboardSwipe } from '../hooks/useDashboardSwipe'
 import { DashboardSwipeCard } from './DashboardSwipeCard'
@@ -12,14 +12,11 @@ import { FEATURE_FLAGS } from '@/features/flags'
 import { useNearbyGarments, type GarmentFilters, type Coordinates } from '../hooks/useNearbyGarments'
 import { useGarmentFeed } from '../hooks/useGarments'
 import { FiltersDrawer } from './FiltersDrawer'
-import { useTotalUnread } from '../hooks/useConversations'
 
 export function SwipePanel() {
   const { t } = useTranslation()
   const { resetSeen, setActiveTab, setMobileOverlay, createChat } = useDashboardStore()
   const referencePhotos = useProfileStore((s) => s.referencePhotos)
-  const totalUnread = useTotalUnread()
-
   const [showPhotoPrompt, setShowPhotoPrompt] = useState(false)
   const [pendingGarment, setPendingGarment] = useState<DashboardGarment | null>(null)
   const [matchedGarment, setMatchedGarment] = useState<DashboardGarment | null>(null)
