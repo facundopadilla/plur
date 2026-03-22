@@ -14,7 +14,7 @@ export function GarmentInfo({ garment }: GarmentInfoProps) {
 
   return (
     <div
-      className="absolute inset-x-0 bottom-0 px-4 pt-16 pb-[calc(140px+env(safe-area-inset-bottom))] lg:pb-24 z-10"
+      className="absolute inset-x-0 bottom-0 px-4 pt-16 pb-[calc(100px+env(safe-area-inset-bottom))] lg:pb-24 z-10"
       style={{ background: 'linear-gradient(transparent 0%, rgba(10,10,10,0.85) 35%, rgba(10,10,10,0.98) 100%)' }}
     >
       {/* Dual price */}

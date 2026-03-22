@@ -13,12 +13,12 @@ export function TokenEconomy() {
   const { t } = useTranslation()
 
   return (
-    <SectionWrapper id="tokens" theme="mid" counter={t('landing.tokens.counter')}>
+    <SectionWrapper id="tokens" theme="mid" counter={t('landing.tokens.counter')} className="overflow-hidden">
       <RevealOnScroll>
         <p className="text-[10px] font-medium tracking-[0.2em] uppercase text-pl-accent mb-4 font-body">
           {t('landing.tokens.eyebrow')}
         </p>
-        <h2 className="font-display text-[clamp(2.5rem,5vw,5rem)] font-extrabold tracking-[-0.05em] leading-[0.95] uppercase text-pl-white mb-6">
+        <h2 className="font-display text-[clamp(1.8rem,5vw,5rem)] font-extrabold tracking-[-0.05em] leading-[0.95] uppercase text-pl-white mb-6">
           {t('landing.tokens.titleLine1')}
           <br />
           {t('landing.tokens.titleLine2')}
@@ -50,7 +50,7 @@ export function TokenEconomy() {
               <p className="text-[13px] font-light text-pl-white/50 leading-[1.6] font-body">
                 {t(`landing.tokens.${descKey}`)}
               </p>
-              <div className="font-display text-[clamp(3rem,4vw,5rem)] font-extrabold text-pl-accent/20 mt-8 leading-none">
+              <div className="font-display text-[clamp(2rem,4vw,5rem)] font-extrabold text-pl-accent/20 mt-8 leading-none">
                 {t(`landing.tokens.${valueKey}`)}
               </div>
             </div>

@@ -12,14 +12,14 @@ export function AIFittingRoom() {
   const { t } = useTranslation()
 
   return (
-    <section id="fitting" className="grid grid-cols-1 lg:grid-cols-2 min-h-screen bg-pl-white">
+    <section id="fitting" className="grid grid-cols-1 lg:grid-cols-2 min-h-screen bg-pl-white overflow-hidden">
       {/* Left: Info */}
       <div className="relative z-10 flex flex-col justify-center px-[clamp(24px,5vw,80px)] py-[clamp(80px,10vw,160px)]">
         <RevealOnScroll>
           <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-pl-gray-400 mb-4 block font-body">
             {t('landing.fitting.eyebrow')}
           </span>
-          <h2 className="font-display text-[clamp(2.5rem,5vw,5rem)] font-extrabold tracking-[-0.05em] leading-[0.95] uppercase text-pl-black mb-6">
+          <h2 className="font-display text-[clamp(1.8rem,5vw,5rem)] font-extrabold tracking-[-0.05em] leading-[0.95] uppercase text-pl-black mb-6">
             {t('landing.fitting.titleLine1')}
             <br />
             {t('landing.fitting.titleLine2')}
