@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Package } from 'lucide-react'
+import { Package, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDashboardStore } from '@/stores/dashboard.store'
 import { getCurrency, formatFiatPrice } from '../data/currencies'
@@ -16,6 +16,7 @@ type InternalView = 'grid' | 'sellerChat' | 'publishForm' | 'publishedDetail'
 export function InventarioTab() {
   const { t } = useTranslation()
   const likedItems = useDashboardStore((s) => s.likedItems)
+  const removeLikedItem = useDashboardStore((s) => s.removeLikedItem)
   const selectedCurrency = useDashboardStore((s) => s.selectedCurrency)
   const pendingSellerChatGarment = useDashboardStore((s) => s.pendingSellerChatGarment)
   const setPendingSellerChatGarment = useDashboardStore((s) => s.setPendingSellerChatGarment)
@@ -107,32 +108,43 @@ export function InventarioTab() {
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {likedItems.map(({ garment }) => (
-                  <button
+                  <div
                     key={garment.id}
-                    onClick={() => handleGarmentClick(garment)}
-                    className="relative aspect-square rounded-lg overflow-hidden group border border-pl-gray-700 hover:border-pl-gray-500 transition-colors text-left"
+                    className="relative aspect-square rounded-lg overflow-hidden group border border-pl-gray-700 hover:border-pl-gray-500 transition-colors"
                   >
-                    <img
-                      src={garment.images[0]}
-                      alt={garment.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
-                    />
-                    <div
-                      className="absolute inset-x-0 bottom-0 p-2"
-                      style={{ background: 'linear-gradient(transparent, rgba(10,10,10,0.85))' }}
+                    <button
+                      onClick={() => handleGarmentClick(garment)}
+                      className="w-full h-full text-left"
                     >
-                      <p className="text-[10px] font-semibold text-pl-white font-body truncate uppercase tracking-[0.04em]">
-                        {garment.name}
-                      </p>
-                      <p className="text-[10px] text-pl-white font-body font-medium">
-                        {formatFiatPrice(garment.pricePLR, currency)}
-                      </p>
-                      <p className="text-[10px] text-pl-accent font-body font-medium">
-                        {garment.pricePLR} PLR
-                      </p>
-                    </div>
-                  </button>
+                      <img
+                        src={garment.images[0]}
+                        alt={garment.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                      <div
+                        className="absolute inset-x-0 bottom-0 p-2"
+                        style={{ background: 'linear-gradient(transparent, rgba(10,10,10,0.85))' }}
+                      >
+                        <p className="text-[10px] font-semibold text-pl-white font-body truncate uppercase tracking-[0.04em]">
+                          {garment.name}
+                        </p>
+                        <p className="text-[10px] text-pl-white font-body font-medium">
+                          {formatFiatPrice(garment.pricePLR, currency)}
+                        </p>
+                        <p className="text-[10px] text-pl-accent font-body font-medium">
+                          {garment.pricePLR} PLR
+                        </p>
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => removeLikedItem(garment.id)}
+                      aria-label={t('common.delete')}
+                      className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/70 backdrop-blur-sm flex items-center justify-center lg:opacity-0 lg:group-hover:opacity-100 transition-opacity z-10 hover:bg-red-500/80"
+                    >
+                      <X className="w-3.5 h-3.5 text-pl-white" />
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>

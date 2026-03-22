@@ -52,6 +52,12 @@ export function SwipePanel() {
     return true
   })
 
+  const handleSwipe = (garment: DashboardGarment, action: 'like' | 'dislike') => {
+    if (action === 'like') {
+      setMatchedGarment(garment)
+    }
+  }
+
   const {
     visibleCards,
     topCardStamp,
@@ -66,7 +72,7 @@ export function SwipePanel() {
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
-  } = useDashboardSwipe(garmentsToUse)
+  } = useDashboardSwipe(garmentsToUse, { onSwipe: handleSwipe })
 
   const executeTryOn = (garment: DashboardGarment) => {
     createChat(garment.id, garment.name, garment.images[0] ?? '')
@@ -184,11 +190,7 @@ export function SwipePanel() {
         <SwipeActions
           onDislike={() => swipe('dislike')}
           onTryOn={handleTryOn}
-          onLike={() => {
-            const topGarment = visibleCards[0]?.garment
-            if (topGarment) setMatchedGarment(topGarment)
-            swipe('like')
-          }}
+          onLike={() => swipe('like')}
           onUndo={undo}
           disabled={isEmpty || isLoading}
           canUndo={canUndo}
@@ -218,7 +220,7 @@ export function SwipePanel() {
           onClick={() => setMatchedGarment(null)}
         >
           <div
-            className="w-full max-w-xs bg-pl-gray-800 border border-pl-gray-700 rounded-2xl overflow-hidden shadow-2xl scale-in"
+            className="relative w-full max-w-xs bg-pl-gray-800 border border-pl-gray-700 rounded-2xl overflow-hidden shadow-2xl scale-in"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close button */}
@@ -243,8 +245,8 @@ export function SwipePanel() {
 
             {/* Content */}
             <div className="px-5 pb-5 -mt-8 relative">
-              <div className="flex items-center gap-2 mb-2">
-                <Heart className="w-5 h-5 text-pl-accent fill-pl-accent" />
+              <div className="inline-flex items-center gap-2 mb-3 px-3 py-1.5 bg-black/70 backdrop-blur-sm rounded-full">
+                <Heart className="w-4 h-4 text-pl-accent fill-pl-accent" />
                 <span className="text-[11px] font-semibold tracking-[0.12em] uppercase text-pl-accent font-body">
                   {t('dashboard.match.matchPopupTitle')}
                 </span>
