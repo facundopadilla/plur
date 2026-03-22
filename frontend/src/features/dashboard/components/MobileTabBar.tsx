@@ -62,7 +62,7 @@ export function MobileTabBar({ activeTab, onTabChange, onQrScan }: MobileTabBarP
   )
 
   return (
-    <div className="lg:hidden fixed bottom-0 inset-x-0 bg-pl-gray-700 border-t border-pl-gray-600 flex z-50 pb-[env(safe-area-inset-bottom)]">
+    <div className="lg:hidden fixed bottom-0 inset-x-0 bg-pl-gray-700 border-t border-pl-gray-600 flex z-50 pb-[env(safe-area-inset-bottom)] w-full max-w-[100vw] overflow-hidden">
       {leftTabs.map(renderTab)}
 
       {isV2 ? (

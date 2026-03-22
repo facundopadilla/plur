@@ -24,7 +24,7 @@ export function DashboardLayout() {
   }
 
   return (
-    <div className="dashboard-shell flex bg-pl-black overflow-hidden fixed inset-0">
+    <div className="dashboard-shell flex bg-pl-black overflow-hidden fixed inset-0 w-full max-w-[100vw]">
       {/* Left panel — desktop only (manages its own tab state via store) */}
       <LeftPanel onQrScan={() => setShowScanner(true)} />
 
@@ -35,7 +35,7 @@ export function DashboardLayout() {
 
       {/* Mobile tab overlay (shown over swipe panel) */}
       {mobileOverlay !== null && (
-        <div className="lg:hidden mobile-overlay fixed inset-0 bg-pl-black z-40 flex flex-col overflow-hidden" style={{ bottom: 'calc(56px + env(safe-area-inset-bottom, 0px))' }}>
+        <div className="lg:hidden mobile-overlay fixed inset-x-0 top-0 bg-pl-black z-40 flex flex-col overflow-hidden w-full max-w-[100vw]" style={{ bottom: 'calc(56px + env(safe-area-inset-bottom, 0px))' }}>
           <div className="flex items-center justify-between border-b border-pl-gray-700">
             <div className="flex-1 min-w-0">
               <ProfileHeader onQrScan={() => setShowScanner(true)} />
