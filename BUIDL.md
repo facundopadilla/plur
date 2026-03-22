@@ -1,246 +1,88 @@
-<div align="center">
+![Plur — Circular Fashion Redefined](https://raw.githubusercontent.com/facundopadilla/plur/main/frontend/public/plur-banner.svg)
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/facundopadilla/plur/main/frontend/public/plur-banner.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/facundopadilla/plur/main/frontend/public/plur-banner.svg">
-  <img alt="Plur — Circular Fashion Redefined" src="https://raw.githubusercontent.com/facundopadilla/plur/main/frontend/public/plur-banner.svg" width="600">
-</picture>
+# Plur — Circular Fashion Redefined
 
-<br /><br />
-
-[![Live App](https://img.shields.io/badge/🌐_Live_App-plur.wtf-C8FF00?style=for-the-badge&labelColor=0A0A0A)](https://plur.wtf)
-&nbsp;
-[![GitHub](https://img.shields.io/badge/📦_Source_Code-GitHub-white?style=for-the-badge&labelColor=0A0A0A)](https://github.com/facundopadilla/plur)
-&nbsp;
-[![Pitch Deck](https://img.shields.io/badge/📊_Pitch_Deck-Slides-C8FF00?style=for-the-badge&labelColor=0A0A0A)](https://aleph-plur-diapositives.vercel.app/)
-&nbsp;
-[![API Docs](https://img.shields.io/badge/📄_API_Docs-Swagger-46E3B7?style=for-the-badge&labelColor=0A0A0A)](https://api.plur.wtf/api/docs)
-
-</div>
+**Live App:** [plur.wtf](https://plur.wtf) | **GitHub:** [facundopadilla/plur](https://github.com/facundopadilla/plur) | **Pitch Deck:** [Slides](https://aleph-plur-diapositives.vercel.app/) | **API Docs:** [Swagger](https://api.plur.wtf/api/docs)
 
 ---
 
-## The Problem
+## What is Plur?
 
-The fashion industry is responsible for **10% of global carbon emissions** and generates **92 million tonnes of textile waste** every year. Fast fashion encourages overconsumption — people buy more than they need and discard garments that still have life in them.
+Plur is a **circular fashion marketplace** where users discover second-hand garments by swiping (like Tinder), try them on virtually using AI, and buy or trade them using **$PLR tokens** on **Avalanche C-Chain**.
 
-The second-hand market exists, but the current experience is broken:
-- **Discovery is terrible** — endless scrolling through unfiltered listings
-- **You can't try before you buy** — sizing uncertainty drives returns and abandoned carts
-- **Payments are fragmented** — no unified economy that rewards circular behavior
+The fashion industry generates 92 million tonnes of textile waste per year. The second-hand market can fix this, but today's experience is broken: discovery is tedious, you can't try anything on, and there's no incentive system to reward circular behavior. Plur solves all three.
+
+The app is **fully deployed and functional** at [plur.wtf](https://plur.wtf) — not a prototype, a working product.
 
 ---
 
-## The Solution: Plur
+## Core Features
 
-**Plur** is a circular fashion marketplace that makes buying second-hand clothing more engaging, trustworthy, and rewarding than buying new.
+**Swipe Discovery** — Users browse garments in a card stack with drag gestures, like/pass, and undo. The interface is fast, fun, and eliminates endless scrolling. When you like a garment, a match popup lets you immediately chat with the seller or try it on with AI.
 
-We combine three innovations into a single mobile-first experience:
+**AI Virtual Try-On** — Upload a reference photo of yourself and Plur uses Google Gemini to generate a realistic image of you wearing the garment. This is the biggest barrier in second-hand shopping ("will it fit me?") and we solve it in seconds.
 
-### 1. Swipe Discovery
-A Tinder-like interface for browsing garments. Like, pass, or try on — the algorithm learns your style. No more infinite scrolling through irrelevant listings.
+**AI Garment Analysis** — Sellers upload a single photo and the AI automatically detects and fills in the garment name, size, style, condition, and suggested price. Publishing a listing takes under 30 seconds.
 
-### 2. AI Virtual Try-On
-Upload a reference photo and see yourself wearing any garment before purchasing. Powered by **Google Gemini**, the AI generates realistic try-on images in seconds. This solves the #1 barrier to second-hand shopping: *"will it look good on me?"*
+**$PLR Token Economy** — Every transaction uses PLR, an ERC-20 token on Avalanche C-Chain (Fuji testnet). Users buy PLR with a credit card in 6 currencies (ARS, USD, EUR, BRL, CLP, MXN) — the backend mints tokens on-chain. When they purchase a garment or generate an AI try-on, tokens are burned. Sellers earn PLR when their garments sell. Users never need a wallet or MetaMask — the backend acts as a custodial intermediary.
 
-### 3. Tokenized Economy ($PLR)
-Every transaction runs through the **$PLR token**, an ERC-20 on **Avalanche C-Chain**. Users never need to know they're using crypto — the backend acts as a custodial intermediary:
+**Real-time Chat** — Buyer and seller communicate directly within the app. Conversations have unread indicators and role labels (Buying/Selling).
 
-- **Buy PLR** with credit card (ARS, USD, EUR, BRL, CLP, MXN) → tokens are minted on-chain
-- **Spend PLR** to purchase garments or generate AI try-ons → tokens are burned
-- **Earn PLR** by publishing your own garments for sale
-- **Every transaction** is verifiable on [Snowtrace](https://testnet.snowtrace.io/)
+**Bilingual** — Full Spanish and English support with a runtime toggle on the landing page.
 
 ---
 
 ## How It Works
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        USER FLOW                            │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  1. SIGN UP → Email verification → Onboarding (style quiz) │
-│                         ↓                                   │
-│  2. SWIPE → Browse garments → Like / Pass / Try On          │
-│                         ↓                                   │
-│  3. MATCH → Chat with seller → Negotiate                    │
-│                         ↓                                   │
-│  4. BUY PLR → Card payment → On-chain mint (Avalanche)      │
-│                         ↓                                   │
-│  5. PURCHASE → PLR transfer → Garment changes hands         │
-│                         ↓                                   │
-│  6. PUBLISH → Upload photo → AI auto-fills metadata         │
-│                         ↓                                   │
-│  7. EARN → Your garment sells → You earn PLR                │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+1. **Sign up** with email verification and complete the onboarding quiz (style, sizes, colors)
+2. **Swipe** through garments — like, pass, or try on with AI
+3. **Match** — when you like a garment, chat with the seller or try it on virtually
+4. **Buy PLR** with your credit card — tokens are minted on Avalanche
+5. **Purchase** the garment — PLR is transferred to the seller, verifiable on Snowtrace
+6. **Publish** your own clothes — upload a photo and AI fills the listing for you
+7. **Earn PLR** when someone buys your garment
 
 ---
 
-## Architecture
+## Smart Contract
 
-```
-┌─────────────────┐     ┌──────────────────┐     ┌──────────────────┐
-│   React SPA     │────▶│  Django Ninja    │────▶│  PostgreSQL      │
-│   (plur.wtf)    │ API │  (api.plur.wtf)  │     │  + Redis         │
-│                 │◀────│                  │     │                  │
-│  Vite 6         │ JWT │  JWT Auth        │     └──────────────────┘
-│  Tailwind v4    │     │  Async Views     │
-│  Zustand        │     │  OpenAPI Auto    │     ┌──────────────────┐
-│  TanStack Query │     │                  │────▶│  Google Gemini   │
-│  react-i18next  │     │                  │     │  (AI Try-On +    │
-└─────────────────┘     │                  │     │   Garment        │
-                        │                  │     │   Analysis)      │
-                        │                  │     └──────────────────┘
-                        │                  │
-                        │                  │     ┌──────────────────┐
-                        │                  │────▶│  Avalanche       │
-                        │                  │     │  C-Chain (Fuji)  │
-                        └──────────────────┘     │  $PLR ERC-20     │
-                                                 └──────────────────┘
-```
+`PLRToken.sol` is an ERC-20 built with OpenZeppelin (AccessControl + Pausable + Permit):
 
-### Frontend
-| Technology | Purpose |
-|---|---|
-| React 18 + TypeScript (strict) | UI framework with full type safety |
-| Vite 6 | Bundler with code splitting (vendor, query, ui chunks) |
-| Tailwind CSS v4 + shadcn/ui | Design system with custom tokens |
-| Zustand + persist | Client state (auth, UI preferences) |
-| TanStack Query v5 | Server state with automatic cache invalidation |
-| react-i18next | Full i18n support (Spanish / English) |
-
-### Backend
-| Technology | Purpose |
-|---|---|
-| Django 5.2 (async) | Web framework with async views |
-| Django Ninja | REST API with auto-generated OpenAPI schema |
-| PostgreSQL + Redis | Primary database + caching layer |
-| JWT (httpOnly cookies) | Secure auth — access token in memory, refresh in cookie |
-| Resend + django-anymail | Transactional emails with domain verification |
-
-### AI & Blockchain
-| Technology | Purpose |
-|---|---|
-| Google Gemini | Virtual try-on generation + garment metadata analysis |
-| Cloudinary | CDN for AI-generated images |
-| Avalanche C-Chain (Fuji) | ERC-20 token with mint/burn/pause capabilities |
-| Solidity + Hardhat + OpenZeppelin | Smart contract with AccessControl, Pausable, Permit |
-
----
-
-## Smart Contract: $PLR Token
-
-The `PLRToken.sol` contract implements a custodial ERC-20 with role-based access control:
-
-```solidity
-contract PLRToken is ERC20, ERC20Pausable, AccessControl, ERC20Permit {
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-    bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
-    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-}
-```
-
-**Key design decisions:**
-- **Custodial model** — The Django backend holds `MINTER_ROLE` and `BURNER_ROLE`. Users don't need wallets or MetaMask.
-- **Reference ID deduplication** — Every mint/burn has a unique `referenceId` (mapped to `_usedReferenceIds`) to prevent double-spend.
+- **Custodial model** — The backend holds MINTER and BURNER roles. Users don't interact with the blockchain directly.
+- **Deduplication** — Every mint/burn requires a unique `referenceId` to prevent double-spend.
 - **Pausable** — Admin can freeze all transfers in case of emergency.
-- **Permit** — Supports gasless approvals via EIP-2612 signatures.
-- **Events** — `CreditsIssued` and `CreditsBurned` for full audit trail.
+- **Full audit trail** — `CreditsIssued` and `CreditsBurned` events for every operation.
 
 ---
 
-## Key Features Implemented
+## Tech Stack
 
-| Feature | Status | Description |
-|---|---|---|
-| Swipe Discovery | ✅ Live | Tinder-like card stack with drag gestures and undo |
-| AI Virtual Try-On | ✅ Live | Upload photo → Gemini generates you wearing the garment |
-| AI Garment Analysis | ✅ Live | Upload garment photo → AI auto-fills name, size, style, condition |
-| Match Popup | ✅ Live | Like a garment → popup with "Chat with seller" or "Try on with AI" |
-| Real-time Chat | ✅ Live | Buyer-seller messaging with unread indicators |
-| PLR Purchase | ✅ Live | Multi-currency calculator → card payment → on-chain mint |
-| Garment Publishing | ✅ Live | Photo upload + AI metadata + currency pricing |
-| JWT Auth | ✅ Live | Secure login/signup with email verification |
-| Onboarding | ✅ Live | Style quiz → size → color preferences (per-user persistence) |
-| i18n | ✅ Live | Full Spanish / English support with runtime toggle |
-| Mobile-first | ✅ Live | Responsive design, safe-area support, iOS viewport fixes |
-| Auto-reload on deploy | ✅ Live | Stale chunk detection → automatic page refresh |
+**Frontend:** React 18, TypeScript (strict), Vite 6, Tailwind CSS v4 + shadcn/ui, Zustand, TanStack Query v5, react-i18next
 
----
+**Backend:** Django 5.2 (async), Django Ninja (auto-generated OpenAPI), PostgreSQL, Redis, JWT auth (httpOnly cookies), Resend for transactional emails
 
-## What Makes Plur Different
+**AI:** Google Gemini for virtual try-on and garment analysis, Cloudinary for image CDN
 
-| | Traditional Marketplaces | Plur |
-|---|---|---|
-| **Discovery** | Search + filter → scroll | Swipe → instant decisions |
-| **Try before buy** | Not possible | AI virtual try-on with your photo |
-| **Payments** | Fiat only, platform-locked | Tokenized ($PLR) with on-chain transparency |
-| **Seller onboarding** | Manual listing (10+ fields) | Upload photo → AI fills everything |
-| **Incentives** | Platform takes a cut | Sellers earn PLR, buyers spend PLR |
-| **Trust** | Platform reputation score | On-chain transaction history |
+**Blockchain:** Avalanche C-Chain (Fuji testnet), Solidity + Hardhat + OpenZeppelin, ERC-20 with mint/burn/pause
+
+**Infra:** Render (backend Web Service + frontend Static Site), Cloudflare DNS
 
 ---
 
 ## Deployment
 
-| Service | URL | Platform |
-|---|---|---|
-| Frontend (SPA) | [plur.wtf](https://plur.wtf) | Render (Static Site) |
-| Backend API | [api.plur.wtf](https://api.plur.wtf/api/health) | Render (Web Service) |
-| API Documentation | [api.plur.wtf/api/docs](https://api.plur.wtf/api/docs) | Auto-generated (Django Ninja) |
-| Smart Contract | Avalanche C-Chain (Fuji Testnet) | Hardhat deployment |
-| DNS | Cloudflare | Custom domain + SSL |
-
----
-
-## Run Locally
-
-```bash
-# Clone
-git clone https://github.com/facundopadilla/plur.git
-cd plur
-
-# Backend (Terminal 1 + 2)
-cd backend
-docker compose -f docker/local.yml up -d    # PostgreSQL + Redis
-uv sync && uv run python manage.py migrate
-uv run python manage.py runserver            # :8000
-
-# Frontend (Terminal 3)
-cd frontend
-pnpm install && pnpm dev                     # :5173
-```
-
-The Vite dev server proxies `/api/*` to Django — no CORS needed locally.
+- **App:** [plur.wtf](https://plur.wtf)
+- **API:** [api.plur.wtf](https://api.plur.wtf/api/health)
+- **API Docs:** [api.plur.wtf/api/docs](https://api.plur.wtf/api/docs)
+- **Contract:** Avalanche C-Chain — Fuji Testnet
 
 ---
 
 ## Team
 
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://facundopadilla.com"><b>Facundo Padilla</b></a>
-      <br />
-      <sub>Full Stack Developer</sub>
-      <br />
-      <a href="https://facundopadilla.com">facundopadilla.com</a>
-    </td>
-    <td align="center">
-      <a href="https://www.linkedin.com/in/mariano-velarde/"><b>Mariano Velarde</b></a>
-      <br />
-      <sub>Product Manager</sub>
-      <br />
-      <a href="https://www.linkedin.com/in/mariano-velarde/">LinkedIn</a>
-    </td>
-  </tr>
-</table>
+- **Facundo Padilla** — Full Stack Developer — [facundopadilla.com](https://facundopadilla.com)
+- **Mariano Velarde** — Product Manager — [LinkedIn](https://www.linkedin.com/in/mariano-velarde/)
 
 ---
-
-## License
 
 MIT — Built for [Aleph Hackathon 2026](https://www.aleph.crecimiento.build)
