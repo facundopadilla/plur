@@ -1,7 +1,6 @@
 import { X, MapPin } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { DASHBOARD_GARMENTS } from '../data/garments'
 import { useDashboardStore } from '@/stores/dashboard.store'
 import { getCurrency, formatFiatPrice } from '../data/currencies'
 import type { DashboardGarment } from '../types'
@@ -14,16 +13,17 @@ interface SellerProfileModalProps {
 export function SellerProfileModal({ garment, onClose }: SellerProfileModalProps) {
   const { t } = useTranslation()
   const selectedCurrency = useDashboardStore((s) => s.selectedCurrency)
+  const likedItems = useDashboardStore((s) => s.likedItems)
   const currency = getCurrency(selectedCurrency)
 
-  const sellerGarments = DASHBOARD_GARMENTS.filter(
-    (g) => g.seller.name === garment.seller.name,
-  )
+  const sellerGarments = likedItems
+    .map((i) => i.garment)
+    .filter((g) => g.seller.name === garment.seller.name)
 
   return (
     /* Overlay */
     <div
-      className="absolute inset-0 z-50 flex items-center justify-center bg-pl-black/70 backdrop-blur-sm p-4"
+      className="absolute inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
       onClick={onClose}
     >
       {/* Card */}

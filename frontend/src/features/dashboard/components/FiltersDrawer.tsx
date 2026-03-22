@@ -73,7 +73,7 @@ export function FiltersDrawer({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[60] flex justify-end bg-black/80 backdrop-blur-sm"
+      className="fixed inset-0 z-[60] flex justify-end bg-black/90 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
@@ -169,6 +169,19 @@ export function FiltersDrawer({
               { value: 'new', label: t('dashboard.filters.conditions.new') },
               { value: 'excellent', label: t('dashboard.filters.conditions.excellent') },
               { value: 'good', label: t('dashboard.filters.conditions.good') },
+              { value: 'fair', label: t('dashboard.filters.conditions.fair') },
+            ]}
+          />
+
+          <FilterChipGroup
+            label={t('dashboard.filters.gender')}
+            value={filters.gender ?? 'any'}
+            onChange={(v) => updateFilter('gender', v)}
+            options={[
+              { value: 'any', label: t('dashboard.filters.any') },
+              { value: 'mujer', label: t('dashboard.filters.genders.mujer') },
+              { value: 'hombre', label: t('dashboard.filters.genders.hombre') },
+              { value: 'unisex', label: t('dashboard.filters.genders.unisex') },
             ]}
           />
         </div>

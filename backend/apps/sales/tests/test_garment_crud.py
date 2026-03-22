@@ -240,9 +240,7 @@ async def test_nearby_style_filter_returns_only_matching_style(async_client: Asy
         status="active",
     )
 
-    response = await async_client.get(
-        "/api/sales/garments/nearby?lat=-34.6037&lng=-58.3816&radius_km=10&style=street"
-    )
+    response = await async_client.get("/api/sales/garments/nearby?lat=-34.6037&lng=-58.3816&radius_km=10&style=street")
 
     assert response.status_code == 200
     data = response.json()

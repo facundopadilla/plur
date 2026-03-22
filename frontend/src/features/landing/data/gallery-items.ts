@@ -31,7 +31,7 @@ export const GALLERY_ITEMS: GalleryItemData[] = [
     name: 'Blazer Vintage',
     price: '95 PLR',
     priceArs: '$38.000 ARS',
-    img: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&q=80',
+    img: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80',
     alt: 'Blazer Vintage',
     variant: 'default',
   },

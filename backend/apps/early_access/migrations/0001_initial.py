@@ -5,40 +5,45 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='EarlyAccessSignup',
+            name="EarlyAccessSignup",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('name', models.CharField(blank=True, default='', max_length=150)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                ("name", models.CharField(blank=True, default="", max_length=150)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'verbose_name': 'early access signup',
-                'verbose_name_plural': 'early access signups',
-                'ordering': ['-created_at'],
+                "verbose_name": "early access signup",
+                "verbose_name_plural": "early access signups",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='WishlistItem',
+            name="WishlistItem",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('photo', models.ImageField(upload_to='early_access/wishlist/')),
-                ('description', models.CharField(blank=True, default='', max_length=500)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('signup', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='wishlist_items', to='early_access.earlyaccesssignup')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("photo", models.ImageField(upload_to="early_access/wishlist/")),
+                ("description", models.CharField(blank=True, default="", max_length=500)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "signup",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="wishlist_items",
+                        to="early_access.earlyaccesssignup",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'wishlist item',
-                'verbose_name_plural': 'wishlist items',
-                'ordering': ['-created_at'],
+                "verbose_name": "wishlist item",
+                "verbose_name_plural": "wishlist items",
+                "ordering": ["-created_at"],
             },
         ),
     ]

@@ -22,8 +22,8 @@ dist-ssr
 # OS
 .DS_Store
 
-# Type generation (auto-generated)
-src/api/generated/
+# Type generation — committed so deploy works without backend running
+# Regenerate with: pnpm generate:types
 
 # Testing
 coverage/

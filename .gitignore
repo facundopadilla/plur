@@ -30,7 +30,7 @@ node_modules/
 dist/
 dist-ssr/
 frontend/.env.local
-frontend/src/api/generated/
+# frontend/src/api/generated/ — committed for deploy
 pnpm-debug.log*
 npm-debug.log*
 

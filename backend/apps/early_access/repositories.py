@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from django.db import IntegrityError
 from ninja.files import UploadedFile
 
 from apps.early_access.models import EarlyAccessSignup, WishlistItem

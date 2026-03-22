@@ -59,7 +59,7 @@ export function SwipeCardStack() {
         </div>
 
         {/* Action buttons */}
-        <div className="absolute bottom-4 left-0 right-0 z-20 flex justify-center gap-4">
+        <div className="absolute bottom-16 left-0 right-0 z-20 flex justify-center gap-4">
           <button
             onClick={() => swipe('nope')}
             title={t('landing.swipe.btnPass')}

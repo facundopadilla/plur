@@ -1,56 +1,88 @@
-import { X, Heart, Sparkles } from 'lucide-react'
+import { X, Heart, Sparkles, Undo2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { cn } from '@/lib/utils'
 
 interface SwipeActionsProps {
   onDislike: () => void
   onTryOn: () => void
   onLike: () => void
+  onUndo: () => void
   disabled: boolean
+  canUndo: boolean
 }
 
-export function SwipeActions({ onDislike, onTryOn, onLike, disabled }: SwipeActionsProps) {
+function ActionButton({
+  onClick,
+  disabled,
+  ariaLabel,
+  className,
+  children,
+}: {
+  onClick: () => void
+  disabled: boolean
+  ariaLabel: string
+  className: string
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      className={cn(
+        'flex items-center justify-center rounded-full shadow-lg backdrop-blur-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95',
+        className,
+      )}
+    >
+      {children}
+    </button>
+  )
+}
+
+export function SwipeActions({ onDislike, onTryOn, onLike, onUndo, disabled, canUndo }: SwipeActionsProps) {
   const { t } = useTranslation()
 
   return (
-    <div className="flex items-center justify-center gap-6 pt-6 pb-20 lg:pb-6">
+    <div className="flex items-center justify-center gap-4">
+      {/* Undo */}
+      <ActionButton
+        onClick={onUndo}
+        disabled={disabled || !canUndo}
+        ariaLabel={t('dashboard.swipe.btnUndo', 'Undo')}
+        className="w-11 h-11 border-2 border-amber-400 text-amber-400 bg-black/40 hover:bg-amber-400/15"
+      >
+        <Undo2 className="w-5 h-5" />
+      </ActionButton>
+
       {/* Dislike */}
-      <button
+      <ActionButton
         onClick={onDislike}
         disabled={disabled}
-        aria-label={t('dashboard.swipe.btnDislike')}
-        className="w-16 h-16 rounded-full border-2 border-pl-red text-pl-red flex items-center justify-center hover:bg-pl-red/10 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
-        style={{ transition: 'transform 0.2s var(--pl-ease-spring), background-color 0.2s ease, opacity 0.2s ease' }}
-        onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.transform = 'scale(1.12)' }}
-        onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
+        ariaLabel={t('dashboard.swipe.btnDislike')}
+        className="w-14 h-14 border-2 border-pl-red text-pl-red bg-black/40 hover:bg-pl-red/15"
       >
         <X className="w-7 h-7" strokeWidth={2.5} />
-      </button>
+      </ActionButton>
 
       {/* Try on with AI */}
-      <button
+      <ActionButton
         onClick={onTryOn}
         disabled={disabled}
-        aria-label={t('dashboard.swipe.btnTryOn')}
-        className="w-12 h-12 rounded-full border-2 border-sky-400 text-sky-400 flex items-center justify-center hover:bg-sky-400/10 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
-        style={{ transition: 'transform 0.2s var(--pl-ease-spring), background-color 0.2s ease, opacity 0.2s ease' }}
-        onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.transform = 'scale(1.12)' }}
-        onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
+        ariaLabel={t('dashboard.swipe.btnTryOn')}
+        className="w-11 h-11 border-2 border-sky-400 text-sky-400 bg-black/40 hover:bg-sky-400/15"
       >
         <Sparkles className="w-5 h-5" />
-      </button>
+      </ActionButton>
 
       {/* Like */}
-      <button
+      <ActionButton
         onClick={onLike}
         disabled={disabled}
-        aria-label={t('dashboard.swipe.btnLike')}
-        className="w-16 h-16 rounded-full border-2 border-pl-green text-pl-green flex items-center justify-center hover:bg-pl-green/10 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
-        style={{ transition: 'transform 0.2s var(--pl-ease-spring), background-color 0.2s ease, opacity 0.2s ease' }}
-        onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.transform = 'scale(1.12)' }}
-        onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
+        ariaLabel={t('dashboard.swipe.btnLike')}
+        className="w-14 h-14 border-2 border-pl-green text-pl-green bg-black/40 hover:bg-pl-green/15"
       >
         <Heart className="w-7 h-7 fill-pl-green" strokeWidth={0} />
-      </button>
+      </ActionButton>
     </div>
   )
 }

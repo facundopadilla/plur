@@ -95,10 +95,6 @@ vi.mock('./FiltersDrawer', () => ({
   FiltersDrawer: () => null,
 }))
 
-vi.mock('../data/garments', () => ({
-  DASHBOARD_GARMENTS: [],
-}))
-
 vi.mock('lucide-react', () => ({
   RefreshCw: () => null,
   Filter: () => null,
@@ -139,9 +135,14 @@ describe('SwipePanel', () => {
       isExiting: false,
       exitDirection: null,
       isEmpty: true,
+      canUndo: false,
+      dragOffset: 0,
+      isDragging: false,
       swipe: vi.fn(),
-      handleTouchStart: vi.fn(),
-      handleTouchEnd: vi.fn(),
+      undo: vi.fn(),
+      handlePointerDown: vi.fn(),
+      handlePointerMove: vi.fn(),
+      handlePointerUp: vi.fn(),
     })
 
     render(<SwipePanel />, { wrapper: createWrapper() })
