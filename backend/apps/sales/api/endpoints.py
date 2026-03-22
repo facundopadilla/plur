@@ -8,8 +8,6 @@ from django.http import HttpRequest
 from apps.sales.api.router import router
 from apps.sales.api.schemas import (
     BalanceOut,
-    BuyCreditsIn,
-    BuyCreditsOut,
     ErrorOut,
     GarmentIn,
     GarmentNearbyOut,
@@ -37,7 +35,6 @@ from core.auth import jwt_auth
 # ------------------------------------------------------------------ #
 # Garment endpoints                                                    #
 # ------------------------------------------------------------------ #
-
 
 @router.post(
     "/garments",
@@ -69,7 +66,6 @@ async def publish_garment(
         return 201, _garment_to_out(garment, user.full_name)
     except ValueError as exc:
         return 400, ErrorOut(detail=str(exc))
-
 
 @router.get(
     "/garments/nearby",
@@ -108,7 +104,6 @@ async def list_nearby_garments(
 
     return 200, [_garment_to_nearby_out(garment, garment.seller.full_name, distance) for garment, distance in nearby]
 
-
 @router.get(
     "/garments/mine",
     response=list[GarmentOut],
@@ -124,7 +119,6 @@ async def list_my_garments(
 
     garments = await GarmentRepository.list_by_seller(user)
     return [_garment_to_out(g, user.full_name) for g in garments]
-
 
 @router.patch(
     "/garments/{garment_id}",
@@ -159,7 +153,6 @@ async def update_garment(
         message = str(exc)
         return _garment_mutation_error_status(message), ErrorOut(detail=message)
 
-
 @router.delete(
     "/garments/{garment_id}",
     response={204: None, 403: ErrorOut, 404: ErrorOut},
@@ -178,11 +171,9 @@ async def delete_garment(
         message = str(exc)
         return _garment_mutation_error_status(message), ErrorOut(detail=message)
 
-
 # ------------------------------------------------------------------ #
 # Sale endpoints                                                       #
 # ------------------------------------------------------------------ #
-
 
 @router.post(
     "/sales",
@@ -210,7 +201,6 @@ async def initiate_sale(
         return 201, _sale_to_out(full_sale)
     except ValueError as exc:
         return 400, ErrorOut(detail=str(exc))
-
 
 @router.get(
     "/sales/pending",
@@ -243,7 +233,6 @@ async def list_pending_sales(
         )
     return result
 
-
 @router.get(
     "/sales/{sale_id}",
     response={200: SaleOut, 404: ErrorOut},
@@ -262,7 +251,6 @@ async def get_sale(
     if sale is None or (sale.buyer_id != user.pk and sale.seller_id != user.pk):
         return 404, ErrorOut(detail="Sale not found")
     return 200, _sale_to_out(sale)
-
 
 @router.post(
     "/sales/{sale_id}/confirm",
@@ -292,7 +280,6 @@ async def confirm_sale(
         logger.exception("Unexpected error confirming sale")
         return 400, ErrorOut(detail=str(exc))
 
-
 @router.post(
     "/sales/{sale_id}/reject",
     response={200: SaleOut, 400: ErrorOut},
@@ -316,11 +303,9 @@ async def reject_sale(
     except ValueError as exc:
         return 400, ErrorOut(detail=str(exc))
 
-
 # ------------------------------------------------------------------ #
 # Wallet endpoints                                                     #
 # ------------------------------------------------------------------ #
-
 
 @router.get(
     "/wallet/balance",
@@ -335,7 +320,6 @@ async def get_balance(
     user: User = request.auth  # type: ignore[assignment]
     balance = await WalletService.get_balance(user)
     return BalanceOut(credits=balance)
-
 
 @router.get(
     "/wallet/transactions",
@@ -360,7 +344,6 @@ async def get_transactions(
         )
         for tx in txs
     ]
-
 
 @router.get(
     "/wallet/on-chain-balance",
@@ -388,78 +371,9 @@ async def get_on_chain_balance(
         logger.exception("Failed to read on-chain balance")
         return 500, ErrorOut(detail=f"Failed to read on-chain balance: {exc}")
 
-
-@router.post(
-    "/wallet/buy",
-    response={200: BuyCreditsOut, 400: ErrorOut},
-    auth=jwt_auth,
-    summary="Purchase PLR credits (mock payment)",
-)
-async def buy_credits(
-    request: HttpRequest,
-    payload: BuyCreditsIn,
-) -> tuple[int, BuyCreditsOut | ErrorOut]:
-    """Simulate a credit purchase. Mints tokens on-chain and credits the user."""
-    user: User = request.auth  # type: ignore[assignment]
-    amount = payload.amount_plr
-    if amount <= 0 or amount > 10000:
-        return 400, ErrorOut(detail="Amount must be between 1 and 10,000 PLR")
-
-    cost_usd = round(amount * 0.15, 2)
-
-    from asgiref.sync import sync_to_async
-    from django.db import transaction
-
-    from apps.sales.models import CreditTransaction
-
-    def _credit_user() -> int:
-        with transaction.atomic():
-            from apps.users.models import User as UserModel
-
-            locked = UserModel.objects.select_for_update().get(pk=user.pk)
-            locked.credits += amount
-            locked.save(update_fields=["credits"])
-            CreditTransaction.objects.create(
-                user=locked,
-                tx_type="purchased",
-                amount=amount,
-                description=f"Compra: {amount} PLR (US$ {cost_usd})",
-            )
-            return locked.credits
-
-    new_balance = await sync_to_async(_credit_user)()
-
-    tx_hash = ""
-    try:
-        from core.blockchain import mint_plr
-
-        if user.wallet_address:
-            tx_hash = await sync_to_async(mint_plr)(
-                amount_plr=amount,
-                reason=f"Compra {amount} PLR",
-                reference_id_str=f"buy-{user.pk}-{new_balance}",
-                to_address=user.wallet_address,
-            )
-            await CreditTransaction.objects.filter(
-                user=user, description=f"Compra: {amount} PLR (US$ {cost_usd})"
-            ).aupdate(tx_hash=tx_hash)
-    except Exception:
-        from loguru import logger
-
-        logger.exception("Blockchain mint failed for credit purchase")
-
-    return 200, BuyCreditsOut(
-        credits=new_balance,
-        amount_plr=amount,
-        cost_usd=cost_usd,
-        tx_hash=tx_hash,
-    )
-
-
 # ------------------------------------------------------------------ #
 # Mirror AI endpoints                                                  #
 # ------------------------------------------------------------------ #
-
 
 @router.post(
     "/mirror/reference",
@@ -478,7 +392,6 @@ async def upload_mirror_reference(
         return 200, MirrorReferenceOut(image_url=image_url, message=message)
     except ValueError as exc:
         return 400, ErrorOut(detail=str(exc))
-
 
 @router.post(
     "/mirror/chat",
@@ -501,7 +414,6 @@ async def mirror_chat(
         return 200, MirrorChatOut(reply=reply)
     except ValueError as exc:
         return 400, ErrorOut(detail=str(exc))
-
 
 @router.post(
     "/mirror/generate",
@@ -534,11 +446,9 @@ async def mirror_generate(
             return 402, ErrorOut(detail=message)
         return 400, ErrorOut(detail=message)
 
-
 # ------------------------------------------------------------------ #
 # Helpers                                                              #
 # ------------------------------------------------------------------ #
-
 
 def _garment_to_out(garment: GarmentModel, seller_name: str) -> GarmentOut:
     """Convert a Garment model instance to GarmentOut schema.
@@ -570,7 +480,6 @@ def _garment_to_out(garment: GarmentModel, seller_name: str) -> GarmentOut:
         created_at=g.created_at,
     )
 
-
 def _garment_to_nearby_out(
     garment: GarmentModel,
     seller_name: str,
@@ -581,7 +490,6 @@ def _garment_to_nearby_out(
         **base.model_dump(),
         distance_km=round(distance_km, 3) if distance_km is not None else None,
     )
-
 
 def _sale_to_out(sale: SaleModel) -> SaleOut:
     """Convert a Sale model instance to SaleOut schema.
@@ -610,7 +518,6 @@ def _sale_to_out(sale: SaleModel) -> SaleOut:
         resolved_at=s.resolved_at,
         tx_hash=s.tx_hash,
     )
-
 
 def _garment_mutation_error_status(message: str) -> int:
     if message == "Garment not found":
