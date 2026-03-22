@@ -4,6 +4,8 @@
 
 **Live App:** [plur.wtf](https://plur.wtf) | **GitHub:** [facundopadilla/plur](https://github.com/facundopadilla/plur) | **Pitch Deck:** [Slides](https://aleph-plur-diapositives.vercel.app/) | **API Docs:** [Swagger](https://api.plur.wtf/api/docs)
 
+[![Demo Video](https://img.youtube.com/vi/fvf2MP7P4u0/maxresdefault.jpg)](https://www.youtube.com/watch?v=fvf2MP7P4u0)
+
 ---
 
 ## What is Plur?
@@ -20,7 +22,7 @@ The app is **fully deployed and functional** at [plur.wtf](https://plur.wtf) —
 
 **Swipe Discovery** — Users browse garments in a card stack with drag gestures, like/pass, and undo. The interface is fast, fun, and eliminates endless scrolling. When you like a garment, a match popup lets you immediately chat with the seller or try it on with AI.
 
-**AI Virtual Try-On** — Upload a reference photo of yourself and Plur uses Google Gemini to generate a realistic image of you wearing the garment. This is the biggest barrier in second-hand shopping ("will it fit me?") and we solve it in seconds.
+**AI Virtual Try-On** — Upload a reference photo of yoaurself and Plur uses Google Gemini to generate a realistic image of you wearing the garment. This is the biggest barrier in second-hand shopping ("will it fit me?") and we solve it in seconds.
 
 **AI Garment Analysis** — Sellers upload a single photo and the AI automatically detects and fills in the garment name, size, style, condition, and suggested price. Publishing a listing takes under 30 seconds.
 
