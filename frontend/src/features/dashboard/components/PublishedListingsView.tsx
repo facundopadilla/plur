@@ -80,6 +80,18 @@ export function PublishedListingsView({ onAdd, onGarmentClick }: PublishedListin
         </button>
       </div>
       <div className="grid grid-cols-2 gap-2">
+        {/* Add new garment card */}
+        <button
+          onClick={onAdd}
+          className="relative aspect-square rounded-lg overflow-hidden border-2 border-dashed border-pl-gray-600 hover:border-pl-accent/60 transition-colors flex flex-col items-center justify-center gap-2 group"
+        >
+          <div className="w-10 h-10 rounded-full bg-pl-gray-700 flex items-center justify-center group-hover:bg-pl-accent/15 transition-colors">
+            <Plus className="w-5 h-5 text-pl-gray-400 group-hover:text-pl-accent transition-colors" />
+          </div>
+          <p className="text-[10px] font-semibold text-pl-gray-400 group-hover:text-pl-accent font-body uppercase tracking-[0.1em] transition-colors">
+            {t('dashboard.publish.newListing')}
+          </p>
+        </button>
         {garments.map((garment) => (
           <button
             key={garment.id}

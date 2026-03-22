@@ -1,6 +1,8 @@
 import { X, MapPin } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
+import { cn } from '@/lib/utils'
 import type { GarmentFilters, Coordinates } from '../hooks/useNearbyGarments'
 
 interface FiltersDrawerProps {
@@ -48,144 +50,181 @@ export function FiltersDrawer({
           lng: position.coords.longitude,
         })
       },
-      (_error) => {
+      () => {
         setGpsLoading(false)
         setGpsError(t('dashboard.filters.gps_denied_hint'))
         onProximityToggle(false, null)
-      }
+      },
     )
   }
 
   const updateFilter = (key: keyof GarmentFilters, value: string) => {
     onFiltersChange({
       ...filters,
-      [key]: value === 'any' ? undefined : value
+      [key]: value === 'any' ? undefined : value,
     })
   }
 
-  return (
-    <div className="absolute inset-0 z-[60] flex justify-end bg-black/60 backdrop-blur-sm transition-opacity">
-      <div className="w-full max-w-sm h-full bg-pl-black border-l border-pl-gray-800 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300">
-        <div className="p-6 border-b border-pl-gray-800 flex justify-between items-center bg-pl-gray-900/50">
-          <h2 className="font-display text-xl font-extrabold uppercase tracking-tight text-pl-white">
-            {t('dashboard.filters.title', 'Filters')}
+  const handleClear = () => {
+    onFiltersChange({})
+    setGpsError(null)
+    onProximityToggle(false, null)
+  }
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[60] flex justify-end bg-black/80 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-xs h-full bg-pl-gray-800 border-l border-pl-gray-700 flex flex-col shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-4 py-4 border-b border-pl-gray-700 flex justify-between items-center">
+          <h2 className="font-display text-[14px] font-bold uppercase tracking-[0.08em] text-pl-white">
+            {t('dashboard.filters.title')}
           </h2>
-          <button onClick={onClose} className="text-pl-gray-400 hover:text-pl-white transition-colors">
-            <X className="w-6 h-6" />
+          <button
+            onClick={onClose}
+            className="w-7 h-7 rounded-full bg-pl-gray-700 flex items-center justify-center hover:bg-pl-gray-600 transition-colors"
+          >
+            <X className="w-4 h-4 text-pl-gray-400" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-8">
-          <div className="space-y-4 bg-pl-gray-900/30 p-5 border border-pl-gray-800">
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5">
+          {/* Proximity toggle */}
+          <div className="bg-pl-gray-700/40 border border-pl-gray-700 rounded-lg p-3.5 space-y-2.5">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 text-pl-white font-semibold">
-                <MapPin className="w-5 h-5 text-pl-accent" />
-                <span>{t('dashboard.filters.proximity', 'Enable proximity')}</span>
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-pl-accent" />
+                <span className="text-[12px] font-semibold text-pl-white font-body">
+                  {t('dashboard.filters.proximity')}
+                </span>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={proximityEnabled}
-                  onChange={(e) => handleProximityChange(e.target.checked)}
-                  disabled={gpsLoading}
+              <button
+                onClick={() => handleProximityChange(!proximityEnabled)}
+                disabled={gpsLoading}
+                className={cn(
+                  'w-10 h-5.5 rounded-full relative transition-colors duration-200',
+                  proximityEnabled ? 'bg-pl-accent' : 'bg-pl-gray-600',
+                )}
+              >
+                <span
+                  className={cn(
+                    'absolute top-0.5 w-4.5 h-4.5 rounded-full bg-white shadow transition-transform duration-200',
+                    proximityEnabled ? 'translate-x-5' : 'translate-x-0.5',
+                  )}
                 />
-                <div className="w-11 h-6 bg-pl-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pl-accent"></div>
-              </label>
+              </button>
             </div>
             {gpsLoading && (
-              <p className="text-sm text-pl-accent animate-pulse">{t('common.loading', 'Loading...')}</p>
+              <p className="text-[10px] text-pl-accent font-body animate-pulse">{t('common.loading')}</p>
             )}
             {gpsError && (
-              <p className="text-sm text-red-400 font-body">{gpsError}</p>
+              <p className="text-[10px] text-pl-red font-body">{gpsError}</p>
             )}
-            <p className="text-xs text-pl-gray-400 leading-relaxed">
-              {t('dashboard.filters.proximity_hint', 'Find items near you')}
+            <p className="text-[10px] text-pl-gray-500 font-body leading-relaxed">
+              {t('dashboard.filters.proximity_hint')}
             </p>
           </div>
 
-          <div className="space-y-6">
-            <FilterSelect 
-              label={t('dashboard.filters.style', 'Style')} 
-              value={filters.style || 'any'} 
-              onChange={(v) => updateFilter('style', v)}
-              options={[
-                { value: 'any', label: t('dashboard.filters.any', 'Any') },
-                { value: 'casual', label: t('dashboard.filters.styles.casual', 'Casual') },
-                { value: 'streetwear', label: t('dashboard.filters.styles.streetwear', 'Streetwear') },
-                { value: 'vintage', label: t('dashboard.filters.styles.vintage', 'Vintage') },
-                { value: 'formal', label: t('dashboard.filters.styles.formal', 'Formal') },
-                { value: 'minimalist', label: t('dashboard.filters.styles.minimalist', 'Minimalist') },
-              ]}
-            />
-            
-            <FilterSelect 
-              label={t('dashboard.filters.size', 'Size')} 
-              value={filters.size || 'any'} 
-              onChange={(v) => updateFilter('size', v)}
-              options={[
-                { value: 'any', label: t('dashboard.filters.any', 'Any') },
-                { value: 'xs', label: t('dashboard.filters.sizes.xs', 'XS') },
-                { value: 's', label: t('dashboard.filters.sizes.s', 'S') },
-                { value: 'm', label: t('dashboard.filters.sizes.m', 'M') },
-                { value: 'l', label: t('dashboard.filters.sizes.l', 'L') },
-                { value: 'xl', label: t('dashboard.filters.sizes.xl', 'XL') },
-              ]}
-            />
+          {/* Filter selects */}
+          <FilterChipGroup
+            label={t('dashboard.filters.style')}
+            value={filters.style ?? 'any'}
+            onChange={(v) => updateFilter('style', v)}
+            options={[
+              { value: 'any', label: t('dashboard.filters.any') },
+              { value: 'casual', label: t('dashboard.filters.styles.casual') },
+              { value: 'streetwear', label: t('dashboard.filters.styles.streetwear') },
+              { value: 'vintage', label: t('dashboard.filters.styles.vintage') },
+              { value: 'formal', label: t('dashboard.filters.styles.formal') },
+              { value: 'minimalist', label: t('dashboard.filters.styles.minimalist') },
+            ]}
+          />
 
-            <FilterSelect 
-              label={t('dashboard.filters.condition', 'Condition')} 
-              value={filters.condition || 'any'} 
-              onChange={(v) => updateFilter('condition', v)}
-              options={[
-                { value: 'any', label: t('dashboard.filters.any', 'Any') },
-                { value: 'new', label: t('dashboard.filters.conditions.new', 'New') },
-                { value: 'excellent', label: t('dashboard.filters.conditions.excellent', 'Excellent') },
-                { value: 'good', label: t('dashboard.filters.conditions.good', 'Good') },
-              ]}
-            />
-          </div>
+          <FilterChipGroup
+            label={t('dashboard.filters.size')}
+            value={filters.size ?? 'any'}
+            onChange={(v) => updateFilter('size', v)}
+            options={[
+              { value: 'any', label: t('dashboard.filters.any') },
+              { value: 'xs', label: 'XS' },
+              { value: 's', label: 'S' },
+              { value: 'm', label: 'M' },
+              { value: 'l', label: 'L' },
+              { value: 'xl', label: 'XL' },
+            ]}
+          />
+
+          <FilterChipGroup
+            label={t('dashboard.filters.condition')}
+            value={filters.condition ?? 'any'}
+            onChange={(v) => updateFilter('condition', v)}
+            options={[
+              { value: 'any', label: t('dashboard.filters.any') },
+              { value: 'new', label: t('dashboard.filters.conditions.new') },
+              { value: 'excellent', label: t('dashboard.filters.conditions.excellent') },
+              { value: 'good', label: t('dashboard.filters.conditions.good') },
+            ]}
+          />
         </div>
-        
-        <div className="p-6 border-t border-pl-gray-800">
+
+        {/* Footer */}
+        <div className="px-4 py-4 border-t border-pl-gray-700 space-y-2">
           <button
             onClick={onClose}
-            className="w-full py-4 bg-pl-white text-pl-black font-semibold uppercase tracking-widest text-sm hover:bg-pl-gray-200 transition-colors"
+            className="w-full text-[11px] font-semibold tracking-[0.12em] uppercase py-3 bg-pl-accent text-pl-black font-body hover:bg-pl-accent-dim transition-colors rounded-lg"
           >
-            {t('dashboard.filters.apply', 'Apply Filters')}
+            {t('dashboard.filters.apply')}
+          </button>
+          <button
+            onClick={handleClear}
+            className="w-full text-[11px] font-semibold tracking-[0.12em] uppercase py-2.5 border border-pl-gray-600 text-pl-gray-400 font-body hover:text-pl-white hover:border-pl-gray-400 transition-colors rounded-lg"
+          >
+            {t('dashboard.filters.clear')}
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
-function FilterSelect({ label, value, onChange, options }: { 
-  label: string, 
-  value: string, 
-  onChange: (v: string) => void,
-  options: { value: string, label: string }[]
+function FilterChipGroup({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  options: { value: string; label: string }[]
 }) {
   return (
     <div className="space-y-2">
-      <label className="block text-xs font-semibold uppercase tracking-wider text-pl-gray-400">
+      <p className="text-[10px] font-medium tracking-[0.15em] uppercase text-pl-gray-400 font-body">
         {label}
-      </label>
-      <div className="relative">
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full bg-pl-gray-900 border border-pl-gray-800 text-pl-white p-3 focus:border-pl-accent focus:outline-none transition-colors appearance-none"
-        >
-          {options.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-pl-gray-400">
-          <svg className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-          </svg>
-        </div>
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {options.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => onChange(opt.value)}
+            className={cn(
+              'px-3 py-1.5 text-[10px] font-semibold tracking-[0.08em] uppercase font-body rounded-lg transition-colors duration-150',
+              value === opt.value
+                ? 'bg-pl-accent text-pl-black'
+                : 'bg-pl-gray-700 text-pl-gray-300 hover:bg-pl-gray-600 hover:text-pl-white',
+            )}
+          >
+            {opt.label}
+          </button>
+        ))}
       </div>
     </div>
   )

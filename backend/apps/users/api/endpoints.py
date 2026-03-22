@@ -2,21 +2,17 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from datetime import date
 
 from asgiref.sync import sync_to_async
 from django.conf import settings
+from django.http import HttpRequest, HttpResponse
 from loguru import logger
 from ninja import File, Form
+from ninja.files import UploadedFile
 
 from apps.sales.models import CreditTransaction
 from apps.users.api.router import router
-
-if TYPE_CHECKING:
-    from datetime import date
-
-    from django.http import HttpRequest, HttpResponse
-    from ninja.files import UploadedFile
 from apps.users.api.schemas import (
     AccessTokenOut,
     ActivateIn,

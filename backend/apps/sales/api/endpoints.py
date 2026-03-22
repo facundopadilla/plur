@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from django.conf import settings
+from django.http import HttpRequest
 
 from apps.sales.api.router import router
 from apps.sales.api.schemas import (
@@ -27,15 +26,11 @@ from apps.sales.api.schemas import (
     SaleOut,
     TransactionOut,
 )
+from apps.sales.models import Garment as GarmentModel
+from apps.sales.models import Sale as SaleModel
 from apps.sales.services import GarmentService, MirrorService, SaleService, WalletService
+from apps.users.models import User
 from core.auth import jwt_auth
-
-if TYPE_CHECKING:
-    from django.http import HttpRequest
-
-    from apps.sales.models import Garment as GarmentModel
-    from apps.sales.models import Sale as SaleModel
-    from apps.users.models import User
 
 # ------------------------------------------------------------------ #
 # Garment endpoints                                                    #

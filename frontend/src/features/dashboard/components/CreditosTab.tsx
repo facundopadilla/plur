@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { ArrowUpRight, ArrowDownLeft, ShoppingCart, Loader2, ExternalLink, X, Copy, Check, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -33,7 +34,7 @@ function TransactionDetailModal({ tx, onClose }: { tx: CreditTransaction; onClos
     setTimeout(() => setCopied(false), 2000)
   }
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
       onClick={onClose}
@@ -120,7 +121,8 @@ function TransactionDetailModal({ tx, onClose }: { tx: CreditTransaction; onClos
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
