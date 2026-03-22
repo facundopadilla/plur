@@ -8,6 +8,7 @@ import { EspejoAITab } from './EspejoAITab'
 import { CreditosTab } from './CreditosTab'
 import { PublicarTab } from './PublicarTab'
 import { PerfilTab } from './PerfilTab'
+import { MatchTab } from './MatchTab'
 import { ProfileHeader } from './ProfileHeader'
 import { QRScannerOverlay } from './QRScannerOverlay'
 import { UserProfileModal } from './UserProfileModal'
@@ -65,6 +66,11 @@ export function DashboardLayout() {
             {mobileOverlay === 'perfil' && (
               <div className="flex-1 overflow-hidden flex flex-col">
                 <PerfilTab />
+              </div>
+            )}
+            {mobileOverlay === 'match' && (
+              <div className="flex-1 overflow-hidden flex flex-col">
+                <MatchTab />
               </div>
             )}
           </div>

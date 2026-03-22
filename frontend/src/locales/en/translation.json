@@ -440,6 +440,16 @@
         "excellent": "Excellent",
         "good": "Good"
       }
+    },
+    "match": {
+      "open": "Open",
+      "finalized": "Finalized",
+      "emptyOpen": "You have no open conversations.",
+      "emptyFinalized": "You have no finalized conversations.",
+      "placeholder": "Type a message...",
+      "statusFinalized": "Conversation finalized",
+      "statusRejected": "Conversation rejected",
+      "statusExpired": "Conversation expired"
     }
   },
   "earlyAccess": {

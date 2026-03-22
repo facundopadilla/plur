@@ -439,6 +439,16 @@
         "excellent": "Excelente",
         "good": "Bueno"
       }
+    },
+    "match": {
+      "open": "Abiertas",
+      "finalized": "Finalizadas",
+      "emptyOpen": "No tienes conversaciones abiertas.",
+      "emptyFinalized": "No tienes conversaciones finalizadas.",
+      "placeholder": "Escribe un mensaje...",
+      "statusFinalized": "Conversación finalizada",
+      "statusRejected": "Conversación rechazada",
+      "statusExpired": "Conversación expirada"
     }
   },
   "earlyAccess": {
