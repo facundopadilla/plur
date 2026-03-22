@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import { Globe } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useNavVisibility } from '../hooks/useNavVisibility'
 
@@ -11,7 +12,10 @@ const NAV_LINKS = [
 ] as const
 
 export function Navbar() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const toggleLang = () => {
+    void i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')
+  }
   const navigate = useNavigate()
   const { isHidden } = useNavVisibility()
 
@@ -67,6 +71,14 @@ export function Navbar() {
           </svg>
           {t('landing.nav.tokenBalance')}
         </div>
+        <button
+          onClick={toggleLang}
+          className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.08em] uppercase text-pl-white/60 hover:text-pl-white transition-colors cursor-pointer bg-transparent border-0"
+          aria-label="Toggle language"
+        >
+          <Globe className="w-3.5 h-3.5" />
+          {i18n.language === 'es' ? 'EN' : 'ES'}
+        </button>
         <button
           onClick={() => void navigate('/login')}
           className="text-[10px] font-semibold tracking-[0.12em] uppercase px-6 py-2.5 bg-pl-accent text-pl-black cursor-pointer border-0 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(200,255,0,0.3)]"

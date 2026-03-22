@@ -223,6 +223,18 @@
       "eyebrow": "Community",
       "title": "What they say."
     },
+    "blockchain": {
+      "eyebrow": "Technology",
+      "titleLine1": "Built on",
+      "titleLine2": "blockchain",
+      "description": "Every PLR transaction is recorded on the Avalanche blockchain. Full transparency, minimal fees and the security of a decentralized network.",
+      "statSpeedValue": "Instant",
+      "statSpeed": "Speed",
+      "statFee": "Fee",
+      "statOnChain": "On-chain",
+      "builtDuring": "Built during",
+      "sponsoredBy": "Sponsored by"
+    },
     "cta": {
       "titleLine1": "Your clothes",
       "titleLine2": "deserve",
@@ -341,7 +353,18 @@
       "generating": "Generating image...",
       "newChat": "New try-on",
       "placeholder": "Write a message...",
-      "emptyChats": "Start a virtual try-on by selecting a garment from your inventory."
+      "emptyChats": "Start a virtual try-on by selecting a garment from your inventory.",
+      "tryOnLabel": "Try garment with AI",
+      "costTitle": "You will spend 1 credit",
+      "costDesc": "1 PLR will be deducted from your balance to generate the image.",
+      "dontShowAgain": "Don't show again",
+      "confirmGenerate": "Generate",
+      "noPhotoTitle": "No reference photos",
+      "noPhotoDesc": "Upload a full-body photo so the AI can show you how the garment looks on you.",
+      "goToProfile": "Go to my profile",
+      "chatSeller": "Chat with seller",
+      "chooseReference": "Choose your photo",
+      "chooseReferenceHint": "Select the reference photo you want to use for the virtual try-on."
     },
     "creditos": {
       "title": "Your credits",
@@ -432,6 +455,13 @@
       "proximityEnabled": "Prioritize proximity",
       "proximityEnabledHint": "Show items from people nearby first",
       "avatarHint": "Tap the circle to upload your profile photo",
+      "referencePhotos": "Reference photos",
+      "referencePhotosHint": "Upload full-body photos for the AI virtual try-on",
+      "noReferencePhotos": "No reference photos yet. Add one to use the AI fitting room.",
+      "conditions": "Accepted condition",
+      "conditionsHint": "What garment condition are you interested in",
+      "genders": "Garment type",
+      "gendersHint": "What gender are you looking for",
       "save": "Save",
       "saveSuccess": "Preferences saved!",
       "saveError": "There was an error saving your preferences"
@@ -466,14 +496,26 @@
         "new": "New",
         "excellent": "Excellent",
         "good": "Good"
+      },
+      "gender": "Gender",
+      "genders": {
+        "mujer": "Women",
+        "hombre": "Men",
+        "unisex": "Unisex"
       }
     },
     "match": {
+      "title": "Chats",
       "open": "Open",
       "finalized": "Finalized",
       "emptyOpen": "You have no open conversations.",
       "emptyFinalized": "You have no finalized conversations.",
       "placeholder": "Type a message...",
+      "filterAll": "All",
+      "filterBuying": "Buying",
+      "filterSelling": "Selling",
+      "buying": "Buying",
+      "selling": "Selling",
       "statusFinalized": "Conversation finalized",
       "statusRejected": "Conversation rejected",
       "statusExpired": "Conversation expired",
