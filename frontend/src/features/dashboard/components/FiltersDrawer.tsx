@@ -108,14 +108,14 @@ export function FiltersDrawer({
                 onClick={() => handleProximityChange(!proximityEnabled)}
                 disabled={gpsLoading}
                 className={cn(
-                  'w-10 h-5.5 rounded-full relative transition-colors duration-200',
+                  'w-10 h-6 rounded-full relative transition-colors duration-200 shrink-0',
                   proximityEnabled ? 'bg-pl-accent' : 'bg-pl-gray-600',
                 )}
               >
                 <span
                   className={cn(
-                    'absolute top-0.5 w-4.5 h-4.5 rounded-full bg-white shadow transition-transform duration-200',
-                    proximityEnabled ? 'translate-x-5' : 'translate-x-0.5',
+                    'absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200',
+                    proximityEnabled && 'translate-x-4',
                   )}
                 />
               </button>

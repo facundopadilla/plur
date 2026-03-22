@@ -154,6 +154,26 @@
     }
 }
 
+/* Dark scrollbars for Plur design system */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #303030 transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: #303030;
+  border-radius: 3px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #505050;
+}
+
 @keyframes progressFill {
   from { width: 0%; }
   to { width: 100%; }

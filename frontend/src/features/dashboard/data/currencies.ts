@@ -15,7 +15,8 @@ export function getCurrency(code: CurrencyCode): Currency {
   return CURRENCIES.find((c) => c.code === code) ?? CURRENCIES[0]!
 }
 
-export function formatFiatPrice(pricePLR: number, currency: Currency): string {
+export function formatFiatPrice(pricePLR: number | undefined, currency: Currency): string {
+  if (pricePLR == null || isNaN(pricePLR)) return `${currency.symbol} —`
   const fiatAmount = pricePLR * currency.rateToPLR
   const formatted = new Intl.NumberFormat('es-AR', {
     maximumFractionDigits: currency.rateToPLR < 1 ? 2 : 0,

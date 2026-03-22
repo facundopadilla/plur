@@ -32,9 +32,16 @@ export function SwipePanel() {
     enabled: FEATURE_FLAGS.PROXIMITY_SORT
   })
 
-  const garmentsToUse = FEATURE_FLAGS.PROXIMITY_SORT && nearbyGarments 
-    ? nearbyGarments 
+  const baseGarments = FEATURE_FLAGS.PROXIMITY_SORT && nearbyGarments
+    ? nearbyGarments
     : DASHBOARD_GARMENTS
+
+  const garmentsToUse = baseGarments.filter((g) => {
+    if (filters.style && g.style.toLowerCase() !== filters.style.toLowerCase()) return false
+    if (filters.size && g.size.toLowerCase() !== filters.size.toLowerCase()) return false
+    if (filters.condition && g.condition.toLowerCase() !== filters.condition.toLowerCase()) return false
+    return true
+  })
 
   const {
     visibleCards,
