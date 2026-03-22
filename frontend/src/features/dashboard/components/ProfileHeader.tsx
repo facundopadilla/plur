@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth.store'
 import { useProfileStore } from '@/stores/profile.store'
 import { useDashboardStore } from '@/stores/dashboard.store'
 import { useCredits } from '../hooks/useCredits'
+import { useTotalUnread } from '../hooks/useConversations'
 
 interface ProfileHeaderProps {
   onQrScan?: (() => void) | undefined
@@ -17,6 +18,7 @@ export function ProfileHeader({ onQrScan }: ProfileHeaderProps) {
   const avatarDataUrl = useProfileStore((s) => s.avatarDataUrl)
   const setActiveTab = useDashboardStore((s) => s.setActiveTab)
   const setMobileOverlay = useDashboardStore((s) => s.setMobileOverlay)
+  const totalUnread = useTotalUnread()
 
   const initials = user
     ? `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase()
@@ -59,9 +61,12 @@ export function ProfileHeader({ onQrScan }: ProfileHeaderProps) {
           setMobileOverlay('match')
         }}
         aria-label={t('dashboard.tabs.match')}
-        className="px-3 py-4 text-pl-gray-400 hover:text-pl-accent transition-colors shrink-0"
+        className={`relative px-3 py-4 transition-colors shrink-0 ${totalUnread > 0 ? 'text-pl-accent' : 'text-pl-gray-400 hover:text-pl-accent'}`}
       >
         <MessageCircle className="w-5 h-5" />
+        {totalUnread > 0 && (
+          <span className="absolute top-3 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-pl-black" />
+        )}
       </button>
 
       {onQrScan !== undefined && (

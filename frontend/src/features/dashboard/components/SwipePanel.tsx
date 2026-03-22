@@ -12,11 +12,13 @@ import { FEATURE_FLAGS } from '@/features/flags'
 import { useNearbyGarments, type GarmentFilters, type Coordinates } from '../hooks/useNearbyGarments'
 import { useGarmentFeed } from '../hooks/useGarments'
 import { FiltersDrawer } from './FiltersDrawer'
+import { useTotalUnread } from '../hooks/useConversations'
 
 export function SwipePanel() {
   const { t } = useTranslation()
   const { resetSeen, setActiveTab, setMobileOverlay, createChat } = useDashboardStore()
   const referencePhotos = useProfileStore((s) => s.referencePhotos)
+  const totalUnread = useTotalUnread()
 
   const [showPhotoPrompt, setShowPhotoPrompt] = useState(false)
   const [pendingGarment, setPendingGarment] = useState<DashboardGarment | null>(null)
@@ -113,9 +115,12 @@ export function SwipePanel() {
             setActiveTab('match')
             setMobileOverlay('match')
           }}
-          className="lg:hidden bg-black/50 backdrop-blur-md border border-white/10 text-pl-white p-2.5 rounded-full hover:bg-black/70 transition-colors shadow-lg flex items-center justify-center"
+          className={`relative lg:hidden bg-black/50 backdrop-blur-md border border-white/10 p-2.5 rounded-full hover:bg-black/70 transition-colors shadow-lg flex items-center justify-center ${totalUnread > 0 ? 'text-pl-accent' : 'text-pl-white'}`}
         >
           <MessageCircle className="w-5 h-5" />
+          {totalUnread > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-black" />
+          )}
         </button>
         <button
           onClick={() => {
