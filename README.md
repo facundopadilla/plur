@@ -132,7 +132,6 @@ plur/
 │   └── public/
 ├── plr-contracts/        # Smart contracts ERC-20 (Hardhat)
 ├── docs/                 # Documentacion tecnica (Avalanche)
-├── dev.sh                # Script para levantar todo el stack
 └── README.md
 ```
 
@@ -148,16 +147,6 @@ plur/
 - Node.js 20+ / Python 3.11+
 
 ### Quick start
-
-```bash
-git clone https://github.com/facundopadilla/plur.git
-cd plur
-bash dev.sh
-```
-
-El script levanta PostgreSQL + Redis, aplica migraciones, e inicia backend (`:8000`) y frontend (`:5173`).
-
-### Manual
 
 ```bash
 # Terminal 1 — Infra
