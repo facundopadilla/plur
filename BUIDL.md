@@ -76,7 +76,7 @@ The app is **fully deployed and functional** at [plur.wtf](https://plur.wtf) —
 - **App:** [plur.wtf](https://plur.wtf)
 - **API:** [api.plur.wtf](https://api.plur.wtf/api/health)
 - **API Docs:** [api.plur.wtf/api/docs](https://api.plur.wtf/api/docs)
-- **Contract:** Avalanche C-Chain — Fuji Testnet
+- **Contract:** [0x159a6f159edaCD4b36947fD54B4BaDD87598de29](https://testnet.snowtrace.io/address/0x159a6f159edaCD4b36947fD54B4BaDD87598de29) — Avalanche Fuji Testnet
 
 ---
 
