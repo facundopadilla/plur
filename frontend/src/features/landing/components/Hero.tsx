@@ -45,7 +45,7 @@ export function Hero() {
         </p>
 
         <h1
-          className="anim-fade-up anim-delay-2 font-display text-[clamp(3.5rem,7vw,8rem)] font-extrabold tracking-[-0.05em] leading-[0.92] uppercase mb-8 text-pl-white"
+          className="anim-fade-up anim-delay-2 font-display text-[clamp(2.5rem,8vw,8rem)] font-extrabold tracking-[-0.05em] leading-[0.92] uppercase mb-8 text-pl-white"
         >
           {t('landing.hero.titleMain')}
           <span className="text-pl-accent">.</span>

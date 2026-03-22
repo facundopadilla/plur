@@ -57,14 +57,14 @@ export function BlockchainSection() {
   const { t } = useTranslation()
 
   return (
-    <section className="bg-pl-black text-pl-white px-[clamp(24px,5vw,80px)] py-[clamp(80px,10vw,140px)]">
+    <section className="bg-pl-black text-pl-white px-[clamp(24px,5vw,80px)] py-[clamp(80px,10vw,140px)] overflow-hidden">
       <div className="max-w-[900px] mx-auto">
         <RevealOnScroll>
           <div className="text-center">
             <p className="text-[10px] font-medium tracking-[0.2em] uppercase text-pl-gray-400 mb-4 font-body">
               {t('landing.blockchain.eyebrow')}
             </p>
-            <h2 className="font-display text-[clamp(2.5rem,5vw,5rem)] font-extrabold tracking-[-0.05em] leading-[0.95] uppercase text-pl-white max-w-[700px] mx-auto mb-6">
+            <h2 className="font-display text-[clamp(1.6rem,5vw,5rem)] font-extrabold tracking-[-0.05em] leading-[0.95] uppercase text-pl-white max-w-[700px] mx-auto mb-6 break-words">
               {t('landing.blockchain.titleLine1')}
               <br />
               <span className="text-pl-accent">{t('landing.blockchain.titleLine2')}</span>
