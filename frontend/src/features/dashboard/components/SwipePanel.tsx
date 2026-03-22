@@ -11,6 +11,7 @@ import { useProfileStore } from '@/stores/profile.store'
 import type { DashboardGarment } from '../types'
 import { FEATURE_FLAGS } from '@/features/flags'
 import { useNearbyGarments, type GarmentFilters, type Coordinates } from '../hooks/useNearbyGarments'
+import { useGarmentFeed } from '../hooks/useGarments'
 import { FiltersDrawer } from './FiltersDrawer'
 
 export function SwipePanel() {
@@ -26,15 +27,22 @@ export function SwipePanel() {
   const [proximityEnabled, setProximityEnabled] = useState(false)
   const [coords, setCoords] = useState<Coordinates | null>(null)
 
-  const { data: nearbyGarments, isLoading } = useNearbyGarments({
+  const { data: nearbyGarments, isLoading: nearbyLoading } = useNearbyGarments({
     filters,
     coords,
-    enabled: FEATURE_FLAGS.PROXIMITY_SORT
+    enabled: FEATURE_FLAGS.PROXIMITY_SORT,
   })
 
+  const { data: feedGarments, isLoading: feedLoading } = useGarmentFeed()
+
+  const isLoading = feedLoading || nearbyLoading
+
+  // Priority: nearby (if proximity enabled) > backend feed > mock data fallback
   const baseGarments = FEATURE_FLAGS.PROXIMITY_SORT && nearbyGarments
     ? nearbyGarments
-    : DASHBOARD_GARMENTS
+    : feedGarments && feedGarments.length > 0
+      ? feedGarments
+      : DASHBOARD_GARMENTS
 
   const garmentsToUse = baseGarments.filter((g) => {
     if (filters.style && g.style.toLowerCase() !== filters.style.toLowerCase()) return false

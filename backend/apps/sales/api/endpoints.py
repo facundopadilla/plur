@@ -105,6 +105,27 @@ async def list_nearby_garments(
     return 200, [_garment_to_nearby_out(garment, garment.seller.full_name, distance) for garment, distance in nearby]
 
 @router.get(
+    "/garments/feed",
+    response=list[GarmentOut],
+    auth=jwt_auth,
+    summary="Feed of active garments from other users",
+)
+async def garment_feed(
+    request: HttpRequest,
+) -> list[GarmentOut]:
+    """Return active garments from all users except the authenticated one."""
+    user: User = request.auth  # type: ignore[assignment]
+    garments = [
+        g
+        async for g in GarmentModel.objects.filter(status="active")
+        .exclude(seller_id=user.pk)
+        .select_related("seller")
+        .order_by("-created_at")[:50]
+    ]
+    return [_garment_to_out(g, g.seller.full_name) for g in garments]
+
+
+@router.get(
     "/garments/mine",
     response=list[GarmentOut],
     auth=jwt_auth,
