@@ -32,7 +32,7 @@ export function ProfileHeader({ onQrScan }: ProfileHeaderProps) {
   }
 
   return (
-    <div className="flex items-center border-b border-pl-gray-700">
+    <div className="flex items-center border-b border-pl-gray-700 w-full max-w-full overflow-hidden">
       <button
         onClick={goToProfile}
         className="flex-1 flex items-center gap-3 p-4 text-left hover:bg-pl-gray-800/40 transition-colors min-w-0"
