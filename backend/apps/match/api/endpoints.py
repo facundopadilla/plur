@@ -23,7 +23,13 @@ if TYPE_CHECKING:
 async def list_open_conversations(request: HttpRequest) -> list[ConversationOut]:
     user: User = request.auth  # type: ignore[assignment]
     conversations = await ConversationService.list_open(user=user)
-    return [_conversation_to_out(conversation) for conversation in conversations]
+    result = []
+    for conv in conversations:
+        count = await Message.objects.filter(
+            conversation=conv, is_read=False
+        ).exclude(sender=user).acount()
+        result.append(_conversation_to_out(conv, unread_count=count))
+    return result
 
 
 @router.get(
@@ -51,6 +57,10 @@ async def list_conversation_messages(
     user: User = request.auth  # type: ignore[assignment]
     try:
         messages = await MessageService.list_for_conversation(user=user, conversation_id=conversation_id)
+        # Mark messages from the other person as read
+        await Message.objects.filter(
+            conversation_id=conversation_id, is_read=False
+        ).exclude(sender=user).aupdate(is_read=True)
         return 200, [_message_to_out(message) for message in messages]
     except ValueError as exc:
         return 403, ErrorOut(detail=str(exc))
@@ -96,7 +106,7 @@ async def create_conversation(
         return 400, ErrorOut(detail=str(exc))
 
 
-def _conversation_to_out(conversation: Conversation) -> ConversationOut:
+def _conversation_to_out(conversation: Conversation, unread_count: int = 0) -> ConversationOut:
     return ConversationOut(
         id=conversation.pk,
         garment_id=conversation.garment_id,
@@ -107,6 +117,7 @@ def _conversation_to_out(conversation: Conversation) -> ConversationOut:
         seller_id=conversation.seller_id,
         seller_name=conversation.seller.full_name,
         status=conversation.status,
+        unread_count=unread_count,
         created_at=conversation.created_at,
         updated_at=conversation.updated_at,
     )

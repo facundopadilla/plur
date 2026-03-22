@@ -11,6 +11,7 @@ export interface ConversationOut {
   seller_id: number
   seller_name: string
   status: string
+  unread_count: number
   created_at: string
   updated_at: string
 }
@@ -31,7 +32,14 @@ export function useOpenConversations() {
       const response = await apiClient.get<ConversationOut[]>('/match/conversations/open')
       return response.data
     },
+    refetchInterval: 10000,
   })
+}
+
+export function useTotalUnread(): number {
+  const { data } = useOpenConversations()
+  if (!data) return 0
+  return data.reduce((sum, c) => sum + (c.unread_count ?? 0), 0)
 }
 
 export function useFinalizedConversations() {
