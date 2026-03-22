@@ -64,9 +64,8 @@ export function BlockchainSection() {
             <p className="text-[10px] font-medium tracking-[0.2em] uppercase text-pl-gray-400 mb-4 font-body">
               {t('landing.blockchain.eyebrow')}
             </p>
-            <h2 className="font-display text-[clamp(1.6rem,5vw,5rem)] font-extrabold tracking-[-0.05em] leading-[0.95] uppercase text-pl-white max-w-[700px] mx-auto mb-6 break-words">
-              {t('landing.blockchain.titleLine1')}
-              <br />
+            <h2 className="font-display text-[clamp(1.6rem,4vw,3.5rem)] font-extrabold tracking-[-0.05em] leading-[0.95] uppercase text-pl-white mx-auto mb-6">
+              {t('landing.blockchain.titleLine1')}{' '}
               <span className="text-pl-accent">{t('landing.blockchain.titleLine2')}</span>
               <span className="text-pl-accent">.</span>
             </h2>

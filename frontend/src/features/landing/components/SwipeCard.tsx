@@ -60,7 +60,7 @@ export function SwipeCard({
 
       {/* Info overlay */}
       <div
-        className="absolute inset-x-0 bottom-0 px-5 pt-12 pb-24 z-10"
+        className="absolute inset-x-0 bottom-0 px-5 pt-12 pb-32 z-10"
         style={{
           background: 'linear-gradient(transparent 0%, rgba(10,10,10,0.85) 35%, rgba(10,10,10,0.98) 100%)',
         }}

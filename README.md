@@ -1,8 +1,12 @@
 <div align="center">
 
-# **PLUR.**
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="frontend/public/plur-banner.svg">
+  <source media="(prefers-color-scheme: light)" srcset="frontend/public/plur-banner.svg">
+  <img alt="Plur — Circular Fashion Redefined" src="frontend/public/plur-banner.svg" width="600">
+</picture>
 
-### Circular Fashion — Redefined
+<br />
 
 [![Live App](https://img.shields.io/badge/Live_App-plur.wtf-C8FF00?style=for-the-badge&logo=vercel&logoColor=black)](https://plur.wtf)
 [![Pitch Deck](https://img.shields.io/badge/Pitch_Deck-Slides-1A1A1A?style=for-the-badge&logo=slides&logoColor=white)](https://aleph-plur-diapositives.vercel.app/)
