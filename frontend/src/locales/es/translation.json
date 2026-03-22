@@ -350,6 +350,25 @@
       "txDate": "Fecha",
       "buyCredits": "Comprar créditos"
     },
+    "comprar": {
+      "title": "Comprar PLR",
+      "subtitle": "Seleccioná cuántos PLR querés comprar. El pago se procesa seguro vía Transak.",
+      "amount": "Monto a comprar",
+      "currencyLabel": "Moneda de pago",
+      "payWith": "Pagar con {{currency}}",
+      "creatingOrder": "Creando orden...",
+      "openingTransak": "Abriendo Transak...",
+      "doNotClose": "No cierres esta ventana",
+      "reconciling": "Verificando pago...",
+      "reconcilingDesc": "Tu pago fue procesado. Estamos confirmando con la blockchain.",
+      "success": "¡Compra exitosa!",
+      "successDesc": "Tus PLR ya están disponibles en tu cuenta.",
+      "failed": "La compra falló",
+      "failedDesc": "Hubo un problema procesando tu pago.",
+      "retry": "Intentar de nuevo",
+      "close": "Cerrar",
+      "openTransakBtn": "Continuar al pago"
+    },
     "garment": {
       "size": "Talle",
       "condition": "Estado",

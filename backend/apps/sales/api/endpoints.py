@@ -8,6 +8,8 @@ from django.http import HttpRequest
 from apps.sales.api.router import router
 from apps.sales.api.schemas import (
     BalanceOut,
+    BuyCreditsIn,
+    BuyCreditsOut,
     ErrorOut,
     GarmentIn,
     GarmentNearbyOut,
@@ -385,6 +387,73 @@ async def get_on_chain_balance(
 
         logger.exception("Failed to read on-chain balance")
         return 500, ErrorOut(detail=f"Failed to read on-chain balance: {exc}")
+
+
+@router.post(
+    "/wallet/buy",
+    response={200: BuyCreditsOut, 400: ErrorOut},
+    auth=jwt_auth,
+    summary="Purchase PLR credits (mock payment)",
+)
+async def buy_credits(
+    request: HttpRequest,
+    payload: BuyCreditsIn,
+) -> tuple[int, BuyCreditsOut | ErrorOut]:
+    """Simulate a credit purchase. Mints tokens on-chain and credits the user."""
+    user: User = request.auth  # type: ignore[assignment]
+    amount = payload.amount_plr
+    if amount <= 0 or amount > 10000:
+        return 400, ErrorOut(detail="Amount must be between 1 and 10,000 PLR")
+
+    cost_usd = round(amount * 0.15, 2)
+
+    from asgiref.sync import sync_to_async
+    from django.db import transaction
+
+    from apps.sales.models import CreditTransaction
+
+    def _credit_user() -> int:
+        with transaction.atomic():
+            from apps.users.models import User as UserModel
+
+            locked = UserModel.objects.select_for_update().get(pk=user.pk)
+            locked.credits += amount
+            locked.save(update_fields=["credits"])
+            CreditTransaction.objects.create(
+                user=locked,
+                tx_type="purchased",
+                amount=amount,
+                description=f"Compra: {amount} PLR (US$ {cost_usd})",
+            )
+            return locked.credits
+
+    new_balance = await sync_to_async(_credit_user)()
+
+    tx_hash = ""
+    try:
+        from core.blockchain import mint_plr
+
+        if user.wallet_address:
+            tx_hash = await sync_to_async(mint_plr)(
+                amount_plr=amount,
+                reason=f"Compra {amount} PLR",
+                reference_id_str=f"buy-{user.pk}-{new_balance}",
+                to_address=user.wallet_address,
+            )
+            await CreditTransaction.objects.filter(
+                user=user, description=f"Compra: {amount} PLR (US$ {cost_usd})"
+            ).aupdate(tx_hash=tx_hash)
+    except Exception:
+        from loguru import logger
+
+        logger.exception("Blockchain mint failed for credit purchase")
+
+    return 200, BuyCreditsOut(
+        credits=new_balance,
+        amount_plr=amount,
+        cost_usd=cost_usd,
+        tx_hash=tx_hash,
+    )
 
 
 # ------------------------------------------------------------------ #

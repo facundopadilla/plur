@@ -157,6 +157,21 @@ class TransactionOut(Schema):
     created_at: datetime
 
 
+class BuyCreditsIn(Schema):
+    """Input schema for purchasing credits (mock)."""
+
+    amount_plr: int
+
+
+class BuyCreditsOut(Schema):
+    """Output schema for credit purchase."""
+
+    credits: int
+    amount_plr: int
+    cost_usd: float
+    tx_hash: str = ""
+
+
 class OnChainBalanceOut(Schema):
     """Output schema for on-chain PLR balance."""
 

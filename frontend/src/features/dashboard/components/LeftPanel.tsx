@@ -17,7 +17,7 @@ export function LeftPanel({ onQrScan }: LeftPanelProps) {
   const setActiveTab = useDashboardStore((s) => s.setActiveTab)
 
   return (
-    <div className="hidden lg:flex flex-col w-[30%] max-w-xs border-r border-pl-gray-700 bg-pl-black">
+    <div className="hidden lg:flex flex-col w-[35%] max-w-sm border-r border-pl-gray-700 bg-pl-black">
       <ProfileHeader onQrScan={onQrScan} />
       <PanelTabs activeTab={activeTab} onTabChange={setActiveTab} />
       <div className="flex-1 overflow-hidden flex flex-col">
