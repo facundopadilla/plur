@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { StepIndicator } from '@/features/auth/components/StepIndicator'
 import { useOnboardingStore } from '@/stores/onboarding.store'
 import { useProfileStore } from '@/stores/profile.store'
+import { useAuthStore } from '@/stores/auth.store'
 import type { OnboardingFormData } from '../types'
 import { OnboardingStepStyles } from './OnboardingStepStyles'
 import { OnboardingStepColors } from './OnboardingStepColors'
@@ -25,6 +26,11 @@ export function OnboardingWizard() {
   const { t } = useTranslation()
   const { completeOnboarding, skipOnboarding } = useOnboardingStore()
   const addReferencePhoto = useProfileStore((s) => s.addReferencePhoto)
+  const userId = useAuthStore((s) => s.user?.id)
+
+  const markDoneForUser = () => {
+    if (userId) localStorage.setItem(`plur-onboarding-done-${userId}`, '1')
+  }
 
   const [currentStep, setCurrentStep] = useState(0)
   const [formData, setFormData] = useState<OnboardingFormData>(INITIAL_DATA)
@@ -44,6 +50,7 @@ export function OnboardingWizard() {
     formData.referencePhotos.forEach((photo) => {
       addReferencePhoto({ label: photo.label, dataUrl: photo.dataUrl })
     })
+    markDoneForUser()
     completeOnboarding({
       styles: formData.selectedStyles,
       colors: formData.selectedColors,
@@ -68,7 +75,7 @@ export function OnboardingWizard() {
         </Link>
         <button
           type="button"
-          onClick={skipOnboarding}
+          onClick={() => { markDoneForUser(); skipOnboarding() }}
           className="text-[11px] font-medium tracking-[0.1em] uppercase text-pl-white/40 font-body hover:text-pl-white transition-colors duration-200 cursor-pointer"
         >
           {t('onboarding.skipLink')}
