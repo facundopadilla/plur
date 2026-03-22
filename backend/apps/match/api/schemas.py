@@ -20,6 +20,7 @@ class ConversationOut(Schema):
     id: int
     garment_id: int
     garment_name: str
+    garment_image: str
     buyer_id: int
     buyer_name: str
     seller_id: int

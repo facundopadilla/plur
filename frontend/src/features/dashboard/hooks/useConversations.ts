@@ -5,6 +5,7 @@ export interface ConversationOut {
   id: number
   garment_id: number
   garment_name: string
+  garment_image: string
   buyer_id: number
   buyer_name: string
   seller_id: number
@@ -52,6 +53,7 @@ export function useConversationMessages(conversationId: number | null) {
       return response.data
     },
     enabled: conversationId !== null,
+    refetchInterval: 3000,
   })
 }
 
@@ -64,7 +66,22 @@ export function useSendMessage() {
       return response.data
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['conversations', variables.conversationId, 'messages'] })
+      void queryClient.invalidateQueries({ queryKey: ['conversations', variables.conversationId, 'messages'] })
+      void queryClient.invalidateQueries({ queryKey: ['conversations', 'open'] })
+    },
+  })
+}
+
+export function useCreateConversation() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (garmentId: number): Promise<ConversationOut> => {
+      const response = await apiClient.post<ConversationOut>('/match/conversations/', { garment_id: garmentId })
+      return response.data
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['conversations', 'open'] })
     },
   })
 }

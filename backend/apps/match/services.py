@@ -26,8 +26,12 @@ class ConversationService:
                 buyer=buyer,
                 seller=garment.seller,
             )
-        except IntegrityError as exc:
-            raise ValueError("Conversation already exists for this garment and buyer") from exc
+        except IntegrityError:
+            # Return existing conversation instead of failing
+            existing = await ConversationRepository.find_by_garment_and_buyer(garment_id=garment_id, buyer_id=buyer.pk)
+            if existing is not None:
+                return existing
+            raise ValueError("Failed to create or find conversation")
 
     @classmethod
     async def list_open(cls, user: User) -> list[Conversation]:
@@ -45,7 +49,6 @@ class ConversationService:
         if conversation.buyer_id != user.pk and conversation.seller_id != user.pk:
             raise ValueError("Participant access only")
         return conversation
-
 
     @classmethod
     async def finalize_conversation_by_garment(cls, garment_id: int) -> None:

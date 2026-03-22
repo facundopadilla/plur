@@ -101,6 +101,7 @@ def _conversation_to_out(conversation: Conversation) -> ConversationOut:
         id=conversation.pk,
         garment_id=conversation.garment_id,
         garment_name=conversation.garment.name,
+        garment_image=conversation.garment.images[0] if conversation.garment.images else "",
         buyer_id=conversation.buyer_id,
         buyer_name=conversation.buyer.full_name,
         seller_id=conversation.seller_id,

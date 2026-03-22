@@ -140,6 +140,19 @@ class PendingSaleOut(Schema):
 # ------------------------------------------------------------------ #
 
 
+class PurchasePLRIn(Schema):
+    """Input schema for purchasing PLR credits."""
+
+    amount_plr: int
+
+
+class PurchasePLROut(Schema):
+    """Output schema for a PLR purchase."""
+
+    credits: int
+    tx_hash: str = ""
+
+
 class BalanceOut(Schema):
     """Output schema for the user's credit balance."""
 
@@ -205,6 +218,24 @@ class MirrorGenerateOut(Schema):
     reply: str
     cost_plr: int
     remaining_credits: int
+
+
+class GarmentAnalyzeIn(Schema):
+    """Input schema for AI garment analysis from image."""
+
+    image_data: str
+
+
+class GarmentAnalyzeOut(Schema):
+    """Output schema for AI garment analysis."""
+
+    name: str = ""
+    description: str = ""
+    size: str = ""
+    style: str = ""
+    condition: str = ""
+    gender: str = ""
+    tags: list[str] = Field(default_factory=list)
 
 
 def _rebuild_datetime_schemas() -> None:

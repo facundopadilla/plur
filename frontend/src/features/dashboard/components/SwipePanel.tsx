@@ -1,11 +1,10 @@
 import { useState } from 'react'
-import { RefreshCw, Filter } from 'lucide-react'
+import { RefreshCw, Filter, MessageCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDashboardSwipe } from '../hooks/useDashboardSwipe'
 import { DashboardSwipeCard } from './DashboardSwipeCard'
 import { SwipeActions } from './SwipeActions'
 import { ReferencePhotoPrompt } from './ReferencePhotoPrompt'
-import { DASHBOARD_GARMENTS } from '../data/garments'
 import { useDashboardStore } from '@/stores/dashboard.store'
 import { useProfileStore } from '@/stores/profile.store'
 import type { DashboardGarment } from '../types'
@@ -21,7 +20,7 @@ export function SwipePanel() {
 
   const [showPhotoPrompt, setShowPhotoPrompt] = useState(false)
   const [pendingGarment, setPendingGarment] = useState<DashboardGarment | null>(null)
-  
+
   const [isFiltersOpen, setIsFiltersOpen] = useState(false)
   const [filters, setFilters] = useState<GarmentFilters>({})
   const [proximityEnabled, setProximityEnabled] = useState(false)
@@ -37,12 +36,10 @@ export function SwipePanel() {
 
   const isLoading = feedLoading || nearbyLoading
 
-  // Priority: nearby (if proximity enabled) > backend feed > mock data fallback
+  // Priority: nearby (if proximity enabled) > backend feed
   const baseGarments = FEATURE_FLAGS.PROXIMITY_SORT && nearbyGarments
     ? nearbyGarments
-    : feedGarments && feedGarments.length > 0
-      ? feedGarments
-      : DASHBOARD_GARMENTS
+    : feedGarments ?? []
 
   const garmentsToUse = baseGarments.filter((g) => {
     if (filters.style && g.style.toLowerCase() !== filters.style.toLowerCase()) return false
@@ -57,9 +54,14 @@ export function SwipePanel() {
     isExiting,
     exitDirection,
     isEmpty,
+    canUndo,
+    dragOffset,
+    isDragging,
     swipe,
-    handleTouchStart,
-    handleTouchEnd,
+    undo,
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
   } = useDashboardSwipe(garmentsToUse)
 
   const executeTryOn = (garment: DashboardGarment) => {
@@ -103,20 +105,36 @@ export function SwipePanel() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-pl-black relative">
-      <div className="absolute top-4 right-4 z-10">
-        <button 
-          onClick={() => setIsFiltersOpen(true)}
-          className="bg-pl-gray-900/80 backdrop-blur border border-pl-gray-800 text-pl-white p-3 rounded-full hover:bg-pl-gray-800 transition-colors shadow-lg flex items-center justify-center"
+    <div className="relative h-full bg-pl-black overflow-hidden">
+      {/* Top-right actions */}
+      <div className="absolute top-4 right-4 z-20 flex gap-2">
+        <button
+          onClick={() => {
+            setActiveTab('match')
+            setMobileOverlay('match')
+          }}
+          className="lg:hidden bg-black/50 backdrop-blur-md border border-white/10 text-pl-white p-2.5 rounded-full hover:bg-black/70 transition-colors shadow-lg flex items-center justify-center"
+        >
+          <MessageCircle className="w-5 h-5" />
+        </button>
+        <button
+          onClick={() => {
+            setActiveTab('perfil')
+            setMobileOverlay('perfil')
+          }}
+          className="bg-black/50 backdrop-blur-md border border-white/10 text-pl-white p-2.5 rounded-full hover:bg-black/70 transition-colors shadow-lg flex items-center justify-center"
         >
           <Filter className="w-5 h-5" />
         </button>
       </div>
 
+      {/* Cards area — fills entire container */}
       <div
-        className="flex-1 relative"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
+        className="absolute inset-0 touch-none"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerUp}
       >
         {isLoading ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-8 text-center">
@@ -149,7 +167,7 @@ export function SwipePanel() {
             </button>
           </div>
         ) : (
-          <div className="absolute inset-4 mt-16">
+          <div className="absolute inset-0">
             {[...visibleCards].reverse().map(({ garment, stackPosition }) => (
               <DashboardSwipeCard
                 key={garment.id}
@@ -158,18 +176,25 @@ export function SwipePanel() {
                 stampState={stackPosition === 0 ? topCardStamp : 'none'}
                 isExiting={stackPosition === 0 ? isExiting : false}
                 exitDirection={stackPosition === 0 ? exitDirection : null}
+                dragOffset={stackPosition === 0 ? dragOffset : 0}
+                isDragging={stackPosition === 0 && isDragging}
               />
             ))}
           </div>
         )}
       </div>
 
-      <SwipeActions
-        onDislike={() => swipe('dislike')}
-        onTryOn={handleTryOn}
-        onLike={() => swipe('like')}
-        disabled={isEmpty || isLoading}
-      />
+      {/* Action buttons — floating over the card, above mobile navbar */}
+      <div className="absolute inset-x-0 z-20 bottom-[calc(80px+env(safe-area-inset-bottom))] lg:bottom-8">
+        <SwipeActions
+          onDislike={() => swipe('dislike')}
+          onTryOn={handleTryOn}
+          onLike={() => swipe('like')}
+          onUndo={undo}
+          disabled={isEmpty || isLoading}
+          canUndo={canUndo}
+        />
+      </div>
 
       {showPhotoPrompt && (
         <ReferencePhotoPrompt

@@ -25,6 +25,7 @@ from apps.users.api.schemas import (
     PreferencesOut,
     RegisterOut,
     TokenOut,
+    UserMeOut,
 )
 from apps.users.models import User
 from apps.users.services import AuthService, PreferencesService
@@ -183,6 +184,25 @@ async def password_reset(
     """
     await AuthService.request_password_reset(payload.email)
     return PasswordResetOut(message="If an account exists with that email, a reset code has been sent.")
+
+
+@router.get(
+    "/me",
+    response={200: UserMeOut, 401: ErrorOut},
+    auth=jwt_auth,
+    summary="Get current user profile",
+)
+async def get_me(request: HttpRequest) -> tuple[int, UserMeOut | ErrorOut]:
+    """Return the authenticated user's basic profile."""
+    user = request.auth
+    if user is None:
+        return 401, ErrorOut(detail="Not authenticated")
+    return 200, UserMeOut(
+        id=user.pk,
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+    )
 
 
 @router.get(

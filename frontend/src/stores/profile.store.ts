@@ -10,14 +10,17 @@ export interface ReferencePhoto {
 
 interface ProfileState {
   referencePhotos: ReferencePhoto[]
+  avatarDataUrl: string | null
   addReferencePhoto: (photo: Omit<ReferencePhoto, 'id' | 'uploadedAt'>) => void
   removeReferencePhoto: (id: string) => void
+  setAvatarDataUrl: (dataUrl: string | null) => void
 }
 
 export const useProfileStore = create<ProfileState>()(
   persist(
     (set) => ({
       referencePhotos: [],
+      avatarDataUrl: null,
       addReferencePhoto: (photo) =>
         set((state) => ({
           referencePhotos: [
@@ -29,6 +32,7 @@ export const useProfileStore = create<ProfileState>()(
         set((state) => ({
           referencePhotos: state.referencePhotos.filter((p) => p.id !== id),
         })),
+      setAvatarDataUrl: (dataUrl) => set({ avatarDataUrl: dataUrl }),
     }),
     { name: 'profile-storage' },
   ),

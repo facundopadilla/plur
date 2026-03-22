@@ -209,7 +209,7 @@ export function CreditosTab() {
             <Loader2 className="w-5 h-5 animate-spin text-pl-gray-500" />
           </div>
         ) : (
-          <ScrollArea className="h-full">
+          <ScrollArea className="flex-1 min-h-0">
             {transactions.length === 0 ? (
               <p className="text-[12px] text-pl-gray-500 font-body px-4 py-8 text-center">
                 {t('dashboard.creditos.emptyHistory')}

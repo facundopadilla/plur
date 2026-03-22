@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { Loader2, MessageSquare, Plus, Send, Sparkles, Upload } from 'lucide-react'
+import { Loader2, MessageCircle, MessageSquare, Plus, Send, Sparkles, Upload, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { apiClient } from '@/api/client'
@@ -53,7 +53,7 @@ function readFileAsDataUrl(file: File): Promise<string> {
 export function EspejoAITab() {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
-  const { likedItems, chats, activeChat, createChat, setActiveChat, addMessage } =
+  const { likedItems, chats, activeChat, createChat, setActiveChat, addMessage, setActiveTab, setMobileOverlay, setPendingSellerChatGarment } =
     useDashboardStore()
   const referencePhotos = useProfileStore((s) => s.referencePhotos)
   const addReferencePhoto = useProfileStore((s) => s.addReferencePhoto)
@@ -64,10 +64,24 @@ export function EspejoAITab() {
   const [isUploadingReference, setIsUploadingReference] = useState(false)
   const [isGeneratingTryOn, setIsGeneratingTryOn] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [expandedImage, setExpandedImage] = useState<string | null>(null)
+  const [showRefPicker, setShowRefPicker] = useState(false)
+  const [showNoPhotoAlert, setShowNoPhotoAlert] = useState(false)
+  const [showCostConfirm, setShowCostConfirm] = useState(false)
+  const [skipCostConfirm, setSkipCostConfirm] = useState(() => localStorage.getItem('plur-skip-cost-confirm') === '1')
   const inputRef = useRef<HTMLInputElement>(null)
   const uploadRef = useRef<HTMLInputElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const currentChat = chats.find((c) => c.id === activeChat) ?? null
+
+  // Auto-scroll to bottom when messages change
+  const msgCount = currentChat?.messages.length ?? 0
+  const prevMsgCount = useRef(0)
+  if (msgCount !== prevMsgCount.current) {
+    prevMsgCount.current = msgCount
+    setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100)
+  }
 
   const handleSend = async (): Promise<void> => {
     if (!inputValue.trim() || !activeChat) return
@@ -141,19 +155,41 @@ export function EspejoAITab() {
     }
   }
 
-  const handleGenerateTryOn = async (): Promise<void> => {
+  const handleGenerateClick = () => {
     if (activeChat === null || currentChat === null) return
     if (isGeneratingTryOn || isUploadingReference || isSending) return
 
-    const latestReference =
-      referencePhotos.length > 0
-        ? referencePhotos[referencePhotos.length - 1]?.dataUrl
-        : undefined
-    if (!latestReference) {
-      setErrorMsg(t('dashboard.espejo.needPhoto'))
+    if (referencePhotos.length === 0) {
+      setShowNoPhotoAlert(true)
       return
     }
 
+    if (skipCostConfirm) {
+      pickOrGenerate()
+      return
+    }
+
+    setShowCostConfirm(true)
+  }
+
+  const pickOrGenerate = () => {
+    if (referencePhotos.length === 1) {
+      void generateWithReference(referencePhotos[0]!.dataUrl)
+    } else {
+      setShowRefPicker(true)
+    }
+  }
+
+  const handleCostConfirm = () => {
+    setShowCostConfirm(false)
+    // Small delay so the cost modal closes before ref picker opens
+    setTimeout(pickOrGenerate, 100)
+  }
+
+  const generateWithReference = async (referenceDataUrl: string): Promise<void> => {
+    if (activeChat === null || currentChat === null) return
+
+    setShowRefPicker(false)
     setIsGeneratingTryOn(true)
     setErrorMsg(null)
 
@@ -161,7 +197,7 @@ export function EspejoAITab() {
       const res = await apiClient.post<MirrorGenerateResponse>('/sales/mirror/generate', {
         garment_name: currentChat.garmentName,
         garment_image: currentChat.garmentThumb,
-        reference_image: latestReference,
+        reference_image: referenceDataUrl,
       })
 
       addMessage(activeChat, {
@@ -289,7 +325,7 @@ export function EspejoAITab() {
       {/* Messages */}
       {currentChat !== null ? (
         <>
-          <ScrollArea className="flex-1 px-3 py-2">
+          <ScrollArea className="flex-1 min-h-0 px-3 py-2">
             <div className="space-y-3">
               {currentChat.messages.map((msg) => (
                 <div
@@ -313,11 +349,17 @@ export function EspejoAITab() {
                     )}
                   >
                     {msg.imageUrl !== undefined && (
-                      <img
-                        src={msg.imageUrl}
-                        alt="foto de referencia"
-                        className="w-full max-w-[180px] object-cover"
-                      />
+                      <button
+                        type="button"
+                        onClick={() => setExpandedImage(msg.imageUrl ?? null)}
+                        className="block cursor-zoom-in w-full"
+                      >
+                        <img
+                          src={msg.imageUrl}
+                          alt={msg.role === 'assistant' ? 'imagen generada por IA' : 'foto de referencia'}
+                          className="w-full object-cover"
+                        />
+                      </button>
                     )}
                     {msg.content !== '' && (
                       <div className="px-3 py-2">{msg.content}</div>
@@ -325,32 +367,54 @@ export function EspejoAITab() {
                   </div>
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
           </ScrollArea>
 
-          {/* Input */}
-          <div className="border-t border-pl-gray-700">
-            <div className="px-2 pt-2">
+          {/* Input area */}
+          <div className="border-t border-pl-gray-700 shrink-0 pb-[env(safe-area-inset-bottom)] mb-2 lg:mb-0">
+            <div className="px-3 pt-2.5 flex gap-2">
               <button
                 type="button"
-                onClick={() => void handleGenerateTryOn()}
+                onClick={() => {
+                  const garment = currentChat
+                    ? likedItems.find((li) => li.garment.id === currentChat.garmentId)?.garment ?? null
+                    : null
+                  if (garment) setPendingSellerChatGarment(garment)
+                  setActiveTab('inventario')
+                  setMobileOverlay('inventario')
+                }}
+                className="flex-1 flex items-center justify-center gap-1.5 text-[10px] font-semibold tracking-[0.08em] uppercase py-2.5 border border-pl-gray-600 text-pl-gray-300 font-body rounded-lg hover:border-pl-accent hover:text-pl-accent transition-colors"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                {t('dashboard.espejo.chatSeller')}
+              </button>
+              <button
+                type="button"
+                onClick={handleGenerateClick}
                 disabled={isGeneratingTryOn || isUploadingReference || isSending}
-                className="w-full text-[10px] font-semibold tracking-[0.1em] uppercase py-2 border border-pl-gray-600 text-pl-gray-300 font-body hover:border-pl-accent hover:text-pl-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 bg-pl-accent text-pl-black font-body rounded-lg hover:bg-pl-accent-dim transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isGeneratingTryOn ? (
-                  <span className="inline-flex items-center gap-1.5">
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                    {t('dashboard.espejo.generating')}
-                  </span>
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
+                    <span className="text-[10px] font-semibold tracking-[0.08em] uppercase">
+                      {t('dashboard.espejo.generating')}
+                    </span>
+                  </>
                 ) : (
-                  t('dashboard.espejo.generateHighQuality')
+                  <>
+                    <span className="text-[10px] font-semibold tracking-[0.08em] uppercase">
+                      {t('dashboard.espejo.tryOnLabel')}
+                    </span>
+                    <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                  </>
                 )}
               </button>
             </div>
             {errorMsg !== null && (
               <p className="px-3 pt-2 text-[10px] text-red-400 font-body">{errorMsg}</p>
             )}
-            <div className="p-2 flex items-center gap-2">
             <input
               ref={uploadRef}
               type="file"
@@ -360,41 +424,42 @@ export function EspejoAITab() {
                 void handleUploadReference(event)
               }}
             />
-            <button
-              onClick={() => uploadRef.current?.click()}
-              disabled={isUploadingReference || isGeneratingTryOn || isSending}
-              aria-label={t('dashboard.espejo.uploadReference')}
-              className="w-8 h-8 rounded-full border border-pl-gray-600 flex items-center justify-center text-pl-gray-400 hover:text-pl-white hover:border-pl-gray-400 transition-colors shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isUploadingReference ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Upload className="w-3.5 h-3.5" />
-              )}
-            </button>
-            <input
-              ref={inputRef}
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={t('dashboard.espejo.placeholder')}
-              className="flex-1 min-w-0 bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[12px] font-body rounded-full px-3 py-1.5 focus:outline-none focus:border-pl-accent/60"
-            />
-            <button
-              onClick={() => {
-                void handleSend()
-              }}
-              disabled={!inputValue.trim() || isSending || isUploadingReference || isGeneratingTryOn}
-              aria-label="Enviar"
-              className="w-8 h-8 rounded-full bg-pl-accent text-pl-black flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:bg-pl-accent-dim transition-colors shrink-0"
-            >
-              {isSending ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Send className="w-3.5 h-3.5" />
-              )}
-            </button>
+            <div className="px-3 py-3 flex items-center gap-2.5">
+              <button
+                onClick={() => uploadRef.current?.click()}
+                disabled={isUploadingReference || isGeneratingTryOn || isSending}
+                aria-label={t('dashboard.espejo.uploadReference')}
+                className="w-10 h-10 rounded-full border border-pl-gray-600 flex items-center justify-center text-pl-gray-400 hover:text-pl-white hover:border-pl-gray-400 transition-colors shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isUploadingReference ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Upload className="w-4 h-4" />
+                )}
+              </button>
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={t('dashboard.espejo.placeholder')}
+                className="flex-1 min-w-0 bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[13px] font-body rounded-full px-4 py-2.5 focus:outline-none focus:border-pl-accent/60"
+              />
+              <button
+                onClick={() => {
+                  void handleSend()
+                }}
+                disabled={!inputValue.trim() || isSending || isUploadingReference || isGeneratingTryOn}
+                aria-label="Enviar"
+                className="w-10 h-10 rounded-full bg-pl-accent text-pl-black flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:bg-pl-accent-dim transition-colors shrink-0"
+              >
+                {isSending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+              </button>
             </div>
           </div>
         </>
@@ -406,6 +471,183 @@ export function EspejoAITab() {
               Seleccioná una prueba para ver el chat
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Cost confirmation popup */}
+      {showCostConfirm && (
+        <div
+          className="fixed inset-0 z-[75] flex items-center justify-center bg-black/90 backdrop-blur-sm p-6"
+          onClick={() => setShowCostConfirm(false)}
+        >
+          <div
+            className="w-full max-w-xs bg-pl-gray-800 border border-pl-gray-700 rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-5 text-center">
+              <div className="w-12 h-12 rounded-full bg-pl-accent/15 flex items-center justify-center mx-auto mb-3">
+                <Sparkles className="w-6 h-6 text-pl-accent" />
+              </div>
+              <p className="text-[13px] font-semibold text-pl-white font-body mb-1.5">
+                {t('dashboard.espejo.costTitle')}
+              </p>
+              <p className="text-[11px] text-pl-gray-400 font-body leading-relaxed">
+                {t('dashboard.espejo.costDesc')}
+              </p>
+            </div>
+            <div className="px-5 pb-2 flex justify-center">
+              <label className="inline-flex items-center gap-2.5 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={skipCostConfirm}
+                  onChange={(e) => {
+                    setSkipCostConfirm(e.target.checked)
+                    if (e.target.checked) {
+                      localStorage.setItem('plur-skip-cost-confirm', '1')
+                    } else {
+                      localStorage.removeItem('plur-skip-cost-confirm')
+                    }
+                  }}
+                  className="w-4 h-4 rounded border-pl-gray-600 bg-pl-gray-700 text-pl-accent accent-pl-accent cursor-pointer"
+                />
+                <span className="text-[11px] text-pl-gray-400 font-body group-hover:text-pl-gray-300 transition-colors">
+                  {t('dashboard.espejo.dontShowAgain')}
+                </span>
+              </label>
+            </div>
+            <div className="px-5 pb-5 pt-3 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setShowCostConfirm(false)}
+                className="flex-1 text-[11px] font-semibold tracking-[0.08em] uppercase py-2.5 border border-pl-gray-600 text-pl-gray-300 font-body rounded-lg hover:border-pl-gray-400 hover:text-pl-white transition-colors"
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                type="button"
+                onClick={handleCostConfirm}
+                className="flex-1 text-[11px] font-semibold tracking-[0.08em] uppercase py-2.5 bg-pl-accent text-pl-black font-body rounded-lg hover:bg-pl-accent-dim transition-colors"
+              >
+                {t('dashboard.espejo.confirmGenerate')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* No reference photo alert */}
+      {showNoPhotoAlert && (
+        <div
+          className="fixed inset-0 z-[75] flex items-center justify-center bg-black/90 backdrop-blur-sm p-6"
+          onClick={() => setShowNoPhotoAlert(false)}
+        >
+          <div
+            className="w-full max-w-xs bg-pl-gray-800 border border-pl-gray-700 rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-5 text-center">
+              <div className="w-12 h-12 rounded-full bg-amber-500/15 flex items-center justify-center mx-auto mb-3">
+                <Upload className="w-6 h-6 text-amber-400" />
+              </div>
+              <p className="text-[13px] font-semibold text-pl-white font-body mb-1.5">
+                {t('dashboard.espejo.noPhotoTitle')}
+              </p>
+              <p className="text-[11px] text-pl-gray-400 font-body leading-relaxed">
+                {t('dashboard.espejo.noPhotoDesc')}
+              </p>
+            </div>
+            <div className="px-5 pb-5 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowNoPhotoAlert(false)
+                  setActiveTab('perfil')
+                  setMobileOverlay('perfil')
+                }}
+                className="w-full flex items-center justify-center gap-2 text-[11px] font-semibold tracking-[0.1em] uppercase py-3 bg-pl-accent text-pl-black font-body rounded-lg hover:bg-pl-accent-dim transition-colors"
+              >
+                {t('dashboard.espejo.goToProfile')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowNoPhotoAlert(false)}
+                className="w-full text-[11px] font-medium text-pl-gray-400 font-body py-2 hover:text-pl-white transition-colors"
+              >
+                {t('common.cancel')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reference photo picker */}
+      {showRefPicker && (
+        <div
+          className="fixed inset-0 z-[75] flex items-end justify-center bg-black/90 backdrop-blur-sm"
+          onClick={() => setShowRefPicker(false)}
+        >
+          <div
+            className="w-full max-w-sm bg-pl-gray-800 border-t border-pl-gray-700 rounded-t-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-pl-gray-700">
+              <p className="text-[12px] font-semibold tracking-[0.1em] uppercase text-pl-white font-body">
+                {t('dashboard.espejo.chooseReference')}
+              </p>
+              <button
+                onClick={() => setShowRefPicker(false)}
+                className="w-7 h-7 rounded-full bg-pl-gray-700 flex items-center justify-center hover:bg-pl-gray-600 transition-colors"
+              >
+                <X className="w-4 h-4 text-pl-gray-400" />
+              </button>
+            </div>
+            <div className="p-4 pb-[calc(1rem+72px+env(safe-area-inset-bottom))] lg:pb-4">
+              <p className="text-[11px] text-pl-gray-400 font-body mb-3">
+                {t('dashboard.espejo.chooseReferenceHint')}
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                {referencePhotos.map((photo) => (
+                  <button
+                    key={photo.id}
+                    type="button"
+                    onClick={() => void generateWithReference(photo.dataUrl)}
+                    className="relative aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-pl-accent transition-colors group"
+                  >
+                    <img
+                      src={photo.dataUrl}
+                      alt={photo.label}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                      <Sparkles className="w-6 h-6 text-pl-accent opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image lightbox */}
+      {expandedImage !== null && (
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+          onClick={() => setExpandedImage(null)}
+        >
+          <button
+            onClick={() => setExpandedImage(null)}
+            aria-label="Cerrar"
+            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-pl-gray-700/80 flex items-center justify-center hover:bg-pl-gray-600 transition-colors z-10"
+          >
+            <X className="w-5 h-5 text-pl-white" />
+          </button>
+          <img
+            src={expandedImage}
+            alt="imagen ampliada"
+            className="max-w-full max-h-full object-contain rounded-xl"
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
       )}
     </div>

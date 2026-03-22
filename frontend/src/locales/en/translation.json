@@ -66,7 +66,8 @@
     "edit": "Edit",
     "create": "Create",
     "back": "Back",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "close": "Close"
   },
   "home": {
     "title": "Home",
@@ -295,7 +296,8 @@
       "garmentDetails": "Garment details",
       "viewProfile": "View profile",
       "publishedGarments": "Published garments",
-      "noOtherGarments": "No other garments published"
+      "noOtherGarments": "No other garments published",
+      "emptyChat": "Send a message to start the conversation"
     },
     "publish": {
       "title": "Publish your clothes",
@@ -315,6 +317,11 @@
       "location": "Location",
       "tags": "Tags",
       "tagsHint": "Comma separated (e.g. vintage, urban)",
+      "mainPhoto": "Main",
+      "uploadPhoto": "Upload photo",
+      "aiComplete": "Complete with AI",
+      "aiAnalyzing": "Analyzing...",
+      "aiError": "Could not analyze the image. Please try again.",
       "publishButton": "Publish garment",
       "publishSuccess": "Garment published!",
       "publishError": "Could not publish the garment. Please try again.",
@@ -353,22 +360,21 @@
     },
     "comprar": {
       "title": "Buy PLR",
-      "amount": "Amount",
-      "pricePerToken": "Price per token",
-      "continue": "Continue with Transak",
-      "cardTitle": "Payment details",
-      "cardCredit": "Credit",
-      "cardDebit": "Debit",
+      "youGet": "You get",
+      "youPay": "You pay",
+      "continue": "Continue",
+      "cardNumber": "Card number",
+      "cardExpiry": "Expiry",
       "cardName": "Name on card",
-      "accepted": "We accept",
       "secure": "Secure payment encrypted with SSL",
       "pay": "Pay",
-      "processing": "Processing purchase...",
+      "stepVerifying": "Verifying payment details...",
+      "stepProcessing": "Processing transaction...",
+      "stepMinting": "Minting tokens on Avalanche...",
+      "stepDone": "Tokens credited",
       "success": "Purchase successful!",
-      "failed": "Purchase failed",
-      "pendingTitle": "Processing with Transak",
-      "pendingSubtext": "Complete the payment in the Transak window. Your balance will update automatically.",
-      "openTransak": "Open Transak"
+      "successHint": "Tokens are in your wallet and ready to use.",
+      "failed": "Purchase failed. Please try again."
     },
     "garment": {
       "size": "Size",
@@ -424,6 +430,7 @@
       "discoveryRadiusHint": "Maximum distance (km)",
       "proximityEnabled": "Prioritize proximity",
       "proximityEnabledHint": "Show items from people nearby first",
+      "avatarHint": "Tap the circle to upload your profile photo",
       "save": "Save",
       "saveSuccess": "Preferences saved!",
       "saveError": "There was an error saving your preferences"
@@ -468,7 +475,9 @@
       "placeholder": "Type a message...",
       "statusFinalized": "Conversation finalized",
       "statusRejected": "Conversation rejected",
-      "statusExpired": "Conversation expired"
+      "statusExpired": "Conversation expired",
+      "seller": "Seller",
+      "buyer": "Buyer"
     }
   },
   "earlyAccess": {

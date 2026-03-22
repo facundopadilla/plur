@@ -36,6 +36,7 @@ interface DashboardState {
 
   seenGarmentIds: string[]
   markAsSeen: (garmentId: string) => void
+  unmarkSeen: (garmentId: string) => void
   resetSeen: () => void
 
   selectedCurrency: CurrencyCode
@@ -44,6 +45,9 @@ interface DashboardState {
   sellerChats: SellerChat[]
   createSellerChat: (garment: DashboardGarment) => string
   addSellerMessage: (chatId: string, msg: Omit<SellerChatMessage, 'id' | 'timestamp'>) => void
+
+  pendingSellerChatGarment: DashboardGarment | null
+  setPendingSellerChatGarment: (garment: DashboardGarment | null) => void
 }
 
 export const useDashboardStore = create<DashboardState>()(
@@ -123,6 +127,10 @@ export const useDashboardStore = create<DashboardState>()(
             ? state.seenGarmentIds
             : [...state.seenGarmentIds, garmentId],
         })),
+      unmarkSeen: (garmentId) =>
+        set((state) => ({
+          seenGarmentIds: state.seenGarmentIds.filter((id) => id !== garmentId),
+        })),
       resetSeen: () => set({ seenGarmentIds: [] }),
 
       selectedCurrency: DEFAULT_CURRENCY,
@@ -165,6 +173,9 @@ export const useDashboardStore = create<DashboardState>()(
               : chat,
           ),
         })),
+
+      pendingSellerChatGarment: null,
+      setPendingSellerChatGarment: (garment) => set({ pendingSellerChatGarment: garment }),
     }),
     {
       name: 'dashboard-storage',
@@ -194,6 +205,19 @@ export const useDashboardStore = create<DashboardState>()(
           rehydratedState.activeTab = 'vestidor'
         } else if (!VALID_TABS.includes(rehydratedState.activeTab)) {
           rehydratedState.activeTab = 'inventario'
+        }
+
+        // Ensure persisted likedItems have valid pricePLR
+        if (Array.isArray(rehydratedState.likedItems)) {
+          rehydratedState.likedItems = rehydratedState.likedItems.map((item) => ({
+            ...item,
+            garment: {
+              ...item.garment,
+              pricePLR: typeof item.garment.pricePLR === 'number' && !isNaN(item.garment.pricePLR)
+                ? item.garment.pricePLR
+                : 0,
+            },
+          }))
         }
       },
     },

@@ -38,6 +38,14 @@ class ConversationRepository:
         queryset = queryset.select_related("garment", "buyer", "seller").order_by("-updated_at")
         return [conversation async for conversation in queryset]
 
+    @staticmethod
+    async def find_by_garment_and_buyer(garment_id: int, buyer_id: int) -> Conversation | None:
+        try:
+            return await Conversation.objects.select_related("garment", "buyer", "seller").aget(
+                garment_id=garment_id, buyer_id=buyer_id
+            )
+        except Conversation.DoesNotExist:
+            return None
 
     @staticmethod
     async def find_open_by_garment_id(garment_id: int) -> Conversation | None:

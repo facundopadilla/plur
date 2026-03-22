@@ -5,6 +5,8 @@ export interface UserPreferences {
   styles: string[]
   sizes: string[]
   colors: string[]
+  conditions: string[]
+  genders: string[]
   discovery_radius_km: number
   proximity_enabled: boolean
 }
@@ -15,7 +17,7 @@ export function usePreferences() {
   return useQuery({
     queryKey: PREFERENCES_QUERY_KEY,
     queryFn: async (): Promise<UserPreferences> => {
-      const response = await apiClient.get<UserPreferences>('/users/me/preferences')
+      const response = await apiClient.get<UserPreferences>('/auth/me/preferences')
       return response.data
     },
   })
@@ -26,7 +28,7 @@ export function useUpdatePreferences() {
 
   return useMutation({
     mutationFn: async (data: Partial<UserPreferences>): Promise<UserPreferences> => {
-      const response = await apiClient.put<UserPreferences>('/users/me/preferences', data)
+      const response = await apiClient.put<UserPreferences>('/auth/me/preferences', data)
       return response.data
     },
     onSuccess: () => {

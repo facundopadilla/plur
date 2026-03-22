@@ -66,7 +66,8 @@
     "edit": "Editar",
     "create": "Crear",
     "back": "Volver",
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "close": "Cerrar"
   },
   "home": {
     "title": "Inicio",
@@ -221,6 +222,18 @@
       "eyebrow": "Comunidad",
       "title": "Lo que dicen."
     },
+    "blockchain": {
+      "eyebrow": "Tecnología",
+      "titleLine1": "Construido sobre",
+      "titleLine2": "blockchain",
+      "description": "Cada transacción de PLR se registra en la blockchain de Avalanche. Transparencia total, comisiones mínimas y la seguridad de una red descentralizada.",
+      "statSpeedValue": "Instantáneo",
+      "statSpeed": "Velocidad",
+      "statFee": "Comisión",
+      "statOnChain": "On-chain",
+      "builtDuring": "Construido durante",
+      "sponsoredBy": "Auspiciado por"
+    },
     "cta": {
       "titleLine1": "Tu ropa",
       "titleLine2": "merece otra",
@@ -294,7 +307,8 @@
       "garmentDetails": "Detalles de la prenda",
       "viewProfile": "Ver perfil",
       "publishedGarments": "Prendas publicadas",
-      "noOtherGarments": "No tiene otras prendas publicadas"
+      "noOtherGarments": "No tiene otras prendas publicadas",
+      "emptyChat": "Enviá un mensaje para iniciar la conversación"
     },
     "publish": {
       "title": "Publicá tu ropa",
@@ -314,6 +328,11 @@
       "location": "Ubicación",
       "tags": "Etiquetas",
       "tagsHint": "Separadas por coma (ej: vintage, urbano)",
+      "mainPhoto": "Principal",
+      "uploadPhoto": "Subir foto",
+      "aiComplete": "Completar con IA",
+      "aiAnalyzing": "Analizando...",
+      "aiError": "No se pudo analizar la imagen. Intentá de nuevo.",
       "publishButton": "Publicar prenda",
       "publishSuccess": "¡Prenda publicada!",
       "publishError": "No se pudo publicar la prenda. Intentá de nuevo.",
@@ -325,11 +344,22 @@
       "selectGarment": "Elegir prenda",
       "uploadPhoto": "Subir foto",
       "uploadReference": "Subir foto de referencia",
-      "generateHighQuality": "Generar imagen alta calidad (1 PLR)",
+      "generateHighQuality": "Probar prenda con IA (1 PLR)",
+      "tryOnLabel": "Probar prenda con IA",
       "referenceUploaded": "¡Foto de referencia guardada!",
       "needPhoto": "Subí una foto tuya",
       "needPhotoDesc": "Necesitamos al menos una foto de referencia para probarte la prenda",
       "generating": "Generando imagen...",
+      "costTitle": "Vas a gastar 1 crédito",
+      "costDesc": "Se va a descontar 1 PLR de tu saldo para generar la imagen con IA.",
+      "dontShowAgain": "No volver a mostrar",
+      "confirmGenerate": "Generar",
+      "noPhotoTitle": "No tenés fotos de referencia",
+      "noPhotoDesc": "Subí una foto tuya acorde a la prenda que querés probar y volvé a intentarlo.",
+      "goToProfile": "Ir a mi perfil",
+      "chatSeller": "Chatear con vendedor",
+      "chooseReference": "Elegí tu foto",
+      "chooseReferenceHint": "Seleccioná la foto de referencia para probarte esta prenda",
       "newChat": "Nueva prueba",
       "placeholder": "Escribí un mensaje...",
       "emptyChats": "Iniciá una prueba virtual seleccionando una prenda de tu inventario."
@@ -352,22 +382,21 @@
     },
     "comprar": {
       "title": "Comprar PLR",
-      "amount": "Cantidad",
-      "pricePerToken": "Precio por token",
-      "continue": "Continuar con Transak",
-      "cardTitle": "Datos de pago",
-      "cardCredit": "Crédito",
-      "cardDebit": "Débito",
+      "youGet": "Recibís",
+      "youPay": "Pagás",
+      "continue": "Continuar",
+      "cardNumber": "Número de tarjeta",
+      "cardExpiry": "Vencimiento",
       "cardName": "Nombre en la tarjeta",
-      "accepted": "Aceptamos",
       "secure": "Pago seguro encriptado con SSL",
       "pay": "Pagar",
-      "processing": "Procesando compra...",
+      "stepVerifying": "Verificando datos de pago...",
+      "stepProcessing": "Procesando transacción...",
+      "stepMinting": "Minteando tokens en Avalanche...",
+      "stepDone": "Tokens acreditados",
       "success": "¡Compra exitosa!",
-      "failed": "La compra falló",
-      "pendingTitle": "Procesando con Transak",
-      "pendingSubtext": "Completá el pago en la ventana de Transak. Tu balance se actualizará automáticamente.",
-      "openTransak": "Abrir Transak"
+      "successHint": "Los tokens ya están en tu wallet y listos para usar.",
+      "failed": "La compra falló. Intentá de nuevo."
     },
     "garment": {
       "size": "Talle",
@@ -423,6 +452,19 @@
       "discoveryRadiusHint": "Distancia máxima (km)",
       "proximityEnabled": "Priorizar cercanía",
       "proximityEnabledHint": "Mostrar primero la ropa de gente cerca tuyo",
+      "conditions": "Condición aceptada",
+      "conditionsHint": "Qué estado de la prenda te interesa",
+      "genders": "Tipo de prenda",
+      "gendersHint": "Para qué género buscás ropa",
+      "gender": {
+        "mujer": "Mujer",
+        "hombre": "Hombre",
+        "unisex": "Unisex"
+      },
+      "referencePhotos": "Fotos de referencia",
+      "referencePhotosHint": "Tus fotos para el probador virtual con IA",
+      "noReferencePhotos": "Agregá fotos tuyas para usar el probador virtual con IA",
+      "avatarHint": "Tocá el círculo para subir tu foto de perfil",
       "save": "Guardar",
       "saveSuccess": "¡Preferencias guardadas!",
       "saveError": "Hubo un error al guardar las preferencias"
@@ -456,18 +498,33 @@
       "conditions": {
         "new": "Nuevo",
         "excellent": "Excelente",
-        "good": "Bueno"
+        "good": "Bueno",
+        "fair": "Aceptable"
+      },
+      "gender": "Género",
+      "genders": {
+        "mujer": "Mujer",
+        "hombre": "Hombre",
+        "unisex": "Unisex"
       }
     },
     "match": {
-      "open": "Abiertas",
+      "title": "Chats",
+      "open": "Activas",
       "finalized": "Finalizadas",
-      "emptyOpen": "No tienes conversaciones abiertas.",
-      "emptyFinalized": "No tienes conversaciones finalizadas.",
-      "placeholder": "Escribe un mensaje...",
+      "filterAll": "Todos",
+      "filterBuying": "Comprando",
+      "filterSelling": "Vendiendo",
+      "buying": "Comprando",
+      "selling": "Vendiendo",
+      "emptyOpen": "No tenés conversaciones todavía.",
+      "emptyFinalized": "No tenés conversaciones finalizadas.",
+      "placeholder": "Escribí un mensaje...",
       "statusFinalized": "Conversación finalizada",
       "statusRejected": "Conversación rechazada",
-      "statusExpired": "Conversación expirada"
+      "statusExpired": "Conversación expirada",
+      "seller": "Vendedor",
+      "buyer": "Comprador"
     }
   },
   "earlyAccess": {

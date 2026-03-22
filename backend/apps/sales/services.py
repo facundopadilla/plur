@@ -15,6 +15,7 @@ from apps.match.services import ConversationService as _ConversationService
 from apps.sales.models import CreditTransaction, Garment, Sale
 from apps.sales.repositories import CreditTransactionRepository, GarmentRepository, SaleRepository
 from apps.users.models import User
+from core.ai_services import generate_tryon_image, upload_to_cloudinary
 from core.blockchain import burn_plr, mint_plr
 
 PLATFORM_FEE_RATE = 0.005  # 0.5%
@@ -408,12 +409,99 @@ class MirrorService:
         logger.info("Mirror reference uploaded", user_id=user.pk)
         return normalized_image, "¡Referencia cargada! Ya podés generar tu prueba en alta calidad."
 
+    # Words/phrases that indicate off-topic or abusive input
+    _BLOCKED_TOKENS: list[str] = [
+        "puto",
+        "puta",
+        "mierda",
+        "carajo",
+        "verga",
+        "culo",
+        "coger",
+        "cojud",
+        "boludo",
+        "pelotudo",
+        "forro",
+        "concha",
+        "chingar",
+        "pendej",
+        "fuck",
+        "shit",
+        "dick",
+        "pussy",
+        "bitch",
+        "ass",
+        "porn",
+        "nude",
+        "naked",
+        "sex",
+        "kill",
+        "murder",
+        "hack",
+        "bomb",
+        "drug",
+        "cocain",
+        "marihuana",
+        "weed",
+        "crypto scam",
+        "phishing",
+        "ignore previous",
+        "ignore instructions",
+        "forget your prompt",
+        "system prompt",
+        "jailbreak",
+        "dan mode",
+    ]
+
+    _OFFTOPIC_TOKENS: list[str] = [
+        "bitcoin",
+        "ethereum",
+        "nft",
+        "forex",
+        "apuesta",
+        "casino",
+        "lotería",
+        "política",
+        "elecciones",
+        "presidente",
+        "religión",
+        "iglesia",
+        "receta",
+        "cocinar",
+        "programar",
+        "código",
+        "python",
+        "javascript",
+        "matemática",
+        "física",
+        "tarea",
+        "examen",
+    ]
+
+    _GUARDRAIL_REPLY: str = (
+        "El asistente de Plur está diseñado exclusivamente para ayudarte con moda y estilo. "
+        "Podés preguntarme sobre talles, combinaciones, looks o generar tu prueba virtual."
+    )
+
+    @classmethod
+    def _is_blocked(cls, text: str) -> bool:
+        """Check if the message contains blocked or off-topic content."""
+        lowered = text.lower()
+        return any(token in lowered for token in cls._BLOCKED_TOKENS) or any(
+            token in lowered for token in cls._OFFTOPIC_TOKENS
+        )
+
     @classmethod
     async def chat(cls, user: User, garment_name: str, message: str) -> str:
         """Return a contextual assistant response for the mirror chat."""
         content = message.strip()
         if not content:
             raise ValueError("Message is required")
+
+        # Guardrail: block inappropriate or off-topic messages
+        if cls._is_blocked(content):
+            logger.warning("Mirror chat blocked message", user_id=user.pk)
+            return cls._GUARDRAIL_REPLY
 
         garment = garment_name.strip() or "esa prenda"
         lowered = content.lower()
@@ -427,6 +515,16 @@ class MirrorService:
             reply = (
                 f"{garment} combina muy bien con tonos neutros y accesorios minimalistas. "
                 "También puedo generar una prueba para ver la combinación completa."
+            )
+        elif any(token in lowered for token in ("precio", "costo", "cuánto", "cuanto", "plata", "pagar")):
+            reply = (
+                f"El precio de {garment} lo podés ver en la card de la prenda. "
+                f"Generar una prueba virtual cuesta {settings.PLR_AI_IMAGE_COST} PLR."
+            )
+        elif any(token in lowered for token in ("material", "tela", "algodón", "cuero", "lana", "seda")):
+            reply = (
+                f"Para conocer el material exacto de {garment}, te recomiendo contactar al vendedor. "
+                "Yo puedo ayudarte a visualizar cómo te queda con una prueba virtual."
             )
         else:
             reply = (
@@ -452,6 +550,10 @@ class MirrorService:
 
         normalized_name = garment_name.strip() or "prenda"
 
+        # Guardrail: sanitize garment name before sending to AI
+        if cls._is_blocked(normalized_name):
+            normalized_name = "prenda"
+
         def _charge_user() -> tuple[int, int]:
             with transaction.atomic():
                 locked_user = User.objects.select_for_update().get(pk=user.pk)
@@ -465,7 +567,7 @@ class MirrorService:
                     user=locked_user,
                     tx_type="spent",
                     amount=-cost,
-                    description=f"Espejo AI: {normalized_name}",
+                    description=f"Generación de imagen: {normalized_name}",
                 )
                 return locked_user.credits, ct.pk
 
@@ -476,7 +578,7 @@ class MirrorService:
             if user.wallet_address:
                 tx_hash = await sync_to_async(burn_plr)(
                     amount_plr=cost,
-                    reason=f"Espejo AI: {normalized_name}",
+                    reason=f"Generación de imagen: {normalized_name}",
                     reference_id_str=f"mirror-{ct_pk}",
                     from_address=user.wallet_address,
                 )
@@ -488,14 +590,27 @@ class MirrorService:
         normalized_reference = reference_image.strip()
         normalized_garment_image = garment_image.strip()
 
-        if normalized_reference.startswith("data:image/"):
-            image_url = normalized_reference
-        elif normalized_garment_image.startswith("data:image/") or normalized_garment_image.startswith("http"):
-            image_url = normalized_garment_image
-        else:
-            image_url = cls._placeholder_image(normalized_name)
+        # Generate real try-on image via Gemini + Cloudinary
+        try:
+            if not settings.GEMINI_API_KEY:
+                raise RuntimeError("GEMINI_API_KEY not configured")
 
-        reply = f"Listo. Generé tu prueba en alta calidad para {normalized_name}. Se descontó {cost} PLR de tu saldo."
+            generated_bytes = await sync_to_async(generate_tryon_image)(
+                garment_name=normalized_name,
+                garment_image=normalized_garment_image,
+                reference_image=normalized_reference,
+            )
+            image_url = await sync_to_async(upload_to_cloudinary)(generated_bytes)
+            reply = f"¡Listo! Generé tu prueba virtual de {normalized_name} con IA. Se descontó {cost} PLR de tu saldo."
+        except Exception:
+            logger.exception("AI image generation failed, returning fallback", user_id=user.pk)
+            if normalized_reference.startswith("data:image/"):
+                image_url = normalized_reference
+            elif normalized_garment_image.startswith(("data:image/", "http")):
+                image_url = normalized_garment_image
+            else:
+                image_url = cls._placeholder_image(normalized_name)
+            reply = f"Generé tu prueba para {normalized_name} (modo simplificado). Se descontó {cost} PLR de tu saldo."
 
         logger.info(
             "Mirror try-on generated",

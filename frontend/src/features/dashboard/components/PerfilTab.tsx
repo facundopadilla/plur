@@ -1,19 +1,33 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Loader2, Check, AlertCircle } from 'lucide-react'
+import { Loader2, Check, AlertCircle, Camera, Plus, X, ImageIcon } from 'lucide-react'
 import { usePreferences, useUpdatePreferences } from '../hooks/usePreferences'
 import { STYLE_OPTIONS } from '@/features/onboarding/data/styles'
 import { COLOR_OPTIONS } from '@/features/onboarding/data/colors'
 import { CLOTHING_SIZES } from '@/features/onboarding/data/sizes'
+import { CONDITION_OPTIONS, GENDER_OPTIONS } from '@/features/onboarding/data/preferences'
+import { useAuthStore } from '@/stores/auth.store'
+import { useProfileStore } from '@/stores/profile.store'
+import { cn } from '@/lib/utils'
 
 export function PerfilTab() {
   const { t } = useTranslation()
+  const user = useAuthStore((s) => s.user)
+  const referencePhotos = useProfileStore((s) => s.referencePhotos)
+  const addReferencePhoto = useProfileStore((s) => s.addReferencePhoto)
+  const removeReferencePhoto = useProfileStore((s) => s.removeReferencePhoto)
+  const avatarDataUrl = useProfileStore((s) => s.avatarDataUrl)
+  const setAvatarDataUrl = useProfileStore((s) => s.setAvatarDataUrl)
   const { data: preferences, isLoading, isError, error } = usePreferences()
   const { mutate: updatePreferences, isPending, isSuccess, isError: isUpdateError } = useUpdatePreferences()
+  const avatarInputRef = useRef<HTMLInputElement>(null)
+  const refPhotoInputRef = useRef<HTMLInputElement>(null)
 
   const [styles, setStyles] = useState<string[]>([])
   const [sizes, setSizes] = useState<string[]>([])
   const [colors, setColors] = useState<string[]>([])
+  const [conditions, setConditions] = useState<string[]>([])
+  const [genders, setGenders] = useState<string[]>([])
   const [radius, setRadius] = useState<number>(50)
   const [proximity, setProximity] = useState<boolean>(true)
   const [validationError, setValidationError] = useState<string | null>(null)
@@ -23,6 +37,8 @@ export function PerfilTab() {
       setStyles(preferences.styles || [])
       setSizes(preferences.sizes || [])
       setColors(preferences.colors || [])
+      setConditions(preferences.conditions || [])
+      setGenders(preferences.genders || [])
       setRadius(preferences.discovery_radius_km ?? 50)
       setProximity(preferences.proximity_enabled ?? true)
     }
@@ -40,6 +56,39 @@ export function PerfilTab() {
     setColors(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id])
   }
 
+  const handleToggleCondition = (id: string) => {
+    setConditions(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id])
+  }
+
+  const handleToggleGender = (id: string) => {
+    setGenders(prev => prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id])
+  }
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const result = ev.target?.result
+      if (typeof result === 'string') setAvatarDataUrl(result)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleAddReferencePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const result = ev.target?.result
+      if (typeof result === 'string') {
+        addReferencePhoto({ label: 'custom', dataUrl: result })
+      }
+    }
+    reader.readAsDataURL(file)
+    if (refPhotoInputRef.current) refPhotoInputRef.current.value = ''
+  }
+
   const handleSave = () => {
     setValidationError(null)
     if (radius < 1 || radius > 500) {
@@ -51,6 +100,8 @@ export function PerfilTab() {
       styles,
       sizes,
       colors,
+      conditions,
+      genders,
       discovery_radius_km: radius,
       proximity_enabled: proximity
     })
@@ -84,7 +135,99 @@ export function PerfilTab() {
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-8">
-        
+
+        {/* Profile photo & name */}
+        <section className="flex flex-col items-center gap-3">
+          <input
+            ref={avatarInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleAvatarChange}
+          />
+          <button
+            type="button"
+            onClick={() => avatarInputRef.current?.click()}
+            className="relative group"
+          >
+            <div className="w-20 h-20 rounded-full overflow-hidden bg-pl-gray-700 flex items-center justify-center">
+              {avatarDataUrl ? (
+                <img src={avatarDataUrl} alt="avatar" className="w-full h-full object-cover" />
+              ) : (
+                <span className="font-display text-2xl font-bold text-pl-gray-400">
+                  {user?.first_name?.[0]?.toUpperCase() ?? '?'}
+                </span>
+              )}
+            </div>
+            <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <Camera className="w-5 h-5 text-pl-white" />
+            </div>
+          </button>
+          {user && (
+            <p className="text-sm font-semibold text-pl-white font-body">
+              {user.first_name} {user.last_name}
+            </p>
+          )}
+          <p className="text-[10px] text-pl-gray-500 font-body">{user?.email}</p>
+          {!avatarDataUrl && (
+            <p className="text-[10px] text-pl-gray-400 font-body mt-0.5">
+              {t('dashboard.preferences.avatarHint')}
+            </p>
+          )}
+        </section>
+
+        {/* Reference photos for AI */}
+        <section>
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold tracking-[0.08em] uppercase text-pl-white font-body">
+              {t('dashboard.preferences.referencePhotos')}
+            </h3>
+            <p className="text-xs text-pl-gray-400 font-body mt-1">
+              {t('dashboard.preferences.referencePhotosHint')}
+            </p>
+          </div>
+          <input
+            ref={refPhotoInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleAddReferencePhoto}
+          />
+          <div className="flex gap-3 overflow-x-auto scrollbar-none pb-1">
+            {referencePhotos.map((photo) => (
+              <div key={photo.id} className="relative shrink-0 w-20 h-20 rounded-lg overflow-hidden">
+                <img src={photo.dataUrl} alt={photo.label} className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => removeReferencePhoto(photo.id)}
+                  className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/70 backdrop-blur-sm flex items-center justify-center"
+                >
+                  <X className="w-3 h-3 text-pl-white" />
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => refPhotoInputRef.current?.click()}
+              className="shrink-0 w-20 h-20 rounded-lg border-2 border-dashed border-pl-gray-600 flex flex-col items-center justify-center gap-1 text-pl-gray-500 hover:border-pl-accent hover:text-pl-accent transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              <span className="text-[8px] font-body uppercase tracking-wider">Agregar</span>
+            </button>
+          </div>
+          {referencePhotos.length === 0 && (
+            <div className="mt-3 flex items-center gap-2 px-3 py-2.5 bg-pl-gray-700/40 border border-pl-gray-700 rounded-lg">
+              <ImageIcon className="w-4 h-4 text-pl-gray-500 shrink-0" />
+              <p className="text-[10px] text-pl-gray-500 font-body">
+                {t('dashboard.preferences.noReferencePhotos')}
+              </p>
+            </div>
+          )}
+        </section>
+
+        <div className="border-t border-pl-gray-700" />
+
+        {/* Preferences title */}
         <section>
           <div className="mb-4">
             <h3 className="text-sm font-semibold tracking-[0.08em] uppercase text-pl-white font-body">
@@ -102,8 +245,8 @@ export function PerfilTab() {
                   key={style.id}
                   onClick={() => handleToggleStyle(style.id)}
                   className={`px-4 py-2 border text-sm font-body transition-colors ${
-                    isSelected 
-                      ? 'border-pl-accent bg-pl-accent/10 text-pl-accent' 
+                    isSelected
+                      ? 'border-pl-accent bg-pl-accent/10 text-pl-accent'
                       : 'border-pl-gray-600 text-pl-gray-300 hover:border-pl-gray-400'
                   }`}
                 >
@@ -131,8 +274,8 @@ export function PerfilTab() {
                   key={size}
                   onClick={() => handleToggleSize(size)}
                   className={`min-w-[3rem] h-12 flex items-center justify-center border text-sm font-body transition-colors ${
-                    isSelected 
-                      ? 'border-pl-accent bg-pl-accent/10 text-pl-accent' 
+                    isSelected
+                      ? 'border-pl-accent bg-pl-accent/10 text-pl-accent'
                       : 'border-pl-gray-600 text-pl-gray-300 hover:border-pl-gray-400'
                   }`}
                 >
@@ -174,6 +317,69 @@ export function PerfilTab() {
           </div>
         </section>
 
+        {/* Condition preference */}
+        <section>
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold tracking-[0.08em] uppercase text-pl-white font-body">
+              {t('dashboard.preferences.conditions')}
+            </h3>
+            <p className="text-xs text-pl-gray-400 font-body mt-1">
+              {t('dashboard.preferences.conditionsHint')}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {CONDITION_OPTIONS.map((cond) => {
+              const isSelected = conditions.includes(cond.id)
+              return (
+                <button
+                  key={cond.id}
+                  onClick={() => handleToggleCondition(cond.id)}
+                  className={cn(
+                    'px-4 py-2 border text-sm font-body transition-colors',
+                    isSelected
+                      ? 'border-pl-accent bg-pl-accent/10 text-pl-accent'
+                      : 'border-pl-gray-600 text-pl-gray-300 hover:border-pl-gray-400',
+                  )}
+                >
+                  {t(cond.labelKey)}
+                </button>
+              )
+            })}
+          </div>
+        </section>
+
+        {/* Gender preference */}
+        <section>
+          <div className="mb-4">
+            <h3 className="text-sm font-semibold tracking-[0.08em] uppercase text-pl-white font-body">
+              {t('dashboard.preferences.genders')}
+            </h3>
+            <p className="text-xs text-pl-gray-400 font-body mt-1">
+              {t('dashboard.preferences.gendersHint')}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {GENDER_OPTIONS.map((gender) => {
+              const isSelected = genders.includes(gender.id)
+              return (
+                <button
+                  key={gender.id}
+                  onClick={() => handleToggleGender(gender.id)}
+                  className={cn(
+                    'px-4 py-2 border text-sm font-body transition-colors',
+                    isSelected
+                      ? 'border-pl-accent bg-pl-accent/10 text-pl-accent'
+                      : 'border-pl-gray-600 text-pl-gray-300 hover:border-pl-gray-400',
+                  )}
+                >
+                  {t(gender.labelKey)}
+                </button>
+              )
+            })}
+          </div>
+        </section>
+
+        {/* Discovery radius */}
         <section className="space-y-6">
           <div>
             <div className="mb-4">
@@ -185,14 +391,23 @@ export function PerfilTab() {
                 {t('dashboard.preferences.discoveryRadiusHint')}
               </p>
             </div>
-            <input
-              type="range"
-              min="1"
-              max="500"
-              value={radius}
-              onChange={(e) => setRadius(Number(e.target.value))}
-              className="w-full accent-pl-accent h-2 bg-pl-gray-800 rounded-lg appearance-none cursor-pointer"
-            />
+            <div className="relative pt-1">
+              <input
+                type="range"
+                min="1"
+                max="500"
+                value={radius}
+                onChange={(e) => setRadius(Number(e.target.value))}
+                className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-pl-gray-700 accent-pl-accent [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-pl-accent [&::-webkit-slider-thumb]:shadow-[0_0_0_3px_rgba(200,255,0,0.2)] [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-pl-accent [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
+                style={{
+                  background: `linear-gradient(to right, #C8FF00 0%, #C8FF00 ${((radius - 1) / 499) * 100}%, #303030 ${((radius - 1) / 499) * 100}%, #303030 100%)`,
+                }}
+              />
+              <div className="flex justify-between mt-2">
+                <span className="text-[10px] text-pl-gray-500 font-body">1 km</span>
+                <span className="text-[10px] text-pl-gray-500 font-body">500 km</span>
+              </div>
+            </div>
           </div>
 
           <label className="flex items-center justify-between cursor-pointer group">
@@ -204,15 +419,21 @@ export function PerfilTab() {
                 {t('dashboard.preferences.proximityEnabledHint')}
               </p>
             </div>
-            <div className="relative inline-flex items-center cursor-pointer">
-              <input 
-                type="checkbox" 
-                className="sr-only peer" 
-                checked={proximity}
-                onChange={(e) => setProximity(e.target.checked)}
+            <button
+              type="button"
+              onClick={() => setProximity(!proximity)}
+              className={cn(
+                'w-11 h-6 rounded-full relative transition-colors duration-200 shrink-0',
+                proximity ? 'bg-pl-accent' : 'bg-pl-gray-600',
+              )}
+            >
+              <span
+                className={cn(
+                  'absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200',
+                  proximity && 'translate-x-5',
+                )}
               />
-              <div className="w-11 h-6 bg-pl-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pl-accent"></div>
-            </div>
+            </button>
           </label>
         </section>
 
@@ -237,7 +458,7 @@ export function PerfilTab() {
         <button
           onClick={handleSave}
           disabled={isPending}
-          className="w-full flex items-center justify-center gap-2 h-14 bg-pl-white text-pl-black font-semibold tracking-[0.12em] uppercase hover:bg-pl-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-body"
+          className="w-full flex items-center justify-center gap-2 h-14 bg-pl-accent text-pl-black font-semibold tracking-[0.12em] uppercase hover:bg-pl-accent-dim transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-body"
         >
           {isPending ? (
             <Loader2 className="w-5 h-5 animate-spin" />
