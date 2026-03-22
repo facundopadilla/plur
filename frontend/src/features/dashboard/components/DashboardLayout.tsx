@@ -24,7 +24,7 @@ export function DashboardLayout() {
   }
 
   return (
-    <div className="flex h-dvh bg-pl-black overflow-hidden">
+    <div className="dashboard-shell flex bg-pl-black overflow-hidden fixed inset-0">
       {/* Left panel — desktop only (manages its own tab state via store) */}
       <LeftPanel onQrScan={() => setShowScanner(true)} />
 

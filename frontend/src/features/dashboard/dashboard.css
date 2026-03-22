@@ -1,5 +1,19 @@
 /* Dashboard-specific CSS — swipe stamps and card animations */
 
+/* Allow vertical scroll inside the fixed dashboard shell */
+.mobile-overlay,
+.mobile-overlay * {
+  touch-action: pan-y;
+}
+
+/* Prevent body scroll when dashboard is active */
+body:has(.dashboard-shell) {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
 /* Swipe stamp animation (portado de landing.css) */
 .swipe-stamp {
   transform: scale(0);
