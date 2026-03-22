@@ -5,9 +5,25 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>Plur</title>
+    <meta name="description" content="Plur — Moda circular reinventada. Swipe, try on, exchange." />
+    <meta name="theme-color" content="#0A0A0A" />
+    <link rel="dns-prefetch" href="https://api.plur.wtf" />
+    <link rel="preconnect" href="https://api.plur.wtf" crossOrigin="" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      /* Instant dark background while JS loads */
+      body { background: #0A0A0A; margin: 0; }
+      #root:empty::after {
+        content: '';
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: #0A0A0A;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

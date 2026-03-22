@@ -8,6 +8,17 @@ export default defineConfig({
   resolve: {
     alias: { '@': path.resolve(__dirname, './src') },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          query: ['@tanstack/react-query'],
+          ui: ['lucide-react', 'zustand'],
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     allowedHosts: ['.ngrok-free.app'],
