@@ -243,7 +243,7 @@ export function ComprarModal({ onClose }: { onClose: () => void }) {
                       onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                       placeholder="4242 4242 4242 4242"
                       maxLength={19}
-                      className="w-full bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[12px] font-body rounded-lg pl-10 pr-3 py-2.5 focus:outline-none focus:border-pl-accent/60 tracking-wider"
+                      className="w-full bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[16px] lg:text-[12px] font-body rounded-lg pl-10 pr-3 py-2.5 focus:outline-none focus:border-pl-accent/60 tracking-wider"
                     />
                   </div>
                 </div>
@@ -260,7 +260,7 @@ export function ComprarModal({ onClose }: { onClose: () => void }) {
                       onChange={(e) => setCardExpiry(formatExpiry(e.target.value))}
                       placeholder="MM/YY"
                       maxLength={5}
-                      className="w-full bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[12px] font-body rounded-lg px-3 py-2.5 focus:outline-none focus:border-pl-accent/60 tracking-wider"
+                      className="w-full bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[16px] lg:text-[12px] font-body rounded-lg px-3 py-2.5 focus:outline-none focus:border-pl-accent/60 tracking-wider"
                     />
                   </div>
                   <div className="w-24">
@@ -273,7 +273,7 @@ export function ComprarModal({ onClose }: { onClose: () => void }) {
                       onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
                       placeholder="123"
                       maxLength={4}
-                      className="w-full bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[12px] font-body rounded-lg px-3 py-2.5 focus:outline-none focus:border-pl-accent/60 tracking-wider"
+                      className="w-full bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[16px] lg:text-[12px] font-body rounded-lg px-3 py-2.5 focus:outline-none focus:border-pl-accent/60 tracking-wider"
                     />
                   </div>
                 </div>
@@ -288,7 +288,7 @@ export function ComprarModal({ onClose }: { onClose: () => void }) {
                     value={cardName}
                     onChange={(e) => setCardName(e.target.value)}
                     placeholder="Juan Pérez"
-                    className="w-full bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[12px] font-body rounded-lg px-3 py-2.5 focus:outline-none focus:border-pl-accent/60"
+                    className="w-full bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[16px] lg:text-[12px] font-body rounded-lg px-3 py-2.5 focus:outline-none focus:border-pl-accent/60"
                   />
                 </div>
 

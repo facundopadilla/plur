@@ -134,7 +134,7 @@ export function PerfilTab() {
         </h2>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-8">
+      <div className="flex-1 overflow-y-auto p-4 lg:p-6 space-y-8">
 
         {/* Profile photo & name */}
         <section className="flex flex-col items-center gap-3">

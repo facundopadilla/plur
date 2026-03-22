@@ -32,7 +32,7 @@ interface GarmentAnalysis {
 
 const labelClass = 'block text-[10px] font-medium tracking-[0.1em] uppercase text-pl-gray-400 font-body mb-2'
 const inputClass =
-  'w-full bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[12px] font-body rounded-lg px-3 py-2.5 focus:outline-none focus:border-pl-accent/60'
+  'w-full bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[16px] lg:text-[12px] font-body rounded-lg px-3 py-2.5 focus:outline-none focus:border-pl-accent/60'
 
 export function PublishGarmentForm({ onBack, onPublish }: PublishGarmentFormProps) {
   const { t } = useTranslation()
