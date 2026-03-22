@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Loader2, Check, AlertCircle, Camera, Plus, X, ImageIcon, Coins } from 'lucide-react'
+import { Loader2, Check, AlertCircle, Camera, Plus, X, ImageIcon, Coins, LogOut } from 'lucide-react'
 import { usePreferences, useUpdatePreferences } from '../hooks/usePreferences'
 import { STYLE_OPTIONS } from '@/features/onboarding/data/styles'
 import { COLOR_OPTIONS } from '@/features/onboarding/data/colors'
 import { CLOTHING_SIZES } from '@/features/onboarding/data/sizes'
 import { CONDITION_OPTIONS, GENDER_OPTIONS } from '@/features/onboarding/data/preferences'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth.store'
 import { useProfileStore } from '@/stores/profile.store'
 import { useDashboardStore } from '@/stores/dashboard.store'
@@ -14,7 +15,9 @@ import { cn } from '@/lib/utils'
 
 export function PerfilTab() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
+  const logout = useAuthStore((s) => s.logout)
   const { credits } = useCredits()
   const setActiveTab = useDashboardStore((s) => s.setActiveTab)
   const setMobileOverlay = useDashboardStore((s) => s.setMobileOverlay)
@@ -497,6 +500,19 @@ export function PerfilTab() {
             t('dashboard.preferences.save')
           )}
         </button>
+
+        <div className="border-t border-pl-gray-700 pt-6">
+          <button
+            onClick={() => {
+              logout()
+              navigate('/login')
+            }}
+            className="w-full flex items-center justify-center gap-2 h-12 border border-red-500/30 text-red-400 font-semibold tracking-[0.08em] uppercase text-[12px] font-body rounded-lg hover:bg-red-500/10 transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            {t('auth.logout')}
+          </button>
+        </div>
 
       </div>
     </div>
