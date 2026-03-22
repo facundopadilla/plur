@@ -32,7 +32,15 @@ interface UndoEntry {
 
 const SWIPE_THRESHOLD = 80
 
-export function useDashboardSwipe(garments: DashboardGarment[]): UseDashboardSwipeReturn {
+interface UseDashboardSwipeOptions {
+  onSwipe?: (garment: DashboardGarment, action: SwipeAction) => void
+}
+
+export function useDashboardSwipe(
+  garments: DashboardGarment[],
+  options?: UseDashboardSwipeOptions,
+): UseDashboardSwipeReturn {
+  const onSwipeRef = useRef(options?.onSwipe)
   const { seenGarmentIds, markAsSeen, unmarkSeen, addLikedItem, removeLikedItem } = useDashboardStore()
 
   const unseenGarments = useMemo(
@@ -51,6 +59,10 @@ export function useDashboardSwipe(garments: DashboardGarment[]): UseDashboardSwi
 
   const dragStartX = useRef(0)
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
+
+  useEffect(() => {
+    onSwipeRef.current = options?.onSwipe
+  }, [options?.onSwipe])
 
   useEffect(() => {
     setCurrentIndex(0)
@@ -95,6 +107,7 @@ export function useDashboardSwipe(garments: DashboardGarment[]): UseDashboardSwi
       }
       markAsSeen(topGarment.id)
       setUndoStack((prev) => [...prev.slice(-9), { garment: topGarment, action }])
+      onSwipeRef.current?.(topGarment, action)
 
       const t1 = setTimeout(() => {
         setIsExiting(true)
