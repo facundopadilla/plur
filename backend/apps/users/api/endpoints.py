@@ -2,21 +2,17 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from datetime import date
 
 from asgiref.sync import sync_to_async
 from django.conf import settings
+from django.http import HttpRequest, HttpResponse
 from loguru import logger
 from ninja import File, Form
+from ninja.files import UploadedFile
 
 from apps.sales.models import CreditTransaction
 from apps.users.api.router import router
-
-if TYPE_CHECKING:
-    from datetime import date
-
-    from django.http import HttpRequest, HttpResponse
-    from ninja.files import UploadedFile
 from apps.users.api.schemas import (
     AccessTokenOut,
     ActivateIn,
@@ -29,6 +25,7 @@ from apps.users.api.schemas import (
     PreferencesOut,
     RegisterOut,
     TokenOut,
+    UserMeOut,
 )
 from apps.users.models import User
 from apps.users.services import AuthService, PreferencesService
@@ -187,6 +184,25 @@ async def password_reset(
     """
     await AuthService.request_password_reset(payload.email)
     return PasswordResetOut(message="If an account exists with that email, a reset code has been sent.")
+
+
+@router.get(
+    "/me",
+    response={200: UserMeOut, 401: ErrorOut},
+    auth=jwt_auth,
+    summary="Get current user profile",
+)
+async def get_me(request: HttpRequest) -> tuple[int, UserMeOut | ErrorOut]:
+    """Return the authenticated user's basic profile."""
+    user = request.auth
+    if user is None:
+        return 401, ErrorOut(detail="Not authenticated")
+    return 200, UserMeOut(
+        id=user.pk,
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+    )
 
 
 @router.get(

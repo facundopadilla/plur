@@ -115,6 +115,12 @@ AVALANCHE_BACKEND_WALLET_ADDRESS = os.environ.get(
 # PLR business logic constants
 PLR_WELCOME_CREDITS = int(os.environ.get("PLR_WELCOME_CREDITS", "30"))  # 30 PLR on signup
 PLR_AI_IMAGE_COST = int(os.environ.get("PLR_AI_IMAGE_COST", "1"))  # 1 PLR per AI image
+
+# Gemini AI image generation
+GEMINI_API_KEY: str = os.environ.get("GEMINI_API_KEY", "")
+GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-image")
+
+# Cloudinary (configured via CLOUDINARY_URL env var automatically)
 PLATFORM_FEE_RATE = float(os.environ.get("PLATFORM_FEE_RATE", "0.005"))  # 0.5%
 
 FEATURE_FLAGS = {
@@ -125,4 +131,5 @@ FEATURE_FLAGS = {
 }
 
 TRANSAK_API_KEY: str = os.environ.get("TRANSAK_API_KEY", "")
+TRANSAK_WEBHOOK_SECRET: str = os.environ.get("TRANSAK_WEBHOOK_SECRET", "")
 TRANSAK_SUPPORTED_CURRENCIES: list[str] = ["USD", "EUR"]

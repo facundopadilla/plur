@@ -1,13 +1,18 @@
-import { useState, useRef } from 'react'
-import { ArrowLeft, Send, ChevronDown, ChevronUp } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { ArrowLeft, Send, ChevronDown, ChevronUp, Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useDashboardStore } from '@/stores/dashboard.store'
+import { useAuthStore } from '@/stores/auth.store'
 import { getCurrency, formatFiatPrice } from '../data/currencies'
-import { MOCK_SELLER_RESPONSES } from '../data/seller-responses'
 import { SellerProfileModal } from './SellerProfileModal'
 import { cn } from '@/lib/utils'
 import type { DashboardGarment } from '../types'
+import {
+  useConversationMessages,
+  useSendMessage,
+  useCreateConversation,
+} from '../hooks/useConversations'
 
 interface SellerChatViewProps {
   garment: DashboardGarment
@@ -16,31 +21,47 @@ interface SellerChatViewProps {
 
 export function SellerChatView({ garment, onBack }: SellerChatViewProps) {
   const { t } = useTranslation()
-  const { sellerChats, createSellerChat, addSellerMessage, selectedCurrency } =
-    useDashboardStore()
+  const selectedCurrency = useDashboardStore((s) => s.selectedCurrency)
+  const currentUser = useAuthStore((s) => s.user)
 
   const [inputValue, setInputValue] = useState('')
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [showProfile, setShowProfile] = useState(false)
+  const [conversationId, setConversationId] = useState<number | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const chatId = createSellerChat(garment)
-  const chat = sellerChats.find((c) => c.id === chatId) ?? null
   const currency = getCurrency(selectedCurrency)
+  const createConversation = useCreateConversation()
+  const sendMessage = useSendMessage()
+  const { data: messages, isLoading: messagesLoading } = useConversationMessages(conversationId)
+  const initCalled = useRef(false)
+
+  // Create or get conversation on mount (once)
+  useEffect(() => {
+    if (initCalled.current) return
+    const backendId = Number(garment.id)
+    if (isNaN(backendId) || backendId <= 0) return
+    initCalled.current = true
+    createConversation.mutate(backendId, {
+      onSuccess: (conv) => setConversationId(conv.id),
+    })
+  }, [garment.id])
+
+  // Auto-scroll on new messages
+  const msgCount = messages?.length ?? 0
+  const prevMsgCount = useRef(0)
+  if (msgCount !== prevMsgCount.current) {
+    prevMsgCount.current = msgCount
+    setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100)
+  }
 
   const handleSend = () => {
-    if (!inputValue.trim()) return
-    addSellerMessage(chatId, { role: 'buyer', content: inputValue.trim() })
-    setInputValue('')
-
-    const delay = 1000 + Math.random() * 500
-    setTimeout(() => {
-      const responses = MOCK_SELLER_RESPONSES
-      const response = responses[Math.floor(Math.random() * responses.length)]
-      if (response !== undefined) {
-        addSellerMessage(chatId, { role: 'seller', content: response })
-      }
-    }, delay)
+    if (!inputValue.trim() || conversationId === null || sendMessage.isPending) return
+    sendMessage.mutate(
+      { conversationId, content: inputValue.trim() },
+      { onSuccess: () => setInputValue('') },
+    )
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -49,6 +70,8 @@ export function SellerChatView({ garment, onBack }: SellerChatViewProps) {
       handleSend()
     }
   }
+
+  const isCreating = createConversation.isPending
 
   return (
     <div className="relative flex flex-col h-full slide-in-right">
@@ -109,7 +132,6 @@ export function SellerChatView({ garment, onBack }: SellerChatViewProps) {
 
         {detailsOpen && (
           <div className="px-3 pb-3">
-            {/* Thumbnail strip */}
             <div className="flex gap-1.5 overflow-x-auto scrollbar-none mb-2">
               {garment.images.map((img, i) => (
                 <img
@@ -120,7 +142,6 @@ export function SellerChatView({ garment, onBack }: SellerChatViewProps) {
                 />
               ))}
             </div>
-            {/* Meta */}
             <div className="flex flex-wrap gap-x-3 gap-y-1">
               <span className="text-[10px] text-pl-gray-400 font-body">
                 {t('dashboard.garment.size')}: <span className="text-pl-white">{garment.size}</span>
@@ -137,33 +158,48 @@ export function SellerChatView({ garment, onBack }: SellerChatViewProps) {
       </div>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 px-3 py-2">
-        <div className="space-y-3">
-          {chat?.messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={cn('flex', msg.role === 'buyer' ? 'justify-end' : 'justify-start')}
-            >
-              {msg.role === 'seller' && (
-                <img
-                  src={garment.seller.avatarUrl}
-                  alt={garment.seller.name}
-                  className="w-6 h-6 rounded-full object-cover mr-2 mt-1 shrink-0"
-                />
-              )}
-              <div
-                className={cn(
-                  'max-w-[85%] px-3 py-2 rounded-2xl text-[12px] font-body leading-relaxed',
-                  msg.role === 'buyer'
-                    ? 'bg-pl-accent text-pl-black rounded-tr-sm'
-                    : 'bg-pl-gray-700 text-pl-white rounded-tl-sm',
-                )}
-              >
-                {msg.content}
-              </div>
-            </div>
-          ))}
-        </div>
+      <ScrollArea className="flex-1 min-h-0 px-3 py-2">
+        {(isCreating || messagesLoading) ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="w-5 h-5 animate-spin text-pl-gray-500" />
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {messages && messages.length === 0 && (
+              <p className="text-[11px] text-pl-gray-500 font-body text-center py-4">
+                {t('dashboard.sellerChat.emptyChat')}
+              </p>
+            )}
+            {messages?.map((msg) => {
+              const isMine = Number(msg.sender_id) === Number(currentUser?.id)
+              return (
+                <div
+                  key={msg.id}
+                  className={cn('flex', isMine ? 'justify-end' : 'justify-start')}
+                >
+                  {!isMine && (
+                    <img
+                      src={garment.seller.avatarUrl}
+                      alt={msg.sender_name}
+                      className="w-6 h-6 rounded-full object-cover mr-2 mt-1 shrink-0"
+                    />
+                  )}
+                  <div
+                    className={cn(
+                      'max-w-[85%] px-3 py-2 rounded-2xl text-[12px] font-body leading-relaxed',
+                      isMine
+                        ? 'bg-pl-accent text-pl-black rounded-tr-sm'
+                        : 'bg-pl-gray-700 text-pl-white rounded-tl-sm',
+                    )}
+                  >
+                    {msg.content}
+                  </div>
+                </div>
+              )
+            })}
+            <div ref={messagesEndRef} />
+          </div>
+        )}
       </ScrollArea>
 
       {/* Input */}
@@ -175,15 +211,20 @@ export function SellerChatView({ garment, onBack }: SellerChatViewProps) {
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={t('dashboard.sellerChat.placeholder')}
-          className="flex-1 min-w-0 bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[12px] font-body rounded-full px-3 py-1.5 focus:outline-none focus:border-pl-accent/60"
+          disabled={conversationId === null}
+          className="flex-1 min-w-0 bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[12px] font-body rounded-full px-3 py-1.5 focus:outline-none focus:border-pl-accent/60 disabled:opacity-50"
         />
         <button
           onClick={handleSend}
-          disabled={!inputValue.trim()}
+          disabled={!inputValue.trim() || conversationId === null || sendMessage.isPending}
           aria-label="Enviar"
           className="w-8 h-8 rounded-full bg-pl-accent text-pl-black flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed hover:bg-pl-accent-dim transition-colors shrink-0"
         >
-          <Send className="w-3.5 h-3.5" />
+          {sendMessage.isPending ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <Send className="w-3.5 h-3.5" />
+          )}
         </button>
       </div>
 

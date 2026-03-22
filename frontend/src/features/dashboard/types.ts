@@ -25,7 +25,7 @@ export interface DashboardGarment {
   }
 }
 
-export type DashboardTab = 'inventario' | 'vestidor' | 'match' | 'creditos' | 'publicar' | 'perfil'
+export type DashboardTab = 'inventario' | 'vestidor' | 'creditos' | 'publicar' | 'perfil' | 'match'
 
 export interface LikedItem {
   garment: DashboardGarment

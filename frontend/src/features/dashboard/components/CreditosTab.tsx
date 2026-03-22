@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { ArrowUpRight, ArrowDownLeft, ShoppingCart, Loader2, ExternalLink, X, Copy, Check } from 'lucide-react'
+import { createPortal } from 'react-dom'
+import { ArrowUpRight, ArrowDownLeft, ShoppingCart, Loader2, ExternalLink, X, Copy, Check, ShoppingBag } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useDashboardStore } from '@/stores/dashboard.store'
@@ -7,6 +8,7 @@ import type { CreditTransaction } from '../types'
 import { CURRENCIES } from '../data/currencies'
 import { cn } from '@/lib/utils'
 import { useCredits } from '../hooks/useCredits'
+import { ComprarModal } from './ComprarModal'
 
 function TransactionIcon({ type }: { type: CreditTransaction['type'] }) {
   if (type === 'earned')
@@ -33,7 +35,7 @@ function TransactionDetailModal({ tx, onClose }: { tx: CreditTransaction; onClos
     setTimeout(() => setCopied(false), 2000)
   }
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
       onClick={onClose}
@@ -120,7 +122,8 @@ function TransactionDetailModal({ tx, onClose }: { tx: CreditTransaction; onClos
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
@@ -137,6 +140,7 @@ export function CreditosTab() {
   const { t } = useTranslation()
   const { credits, transactions, isLoading } = useCredits()
   const [selectedTx, setSelectedTx] = useState<CreditTransaction | null>(null)
+  const [isComprarOpen, setIsComprarOpen] = useState(false)
 
   const selectedCurrency = useDashboardStore((s) => s.selectedCurrency)
   const setSelectedCurrency = useDashboardStore((s) => s.setSelectedCurrency)
@@ -158,6 +162,13 @@ export function CreditosTab() {
           )}
           <span className="text-[13px] text-pl-accent font-body font-semibold tracking-[0.08em]">PLR</span>
         </div>
+        <button
+          onClick={() => setIsComprarOpen(true)}
+          className="mt-3 w-full flex items-center justify-center gap-2 text-[11px] font-semibold tracking-[0.1em] uppercase py-2.5 bg-pl-accent text-pl-black font-body hover:bg-pl-accent-dim transition-colors rounded-lg"
+        >
+          <ShoppingBag className="w-3.5 h-3.5" />
+          {t('dashboard.comprar.title')}
+        </button>
       </div>
 
       {/* Currency selector */}
@@ -198,7 +209,7 @@ export function CreditosTab() {
             <Loader2 className="w-5 h-5 animate-spin text-pl-gray-500" />
           </div>
         ) : (
-          <ScrollArea className="h-full">
+          <ScrollArea className="flex-1 min-h-0">
             {transactions.length === 0 ? (
               <p className="text-[12px] text-pl-gray-500 font-body px-4 py-8 text-center">
                 {t('dashboard.creditos.emptyHistory')}
@@ -245,6 +256,10 @@ export function CreditosTab() {
       {/* Transaction detail modal */}
       {selectedTx && (
         <TransactionDetailModal tx={selectedTx} onClose={() => setSelectedTx(null)} />
+      )}
+
+      {isComprarOpen && (
+        <ComprarModal onClose={() => setIsComprarOpen(false)} />
       )}
     </div>
   )

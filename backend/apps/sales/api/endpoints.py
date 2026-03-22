@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from django.conf import settings
+from django.http import HttpRequest
 
 from apps.sales.api.router import router
 from apps.sales.api.schemas import (
     BalanceOut,
     ErrorOut,
+    GarmentAnalyzeIn,
+    GarmentAnalyzeOut,
     GarmentIn,
     GarmentNearbyOut,
     GarmentOut,
@@ -23,19 +24,17 @@ from apps.sales.api.schemas import (
     NearbyQueryIn,
     OnChainBalanceOut,
     PendingSaleOut,
+    PurchasePLRIn,
+    PurchasePLROut,
     SaleInitiateIn,
     SaleOut,
     TransactionOut,
 )
+from apps.sales.models import Garment as GarmentModel
+from apps.sales.models import Sale as SaleModel
 from apps.sales.services import GarmentService, MirrorService, SaleService, WalletService
+from apps.users.models import User
 from core.auth import jwt_auth
-
-if TYPE_CHECKING:
-    from django.http import HttpRequest
-
-    from apps.sales.models import Garment as GarmentModel
-    from apps.sales.models import Sale as SaleModel
-    from apps.users.models import User
 
 # ------------------------------------------------------------------ #
 # Garment endpoints                                                    #
@@ -113,6 +112,27 @@ async def list_nearby_garments(
 
 
 @router.get(
+    "/garments/feed",
+    response=list[GarmentOut],
+    auth=jwt_auth,
+    summary="Feed of active garments from other users",
+)
+async def garment_feed(
+    request: HttpRequest,
+) -> list[GarmentOut]:
+    """Return active garments from all users except the authenticated one."""
+    user: User = request.auth  # type: ignore[assignment]
+    garments = [
+        g
+        async for g in GarmentModel.objects.filter(status="active")
+        .exclude(seller_id=user.pk)
+        .select_related("seller")
+        .order_by("-created_at")[:50]
+    ]
+    return [_garment_to_out(g, g.seller.full_name) for g in garments]
+
+
+@router.get(
     "/garments/mine",
     response=list[GarmentOut],
     auth=jwt_auth,
@@ -127,6 +147,39 @@ async def list_my_garments(
 
     garments = await GarmentRepository.list_by_seller(user)
     return [_garment_to_out(g, user.full_name) for g in garments]
+
+
+@router.post(
+    "/garments/analyze",
+    response={200: GarmentAnalyzeOut, 400: ErrorOut},
+    auth=jwt_auth,
+    summary="Analyze garment image with AI",
+)
+async def analyze_garment(
+    request: HttpRequest,
+    payload: GarmentAnalyzeIn,
+) -> tuple[int, GarmentAnalyzeOut | ErrorOut]:
+    """Use Gemini AI to analyze a garment photo and return structured metadata."""
+    try:
+        from asgiref.sync import sync_to_async
+
+        from core.ai_services import analyze_garment_image
+
+        result = await sync_to_async(analyze_garment_image)(payload.image_data)
+        return 200, GarmentAnalyzeOut(
+            name=str(result.get("name", "")),
+            description=str(result.get("description", "")),
+            size=str(result.get("size", "")),
+            style=str(result.get("style", "")),
+            condition=str(result.get("condition", "")),
+            gender=str(result.get("gender", "")),
+            tags=result.get("tags", []) if isinstance(result.get("tags"), list) else [],
+        )
+    except Exception as exc:
+        from loguru import logger
+
+        logger.exception("Garment analysis failed")
+        return 400, ErrorOut(detail=f"AI analysis failed: {exc}")
 
 
 @router.patch(
@@ -323,6 +376,58 @@ async def reject_sale(
 # ------------------------------------------------------------------ #
 # Wallet endpoints                                                     #
 # ------------------------------------------------------------------ #
+
+
+@router.post(
+    "/wallet/purchase",
+    response={200: PurchasePLROut, 400: ErrorOut},
+    auth=jwt_auth,
+    summary="Purchase PLR credits (mock payment)",
+)
+async def purchase_plr(
+    request: HttpRequest,
+    payload: PurchasePLRIn,
+) -> tuple[int, PurchasePLROut | ErrorOut]:
+    """Mock card purchase: add PLR credits and mint on-chain."""
+    user: User = request.auth  # type: ignore[assignment]
+    amount = payload.amount_plr
+    if amount < 1 or amount > 10000:
+        return 400, ErrorOut(detail="Amount must be between 1 and 10000 PLR")
+    try:
+        from apps.sales.models import CreditTransaction
+
+        user.credits += amount
+        await user.asave(update_fields=["credits"])
+        await CreditTransaction.objects.acreate(
+            user=user,
+            tx_type="purchased",
+            amount=amount,
+            description=f"Compra de {amount} PLR",
+        )
+        # Mint on-chain (fire-and-forget)
+        tx_hash = ""
+        try:
+            from asgiref.sync import sync_to_async
+
+            from core.blockchain import mint_plr
+
+            if user.wallet_address:
+                tx_hash = await sync_to_async(mint_plr)(
+                    amount_plr=amount,
+                    reason=f"Compra de {amount} PLR",
+                    reference_id_str=f"purchase-{user.pk}-{amount}",
+                    to_address=user.wallet_address,
+                )
+        except Exception:
+            from loguru import logger
+
+            logger.exception("Blockchain mint failed for purchase")
+        return 200, PurchasePLROut(credits=user.credits, tx_hash=tx_hash)
+    except Exception as exc:
+        from loguru import logger
+
+        logger.exception("Purchase failed")
+        return 400, ErrorOut(detail=str(exc))
 
 
 @router.get(

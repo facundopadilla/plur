@@ -24,6 +24,16 @@ class CreateOrderOut(Schema):
     transak_session_data: dict[str, Any]
 
 
+class WebhookEventIn(Schema):
+    event_id: str
+    event_type: str
+    order_id: str
+
+
+class WebhookAckOut(Schema):
+    received: bool
+
+
 def _rebuild_decimal_schemas() -> None:
     from decimal import Decimal
 
@@ -32,3 +42,4 @@ def _rebuild_decimal_schemas() -> None:
 
 
 _rebuild_decimal_schemas()
+

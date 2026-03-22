@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Package } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useDashboardStore } from '@/stores/dashboard.store'
@@ -17,12 +17,22 @@ export function InventarioTab() {
   const { t } = useTranslation()
   const likedItems = useDashboardStore((s) => s.likedItems)
   const selectedCurrency = useDashboardStore((s) => s.selectedCurrency)
+  const pendingSellerChatGarment = useDashboardStore((s) => s.pendingSellerChatGarment)
+  const setPendingSellerChatGarment = useDashboardStore((s) => s.setPendingSellerChatGarment)
   const currency = getCurrency(selectedCurrency)
 
   const [subTab, setSubTab] = useState<InventarioSubTab>('liked')
   const [view, setView] = useState<InternalView>('grid')
   const [selectedGarment, setSelectedGarment] = useState<DashboardGarment | null>(null)
   const [selectedPublished, setSelectedPublished] = useState<GarmentOut | null>(null)
+
+  useEffect(() => {
+    if (pendingSellerChatGarment) {
+      setSelectedGarment(pendingSellerChatGarment)
+      setView('sellerChat')
+      setPendingSellerChatGarment(null)
+    }
+  }, [pendingSellerChatGarment, setPendingSellerChatGarment])
 
   const handleGarmentClick = (garment: DashboardGarment) => {
     setSelectedGarment(garment)

@@ -5,6 +5,8 @@ import { InventarioTab } from './InventarioTab'
 import { EspejoAITab } from './EspejoAITab'
 import { CreditosTab } from './CreditosTab'
 import { PublicarTab } from './PublicarTab'
+import { PerfilTab } from './PerfilTab'
+import { MatchTab } from './MatchTab'
 
 interface LeftPanelProps {
   onQrScan: () => void
@@ -15,7 +17,7 @@ export function LeftPanel({ onQrScan }: LeftPanelProps) {
   const setActiveTab = useDashboardStore((s) => s.setActiveTab)
 
   return (
-    <div className="hidden lg:flex flex-col w-[30%] max-w-xs border-r border-pl-gray-700 bg-pl-black">
+    <div className="hidden lg:flex flex-col w-[35%] max-w-sm border-r border-pl-gray-700 bg-pl-black">
       <ProfileHeader onQrScan={onQrScan} />
       <PanelTabs activeTab={activeTab} onTabChange={setActiveTab} />
       <div className="flex-1 overflow-hidden flex flex-col">
@@ -34,19 +36,19 @@ export function LeftPanel({ onQrScan }: LeftPanelProps) {
             <CreditosTab />
           </div>
         )}
-        {activeTab === 'match' && (
-          <div className="flex-1 flex items-center justify-center text-pl-gray-400">
-            Match (Próximamente)
-          </div>
-        )}
         {activeTab === 'publicar' && (
           <div className="flex-1 overflow-hidden flex flex-col">
             <PublicarTab />
           </div>
         )}
         {activeTab === 'perfil' && (
-          <div className="flex-1 flex items-center justify-center text-pl-gray-400">
-            Perfil (Próximamente)
+          <div className="flex-1 overflow-hidden flex flex-col">
+            <PerfilTab />
+          </div>
+        )}
+        {activeTab === 'match' && (
+          <div className="flex-1 overflow-hidden flex flex-col">
+            <MatchTab />
           </div>
         )}
       </div>

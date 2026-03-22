@@ -28,6 +28,15 @@ class AccessTokenOut(Schema):
     access_token: str
 
 
+class UserMeOut(Schema):
+    """Response schema for the authenticated user's profile."""
+
+    id: int
+    email: str
+    first_name: str
+    last_name: str
+
+
 class ActivateOut(Schema):
     """Response schema for successful account activation."""
 

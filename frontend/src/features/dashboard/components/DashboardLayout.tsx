@@ -7,9 +7,10 @@ import { InventarioTab } from './InventarioTab'
 import { EspejoAITab } from './EspejoAITab'
 import { CreditosTab } from './CreditosTab'
 import { PublicarTab } from './PublicarTab'
+import { PerfilTab } from './PerfilTab'
+import { MatchTab } from './MatchTab'
 import { ProfileHeader } from './ProfileHeader'
 import { QRScannerOverlay } from './QRScannerOverlay'
-import { UserProfileModal } from './UserProfileModal'
 import { X } from 'lucide-react'
 import { useDashboardStore } from '@/stores/dashboard.store'
 import type { DashboardTab } from '../types'
@@ -17,7 +18,6 @@ import type { DashboardTab } from '../types'
 export function DashboardLayout() {
   const { mobileOverlay, setMobileOverlay } = useDashboardStore()
   const [showScanner, setShowScanner] = useState(false)
-  const [showProfile, setShowProfile] = useState(false)
 
   const handleMobileTabChange = (tab: DashboardTab) => {
     setMobileOverlay(mobileOverlay === tab ? null : tab)
@@ -54,15 +54,31 @@ export function DashboardLayout() {
                 <InventarioTab />
               </div>
             )}
-            {mobileOverlay === 'vestidor' && <EspejoAITab />}
-            {mobileOverlay === 'creditos' && <CreditosTab />}
-            {mobileOverlay === 'match' && <div className="flex-1 flex items-center justify-center text-pl-gray-400">Match (Próximamente)</div>}
+            {mobileOverlay === 'vestidor' && (
+              <div className="flex-1 overflow-hidden flex flex-col">
+                <EspejoAITab />
+              </div>
+            )}
+            {mobileOverlay === 'creditos' && (
+              <div className="flex-1 overflow-hidden flex flex-col">
+                <CreditosTab />
+              </div>
+            )}
             {mobileOverlay === 'publicar' && (
               <div className="flex-1 overflow-hidden flex flex-col">
                 <PublicarTab />
               </div>
             )}
-            {mobileOverlay === 'perfil' && <div className="flex-1 flex items-center justify-center text-pl-gray-400">Perfil (Próximamente)</div>}
+            {mobileOverlay === 'perfil' && (
+              <div className="flex-1 overflow-hidden flex flex-col">
+                <PerfilTab />
+              </div>
+            )}
+            {mobileOverlay === 'match' && (
+              <div className="flex-1 overflow-hidden flex flex-col">
+                <MatchTab />
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -72,14 +88,10 @@ export function DashboardLayout() {
         activeTab={mobileOverlay}
         onTabChange={handleMobileTabChange}
         onQrScan={() => setShowScanner(true)}
-        onProfile={() => setShowProfile(true)}
       />
 
       {/* QR Scanner overlay — shared entre desktop header y mobile navbar */}
       {showScanner && <QRScannerOverlay onClose={() => setShowScanner(false)} />}
-
-      {/* Profile modal — abierto desde el tab Perfil del navbar mobile */}
-      {showProfile && <UserProfileModal onClose={() => setShowProfile(false)} />}
     </div>
   )
 }
