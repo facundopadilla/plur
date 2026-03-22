@@ -203,7 +203,7 @@ export function SellerChatView({ garment, onBack }: SellerChatViewProps) {
       </ScrollArea>
 
       {/* Input */}
-      <div className="p-2 border-t border-pl-gray-700 flex items-center gap-2 shrink-0">
+      <div className="p-2 border-t border-pl-gray-700 flex items-center gap-2 shrink-0 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] lg:pb-2">
         <input
           ref={inputRef}
           type="text"
@@ -212,7 +212,7 @@ export function SellerChatView({ garment, onBack }: SellerChatViewProps) {
           onKeyDown={handleKeyDown}
           placeholder={t('dashboard.sellerChat.placeholder')}
           disabled={conversationId === null}
-          className="flex-1 min-w-0 bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[12px] font-body rounded-full px-3 py-1.5 focus:outline-none focus:border-pl-accent/60 disabled:opacity-50"
+          className="flex-1 min-w-0 bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[16px] lg:text-[12px] font-body rounded-full px-3 py-1.5 focus:outline-none focus:border-pl-accent/60 disabled:opacity-50"
         />
         <button
           onClick={handleSend}

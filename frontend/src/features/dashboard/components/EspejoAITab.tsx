@@ -372,7 +372,7 @@ export function EspejoAITab() {
           </ScrollArea>
 
           {/* Input area */}
-          <div className="border-t border-pl-gray-700 shrink-0 pb-[env(safe-area-inset-bottom)] mb-2 lg:mb-0">
+          <div className="border-t border-pl-gray-700 shrink-0 pb-[env(safe-area-inset-bottom)]">
             <div className="px-3 pt-2.5 flex gap-2">
               <button
                 type="button"
@@ -444,7 +444,7 @@ export function EspejoAITab() {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={t('dashboard.espejo.placeholder')}
-                className="flex-1 min-w-0 bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[13px] font-body rounded-full px-4 py-2.5 focus:outline-none focus:border-pl-accent/60"
+                className="flex-1 min-w-0 bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[16px] lg:text-[13px] font-body rounded-full px-4 py-2.5 focus:outline-none focus:border-pl-accent/60"
               />
               <button
                 onClick={() => {

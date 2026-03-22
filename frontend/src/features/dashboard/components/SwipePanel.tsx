@@ -185,7 +185,7 @@ export function SwipePanel() {
       </div>
 
       {/* Action buttons — floating over the card, above mobile navbar */}
-      <div className="absolute inset-x-0 z-20 bottom-[calc(80px+env(safe-area-inset-bottom))] lg:bottom-8">
+      <div className="absolute inset-x-0 z-20 bottom-[calc(76px+env(safe-area-inset-bottom))] lg:bottom-8">
         <SwipeActions
           onDislike={() => swipe('dislike')}
           onTryOn={handleTryOn}

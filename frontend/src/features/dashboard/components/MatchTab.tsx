@@ -312,7 +312,7 @@ function ThreadView({
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={t('dashboard.match.placeholder')}
-              className="flex-1 min-w-0 bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[13px] font-body rounded-full px-4 py-2.5 focus:outline-none focus:border-pl-accent/60"
+              className="flex-1 min-w-0 bg-pl-gray-700 border border-pl-gray-600 text-pl-white placeholder:text-pl-gray-500 text-[16px] lg:text-[13px] font-body rounded-full px-4 py-2.5 focus:outline-none focus:border-pl-accent/60"
               disabled={isSending}
             />
             <button
