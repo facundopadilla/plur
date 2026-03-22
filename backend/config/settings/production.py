@@ -13,19 +13,21 @@ from .base import *  # noqa: F403
 
 DEBUG = False
 
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
-ALLOWED_HOSTS = os.environ["ALLOWED_HOSTS"].split(",")
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "fallback-insecure-key-set-in-render")
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 
 DATABASES = {
     "default": dj_database_url.config(
-        default=os.environ["DATABASE_URL"],
+        default=os.environ.get("DATABASE_URL", ""),
         conn_max_age=600,
         conn_health_checks=True,
     )
 }
 
 # CORS — allow frontend origin (set CORS_ALLOWED_ORIGINS in Render dashboard)
-CORS_ALLOWED_ORIGINS = os.environ["CORS_ALLOWED_ORIGINS"].split(",")
+_cors_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "")
+CORS_ALLOWED_ORIGINS = [o for o in _cors_origins.split(",") if o] if _cors_origins else []
+CORS_ALLOW_ALL_ORIGINS = not CORS_ALLOWED_ORIGINS
 CORS_ALLOW_CREDENTIALS = True
 
 # Static files — whitenoise serves Django admin assets
