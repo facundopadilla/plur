@@ -15,13 +15,25 @@ export interface UseDashboardSwipeReturn {
   isExiting: boolean
   exitDirection: ExitDirection
   isEmpty: boolean
+  canUndo: boolean
+  dragOffset: number
+  isDragging: boolean
   swipe: (action: SwipeAction) => void
-  handleTouchStart: (e: React.TouchEvent) => void
-  handleTouchEnd: (e: React.TouchEvent) => void
+  undo: () => void
+  handlePointerDown: (e: React.PointerEvent) => void
+  handlePointerMove: (e: React.PointerEvent) => void
+  handlePointerUp: () => void
 }
 
+interface UndoEntry {
+  garment: DashboardGarment
+  action: SwipeAction
+}
+
+const SWIPE_THRESHOLD = 80
+
 export function useDashboardSwipe(garments: DashboardGarment[]): UseDashboardSwipeReturn {
-  const { seenGarmentIds, markAsSeen, addLikedItem } = useDashboardStore()
+  const { seenGarmentIds, markAsSeen, unmarkSeen, addLikedItem, removeLikedItem } = useDashboardStore()
 
   const unseenGarments = useMemo(
     () => garments.filter((g) => !seenGarmentIds.includes(g.id)),
@@ -33,10 +45,13 @@ export function useDashboardSwipe(garments: DashboardGarment[]): UseDashboardSwi
   const [isAnimating, setIsAnimating] = useState(false)
   const [isExiting, setIsExiting] = useState(false)
   const [exitDirection, setExitDirection] = useState<ExitDirection>(null)
-  const touchStartX = useRef(0)
+  const [undoStack, setUndoStack] = useState<UndoEntry[]>([])
+  const [dragOffset, setDragOffset] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+
+  const dragStartX = useRef(0)
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
 
-  // Reset index when unseen garments change (e.g., after resetSeen)
   useEffect(() => {
     setCurrentIndex(0)
   }, [unseenGarments.length])
@@ -69,6 +84,8 @@ export function useDashboardSwipe(garments: DashboardGarment[]): UseDashboardSwi
       if (!topGarment) return
 
       setIsAnimating(true)
+      setIsDragging(false)
+      setDragOffset(0)
 
       if (action === 'like') {
         setTopCardStamp('match')
@@ -77,11 +94,12 @@ export function useDashboardSwipe(garments: DashboardGarment[]): UseDashboardSwi
         setTopCardStamp('nope')
       }
       markAsSeen(topGarment.id)
+      setUndoStack((prev) => [...prev.slice(-9), { garment: topGarment, action }])
 
       const t1 = setTimeout(() => {
         setIsExiting(true)
         setExitDirection(action === 'like' ? 'right' : 'left')
-      }, 400)
+      }, 300)
 
       const t2 = setTimeout(() => {
         setTopCardStamp('none')
@@ -89,31 +107,54 @@ export function useDashboardSwipe(garments: DashboardGarment[]): UseDashboardSwi
         setExitDirection(null)
         setCurrentIndex((prev) => prev + 1)
         setIsAnimating(false)
-      }, 700)
+      }, 600)
 
       timersRef.current.push(t1, t2)
     },
     [isAnimating, visibleCards, addLikedItem, markAsSeen],
   )
 
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    const touch = e.touches[0]
-    if (touch) {
-      touchStartX.current = touch.clientX
-    }
-  }, [])
+  const undo = useCallback(() => {
+    if (isAnimating || undoStack.length === 0) return
 
-  const handleTouchEnd = useCallback(
-    (e: React.TouchEvent) => {
-      const touch = e.changedTouches[0]
-      if (!touch) return
-      const diff = touch.clientX - touchStartX.current
-      if (Math.abs(diff) > 60) {
-        swipe(diff > 0 ? 'like' : 'dislike')
-      }
+    const lastEntry = undoStack[undoStack.length - 1]
+    if (!lastEntry) return
+
+    setUndoStack((prev) => prev.slice(0, -1))
+    unmarkSeen(lastEntry.garment.id)
+    if (lastEntry.action === 'like') {
+      removeLikedItem(lastEntry.garment.id)
+    }
+  }, [isAnimating, undoStack, unmarkSeen, removeLikedItem])
+
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      if (isAnimating || isEmpty) return
+      setIsDragging(true)
+      dragStartX.current = e.clientX
     },
-    [swipe],
+    [isAnimating, isEmpty],
   )
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (!isDragging) return
+      const diff = e.clientX - dragStartX.current
+      setDragOffset(diff)
+    },
+    [isDragging],
+  )
+
+  const handlePointerUp = useCallback(() => {
+    if (!isDragging) return
+    setIsDragging(false)
+
+    if (Math.abs(dragOffset) > SWIPE_THRESHOLD) {
+      swipe(dragOffset > 0 ? 'like' : 'dislike')
+    } else {
+      setDragOffset(0)
+    }
+  }, [isDragging, dragOffset, swipe])
 
   return {
     visibleCards,
@@ -121,8 +162,13 @@ export function useDashboardSwipe(garments: DashboardGarment[]): UseDashboardSwi
     isExiting,
     exitDirection,
     isEmpty,
+    canUndo: undoStack.length > 0,
+    dragOffset,
+    isDragging,
     swipe,
-    handleTouchStart,
-    handleTouchEnd,
+    undo,
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
   }
 }

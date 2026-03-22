@@ -8,11 +8,15 @@ interface DashboardSwipeCardProps {
   stampState: StampState
   isExiting: boolean
   exitDirection: ExitDirection
+  dragOffset?: number
+  isDragging?: boolean
 }
 
+const SWIPE_THRESHOLD = 80
+
 function getExitTransform(direction: ExitDirection): string {
-  if (direction === 'right') return 'translateX(130%) rotate(15deg)'
-  if (direction === 'left') return 'translateX(-130%) rotate(-15deg)'
+  if (direction === 'right') return 'translateX(130%) rotate(14deg)'
+  if (direction === 'left') return 'translateX(-130%) rotate(-14deg)'
   return ''
 }
 
@@ -22,15 +26,38 @@ export function DashboardSwipeCard({
   stampState,
   isExiting,
   exitDirection,
+  dragOffset = 0,
+  isDragging = false,
 }: DashboardSwipeCardProps) {
-  const scale = 1 - stackPosition * 0.04
-  const translateY = stackPosition * 10
+  const isTop = stackPosition === 0
+  const scale = 1 - stackPosition * 0.03
+  const translateY = stackPosition * 8
   const zIndex = 10 - stackPosition
-  const opacity = stackPosition === 0 ? 1 : 0.65
+  const opacity = stackPosition === 0 ? 1 : 0.5
 
-  const baseTransform = `scale(${scale}) translateY(${translateY}px)`
-  const currentTransform =
-    isExiting && exitDirection !== null ? getExitTransform(exitDirection) : baseTransform
+  // Drag transform for top card
+  const rotation = isTop ? dragOffset * 0.06 : 0
+  const dragTransform = isTop && Math.abs(dragOffset) > 0
+    ? `translateX(${dragOffset}px) rotate(${rotation}deg)`
+    : `scale(${scale}) translateY(${translateY}px)`
+
+  const currentTransform = isExiting && exitDirection !== null
+    ? getExitTransform(exitDirection)
+    : dragTransform
+
+  // Progressive stamp opacity based on drag
+  const matchOpacity = isTop && dragOffset > 20
+    ? Math.min((dragOffset - 20) / (SWIPE_THRESHOLD - 20), 1)
+    : 0
+  const nopeOpacity = isTop && dragOffset < -20
+    ? Math.min((Math.abs(dragOffset) - 20) / (SWIPE_THRESHOLD - 20), 1)
+    : 0
+
+  // Stamp visibility: from drag OR from swipe action
+  const showMatch = stampState === 'match' || matchOpacity > 0
+  const showNope = stampState === 'nope' || nopeOpacity > 0
+  const matchFinalOpacity = stampState === 'match' ? 1 : matchOpacity
+  const nopeFinalOpacity = stampState === 'nope' ? 1 : nopeOpacity
 
   return (
     <div
@@ -40,15 +67,18 @@ export function DashboardSwipeCard({
         zIndex,
         opacity: isExiting ? 0 : opacity,
         overflow: 'hidden',
-        borderRadius: '16px',
         transform: currentTransform,
-        transition: isExiting
-          ? 'transform 0.6s cubic-bezier(0.16,1,0.3,1), opacity 0.5s'
-          : 'transform 0.3s cubic-bezier(0.16,1,0.3,1)',
+        transition: isDragging && isTop
+          ? 'none'
+          : isExiting
+            ? 'transform 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.4s'
+            : 'transform 0.4s cubic-bezier(0.34,1.56,0.64,1)',
+        touchAction: 'none',
+        userSelect: 'none',
       }}
     >
-      {/* Photo album — only interactive on top card */}
-      {stackPosition === 0 ? (
+      {/* Photo */}
+      {isTop ? (
         <PhotoAlbum images={garment.images} name={garment.name} />
       ) : (
         <img
@@ -60,21 +90,35 @@ export function DashboardSwipeCard({
         />
       )}
 
-      {/* Info overlay — only on top card */}
-      {stackPosition === 0 && <GarmentInfo garment={garment} />}
+      {/* Info overlay */}
+      {isTop && <GarmentInfo garment={garment} />}
 
       {/* MATCH stamp */}
       <div
-        className={`swipe-stamp absolute top-6 right-4 font-display text-3xl font-extrabold uppercase px-3 py-1.5 border-4 border-pl-accent text-pl-accent rounded-xl ${stampState === 'match' ? 'show' : ''}`}
-        style={{ rotate: '-12deg', transformOrigin: 'center' }}
+        className="absolute top-8 right-6 font-display text-4xl font-extrabold uppercase px-4 py-2 border-4 border-pl-accent text-pl-accent rounded-xl pointer-events-none"
+        style={{
+          rotate: '-15deg',
+          transformOrigin: 'center',
+          textShadow: '0 2px 12px rgba(200,255,0,0.3)',
+          opacity: matchFinalOpacity,
+          transform: showMatch ? 'scale(1)' : 'scale(0.5)',
+          transition: isDragging ? 'none' : 'opacity 0.3s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+        }}
       >
         MATCH
       </div>
 
       {/* NOPE stamp */}
       <div
-        className={`swipe-stamp absolute top-6 left-4 font-display text-3xl font-extrabold uppercase px-3 py-1.5 border-4 border-pl-red text-pl-red rounded-xl ${stampState === 'nope' ? 'show' : ''}`}
-        style={{ rotate: '12deg', transformOrigin: 'center' }}
+        className="absolute top-8 left-6 font-display text-4xl font-extrabold uppercase px-4 py-2 border-4 border-pl-red text-pl-red rounded-xl pointer-events-none"
+        style={{
+          rotate: '15deg',
+          transformOrigin: 'center',
+          textShadow: '0 2px 12px rgba(255,77,106,0.3)',
+          opacity: nopeFinalOpacity,
+          transform: showNope ? 'scale(1)' : 'scale(0.5)',
+          transition: isDragging ? 'none' : 'opacity 0.3s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+        }}
       >
         NOPE
       </div>

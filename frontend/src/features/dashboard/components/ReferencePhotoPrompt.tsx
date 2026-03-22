@@ -35,7 +35,7 @@ export function ReferencePhotoPrompt({ onConfirm, onCancel }: ReferencePhotoProm
 
   return (
     <div
-      className="absolute inset-0 z-50 flex items-end justify-center bg-pl-black/80 backdrop-blur-sm"
+      className="absolute inset-0 z-50 flex items-end justify-center bg-black/90 backdrop-blur-sm"
       onClick={onCancel}
     >
       <div

@@ -10,6 +10,7 @@ import {
   TokenEconomy,
   Gallery,
   Testimonials,
+  BlockchainSection,
   CTASection,
   Footer,
 } from '@/features/landing'
@@ -28,6 +29,7 @@ export function Component() {
         <TokenEconomy />
         <Gallery />
         <Testimonials />
+        <BlockchainSection />
         <CTASection />
       </main>
       <Footer />

@@ -8,7 +8,7 @@ interface TestimonialCardProps {
 export function TestimonialCard({ testimonial }: TestimonialCardProps) {
   return (
     <div
-      className="bg-white p-[clamp(28px,3vw,48px)]"
+      className="bg-white p-[clamp(28px,3vw,48px)] flex flex-col h-full"
       style={{ border: '1px solid rgba(10,10,10,0.1)' }}
     >
       <div className="flex items-center gap-0.5 mb-5">
@@ -16,7 +16,7 @@ export function TestimonialCard({ testimonial }: TestimonialCardProps) {
           <Star key={i} className="w-4 h-4 fill-pl-accent text-pl-accent" />
         ))}
       </div>
-      <p className="text-[14px] font-light leading-[1.7] text-pl-black/70 italic mb-6 font-body">
+      <p className="text-[14px] font-light leading-[1.7] text-pl-black/70 italic mb-6 font-body flex-1">
         "{testimonial.text}"
       </p>
       <div className="flex items-center gap-3">

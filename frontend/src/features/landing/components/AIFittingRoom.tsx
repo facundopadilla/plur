@@ -14,7 +14,7 @@ export function AIFittingRoom() {
   return (
     <section id="fitting" className="grid grid-cols-1 lg:grid-cols-2 min-h-screen bg-pl-white">
       {/* Left: Info */}
-      <div className="flex flex-col justify-center px-[clamp(24px,5vw,80px)] py-[clamp(80px,10vw,160px)]">
+      <div className="relative z-10 flex flex-col justify-center px-[clamp(24px,5vw,80px)] py-[clamp(80px,10vw,160px)]">
         <RevealOnScroll>
           <span className="text-[10px] font-medium tracking-[0.2em] uppercase text-pl-gray-400 mb-4 block font-body">
             {t('landing.fitting.eyebrow')}
@@ -36,8 +36,8 @@ export function AIFittingRoom() {
         <div className="flex flex-col gap-10 mt-12">
           {STEPS.map(({ num, titleKey, descKey }, i) => (
             <RevealOnScroll key={titleKey} delay={((i + 1) as 1 | 2 | 3)}>
-              <div className="flex gap-5 items-start">
-                <span className="font-display text-4xl font-extrabold text-pl-accent shrink-0 w-[50px]">
+              <div className="flex gap-6 items-start">
+                <span className="font-display text-3xl font-extrabold text-pl-accent shrink-0 w-12 min-w-[48px]">
                   {num}
                 </span>
                 <div>

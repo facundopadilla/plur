@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -16,24 +15,43 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='PurchaseOrder',
+            name="PurchaseOrder",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('amount_fiat', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('currency_fiat', models.CharField(max_length=3)),
-                ('amount_plr', models.DecimalField(decimal_places=8, max_digits=20)),
-                ('status', models.CharField(choices=[('pending', 'Pending'), ('processing', 'Processing'), ('settled', 'Settled'), ('failed', 'Failed')], default='pending', max_length=20)),
-                ('transak_order_id', models.CharField(blank=True, max_length=200)),
-                ('transak_session_data', models.JSONField(default=dict)),
-                ('idempotency_key', models.UUIDField(default=uuid.uuid4, unique=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='purchase_orders', to=settings.AUTH_USER_MODEL)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("amount_fiat", models.DecimalField(decimal_places=2, max_digits=10)),
+                ("currency_fiat", models.CharField(max_length=3)),
+                ("amount_plr", models.DecimalField(decimal_places=8, max_digits=20)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "Pending"),
+                            ("processing", "Processing"),
+                            ("settled", "Settled"),
+                            ("failed", "Failed"),
+                        ],
+                        default="pending",
+                        max_length=20,
+                    ),
+                ),
+                ("transak_order_id", models.CharField(blank=True, max_length=200)),
+                ("transak_session_data", models.JSONField(default=dict)),
+                ("idempotency_key", models.UUIDField(default=uuid.uuid4, unique=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="purchase_orders",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'purchase order',
-                'verbose_name_plural': 'purchase orders',
-                'ordering': ['-created_at'],
+                "verbose_name": "purchase order",
+                "verbose_name_plural": "purchase orders",
+                "ordering": ["-created_at"],
             },
         ),
     ]

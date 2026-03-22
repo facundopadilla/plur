@@ -42,4 +42,3 @@ def _rebuild_decimal_schemas() -> None:
 
 
 _rebuild_decimal_schemas()
-
