@@ -114,18 +114,6 @@ export function SwipePanel() {
       <div className="absolute top-4 right-4 z-20 flex gap-2">
         <button
           onClick={() => {
-            setActiveTab('match')
-            setMobileOverlay('match')
-          }}
-          className={`relative lg:hidden bg-black/50 backdrop-blur-md border border-white/10 p-2.5 rounded-full hover:bg-black/70 transition-colors shadow-lg flex items-center justify-center ${totalUnread > 0 ? 'text-pl-accent' : 'text-pl-white'}`}
-        >
-          <MessageCircle className="w-5 h-5" />
-          {totalUnread > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-black" />
-          )}
-        </button>
-        <button
-          onClick={() => {
             setActiveTab('perfil')
             setMobileOverlay('perfil')
           }}
