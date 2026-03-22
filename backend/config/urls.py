@@ -23,7 +23,12 @@ api.add_router("/sales", sales_router)
 
 @api.get("/health", tags=["health"], summary="Health check")
 async def health_check(request: object) -> dict[str, str]:
-    """Return API health status."""
+    """Return API health status with a DB query to keep PostgreSQL alive."""
+    from django.db import connection
+
+    from asgiref.sync import sync_to_async
+
+    await sync_to_async(lambda: connection.cursor().execute("SELECT 1"))()
     return {"status": "ok"}
 
 
