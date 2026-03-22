@@ -2,6 +2,10 @@
 .claude/
 .agents/
 .sisyphus/
+.tmp-test/
+.tool-versions
+.env.docs
+skills-lock.json
 .DS_Store
 *.log
 
