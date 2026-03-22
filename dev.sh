@@ -45,6 +45,12 @@ echo -e "${CYAN}[infra]${NC} PostgreSQL listo."
 export AVALANCHE_BACKEND_PRIVATE_KEY="${AVALANCHE_BACKEND_PRIVATE_KEY:-0xff48970edd19f9168d6c5d700715d1b255a464ac10386e91b97ffb01b879aeb8}"
 echo -e "${CYAN}[chain]${NC} Avalanche Fuji testnet habilitado (wallet: 0xe2D919b66F1Df21644Bf8dF638Bf9C04e383c2E4)"
 
+# ── AI & Storage ──────────────────────────────────────────────────────────
+export GEMINI_API_KEY="${GEMINI_API_KEY:-AIzaSyBEWA8YNugrPge_UhpHcU98iE-pl7xD8oo}"
+export CLOUDINARY_URL="${CLOUDINARY_URL:-cloudinary://828685358723523:GI9fNsk3oSU5u-9Q96aBnM3VouI@dsnwiywmj}"
+[ -n "$GEMINI_API_KEY" ] && echo -e "${CYAN}[ai]${NC} Gemini API habilitada" || echo -e "${YELLOW}[ai]${NC} GEMINI_API_KEY no configurada (fallback a placeholder)"
+[ -n "$CLOUDINARY_URL" ] && echo -e "${CYAN}[storage]${NC} Cloudinary habilitado" || echo -e "${YELLOW}[storage]${NC} CLOUDINARY_URL no configurada"
+
 # ── Backend ─────────────────────────────────────────────────────────────────
 echo -e "${CYAN}[backend]${NC} Aplicando migraciones..."
 cd "$ROOT/backend"

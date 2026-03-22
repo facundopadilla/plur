@@ -1,7 +1,8 @@
-import { Sparkles, Coins, QrCode, User, Plus, Heart } from 'lucide-react'
+import { Sparkles, QrCode, User, Plus, Heart, MessageCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { FEATURE_FLAGS } from '../../flags'
+import { useTotalUnread } from '../hooks/useConversations'
 import type { DashboardTab } from '../types'
 
 interface MobileTabBarProps {
@@ -23,27 +24,17 @@ const LEFT_TABS: {
   { key: 'vestidor', labelKey: 'dashboard.tabs.espejo', Icon: Sparkles },
 ]
 
-const RIGHT_TABS: {
-  key: DashboardTab
-  labelKey: string
-  Icon: React.ComponentType<TabIcon>
-}[] = [{ key: 'creditos', labelKey: 'dashboard.tabs.creditos', Icon: Coins }]
-
 const LEFT_TABS_V2: typeof LEFT_TABS = [
   { key: 'inventario', labelKey: 'dashboard.tabs.inventario', Icon: Heart },
   { key: 'vestidor', labelKey: 'dashboard.tabs.vestidor', Icon: Sparkles },
 ]
 
-const RIGHT_TABS_V2: typeof RIGHT_TABS = [
-  { key: 'creditos', labelKey: 'dashboard.tabs.creditos', Icon: Coins },
-]
-
 export function MobileTabBar({ activeTab, onTabChange, onQrScan }: MobileTabBarProps) {
   const { t } = useTranslation()
   const isV2 = FEATURE_FLAGS.DASHBOARD_IA_V2
+  const totalUnread = useTotalUnread()
 
   const leftTabs = isV2 ? LEFT_TABS_V2 : LEFT_TABS
-  const rightTabs = isV2 ? RIGHT_TABS_V2 : RIGHT_TABS
 
   const renderTab = ({ key, labelKey, Icon }: (typeof LEFT_TABS)[number]) => (
     <button
@@ -94,7 +85,22 @@ export function MobileTabBar({ activeTab, onTabChange, onQrScan }: MobileTabBarP
         </button>
       )}
 
-      {rightTabs.map(renderTab)}
+      {/* Chats (reemplaza créditos) */}
+      <button
+        onClick={() => onTabChange('match')}
+        className={cn(
+          "relative flex-1 flex flex-col items-center justify-center gap-1 py-3 transition-colors duration-200",
+          activeTab === 'match' ? 'text-pl-accent' : totalUnread > 0 ? 'text-pl-accent' : 'text-pl-gray-400',
+        )}
+      >
+        <MessageCircle className="w-5 h-5" />
+        {totalUnread > 0 && (
+          <span className="absolute top-2 right-1/2 translate-x-3 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-pl-gray-700" />
+        )}
+        <span className="text-[9px] font-medium tracking-[0.1em] uppercase font-body truncate w-full text-center px-1">
+          {t('dashboard.tabs.chats')}
+        </span>
+      </button>
 
       {/* Perfil */}
       <button

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Loader2, Check, AlertCircle, Camera, Plus, X, ImageIcon } from 'lucide-react'
+import { Loader2, Check, AlertCircle, Camera, Plus, X, ImageIcon, Coins } from 'lucide-react'
 import { usePreferences, useUpdatePreferences } from '../hooks/usePreferences'
 import { STYLE_OPTIONS } from '@/features/onboarding/data/styles'
 import { COLOR_OPTIONS } from '@/features/onboarding/data/colors'
@@ -8,11 +8,16 @@ import { CLOTHING_SIZES } from '@/features/onboarding/data/sizes'
 import { CONDITION_OPTIONS, GENDER_OPTIONS } from '@/features/onboarding/data/preferences'
 import { useAuthStore } from '@/stores/auth.store'
 import { useProfileStore } from '@/stores/profile.store'
+import { useDashboardStore } from '@/stores/dashboard.store'
+import { useCredits } from '../hooks/useCredits'
 import { cn } from '@/lib/utils'
 
 export function PerfilTab() {
   const { t } = useTranslation()
   const user = useAuthStore((s) => s.user)
+  const { credits } = useCredits()
+  const setActiveTab = useDashboardStore((s) => s.setActiveTab)
+  const setMobileOverlay = useDashboardStore((s) => s.setMobileOverlay)
   const referencePhotos = useProfileStore((s) => s.referencePhotos)
   const addReferencePhoto = useProfileStore((s) => s.addReferencePhoto)
   const removeReferencePhoto = useProfileStore((s) => s.removeReferencePhoto)
@@ -175,6 +180,32 @@ export function PerfilTab() {
             </p>
           )}
         </section>
+
+        {/* Credits button */}
+        <button
+          onClick={() => {
+            setActiveTab('creditos')
+            setMobileOverlay('creditos')
+          }}
+          className="w-full flex items-center justify-between gap-3 px-5 py-4 bg-pl-gray-800/60 border border-pl-gray-700 rounded-xl hover:border-pl-accent/40 hover:bg-pl-gray-800 transition-colors group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-pl-accent/15 flex items-center justify-center">
+              <Coins className="w-5 h-5 text-pl-accent" />
+            </div>
+            <div className="text-left">
+              <p className="text-[13px] font-semibold text-pl-white font-body">
+                {t('dashboard.profile.credits', { amount: credits })}
+              </p>
+              <p className="text-[10px] text-pl-gray-400 font-body">
+                {t('dashboard.tabs.creditos')}
+              </p>
+            </div>
+          </div>
+          <span className="text-[11px] font-semibold tracking-[0.08em] uppercase text-pl-accent font-body group-hover:underline">
+            {t('dashboard.creditos.buyCredits')}
+          </span>
+        </button>
 
         {/* Reference photos for AI */}
         <section>

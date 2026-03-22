@@ -17,7 +17,7 @@ const LEGACY_TABS: { key: DashboardTab; labelKey: string }[] = [
 const V2_TABS: { key: DashboardTab; labelKey: string }[] = [
   { key: 'inventario', labelKey: 'dashboard.tabs.inventario' },
   { key: 'vestidor', labelKey: 'dashboard.tabs.vestidor' },
-  { key: 'creditos', labelKey: 'dashboard.tabs.creditos' },
+  { key: 'match', labelKey: 'dashboard.tabs.chats' },
   { key: 'publicar', labelKey: 'dashboard.tabs.publicar' },
   { key: 'perfil', labelKey: 'dashboard.tabs.perfil' },
 ]
