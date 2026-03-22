@@ -477,7 +477,10 @@
       "statusRejected": "Conversation rejected",
       "statusExpired": "Conversation expired",
       "seller": "Seller",
-      "buyer": "Buyer"
+      "buyer": "Buyer",
+      "matchPopupTitle": "You like this garment",
+      "chatWithSeller": "Chat with seller",
+      "tryOnAI": "Try on with AI"
     }
   },
   "earlyAccess": {

@@ -524,7 +524,10 @@
       "statusRejected": "Conversación rechazada",
       "statusExpired": "Conversación expirada",
       "seller": "Vendedor",
-      "buyer": "Comprador"
+      "buyer": "Comprador",
+      "matchPopupTitle": "Te gusta esta prenda",
+      "chatWithSeller": "Chatear con vendedor",
+      "tryOnAI": "Probar con IA"
     }
   },
   "earlyAccess": {
